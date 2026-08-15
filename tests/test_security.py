@@ -54,12 +54,12 @@ def registered_customer(client: TestClient) -> dict:
     """
     import os
     import random
-    
+
     unique_suffix = os.urandom(4).hex()
     email = f"security_{unique_suffix}@test.com"
     # Mobile must start with 6-9 (Indian number validation)
     mobile = str(random.randint(6000000000, 9999999999))
-    
+
     resp = client.post(
         "/api/auth/register",
         json={
@@ -257,6 +257,7 @@ class TestCSRF:
         """Login should set ub_csrf_token cookie."""
         import os
         import random
+
         unique = os.urandom(4).hex()
         reg_resp = client.post(
             "/api/auth/register",
@@ -351,6 +352,7 @@ class TestCookieSecurity:
         """Access token cookie should be httpOnly (not accessible to JS)."""
         import os
         import random
+
         unique = os.urandom(4).hex()
         reg_resp = client.post(
             "/api/auth/register",
@@ -386,6 +388,7 @@ class TestCookieSecurity:
         """CSRF token cookie should NOT be httpOnly (JS needs to read it)."""
         import os
         import random
+
         unique = os.urandom(4).hex()
         reg_resp = client.post(
             "/api/auth/register",

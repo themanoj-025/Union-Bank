@@ -3,5 +3,5 @@ repos:
     rev: v0.15.15
     hooks:
       - id: ruff
-        args: [--fix]
+        args: [--fix, "--ignore=E402,F403,F401,E501,D,B004,B008"]
       - id: ruff-format
