@@ -11,7 +11,6 @@ from .database import (
 from .persistence import (
     AccountModel,
     AdminModel,
-    AuditLogModel,
     LoginAttemptModel,
     SavingsGoalModel,
     TransactionModel,
