@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React">
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/Redis-7.2-DC382D?logo=redis&logoColor=white" alt="Redis">
-  <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/UNION-BANK-/ci.yml?branch=main&label=CI&logo=github" alt="CI">
+  <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Union-Bank/ci.yml?branch=main&label=CI&logo=github" alt="CI">
   <img src="https://img.shields.io/badge/tests-386%20passing-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-73%25-yellowgreen" alt="Coverage">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
@@ -288,7 +288,7 @@ cd frontend && npm test
 
 ```bash
 # 1. Clone & install (Python + git hooks)
-git clone https://github.com/themanoj-025/UNION-BANK-.git && cd UNION-BANK-
+git clone https://github.com/themanoj-025/Union-Bank.git && cd Union-Bank
 python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -e . && pip install -r requirements.txt && npm install
 
@@ -353,8 +353,8 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
 ## ⭐ Show Your Support
 
 - ⭐ Star the repository if this portfolio reference helped you
-- 🐛 [Report a bug](https://github.com/themanoj-025/UNION-BANK-/issues)
-- 💡 [Request a feature](https://github.com/themanoj-025/UNION-BANK-/issues)
+- 🐛 [Report a bug](https://github.com/themanoj-025/Union-Bank/issues)
+- 💡 [Request a feature](https://github.com/themanoj-025/Union-Bank/issues)
 
 ---
 
@@ -365,3 +365,11 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
   <br>
   <sub>Two independent audits: 3.8/10 → current: 8.1/10 (<a href="docs/reference/SELF_AUDIT.md">prove it</a>)</sub>
 </p>
+---
+
+## ⭐ Star History
+
+[![Last Commit](https://img.shields.io/github/last-commit/themanoj-025/Union-Bank?style=flat-square)](https://github.com/themanoj-025/Union-Bank)
+[![Contributors](https://img.shields.io/github/contributors/themanoj-025/Union-Bank?style=flat-square)](https://github.com/themanoj-025/Union-Bank/graphs/contributors)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=themanoj-025/Union-Bank&type=Date)](https://star-history.com/#Union-Bank&Date)
