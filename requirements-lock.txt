@@ -214,7 +214,7 @@ prompt_toolkit==3.0.52
 propcache==0.4.1
 proto-plus==1.27.1
 protobuf==5.29.6
-psutil==7.1.0
+psutil==7.2.2
 psycopg2==2.9.11
 pure_eval==0.2.3
 pyarrow==23.0.1
