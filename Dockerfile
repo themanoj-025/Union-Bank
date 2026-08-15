@@ -30,6 +30,13 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
+    # Remove Debian's apt-managed python packages: python:3.11-slim ships
+    # python3-msgpack 1.1.2 (GHSA-6v7p-g79w-8964, HIGH) and python3-setuptools
+    # 70.3.0 (CVE-2025-47273) in /usr/lib/python3/dist-packages. The pip
+    # install in the deps stage provides patched versions (msgpack 1.2.1,
+    # setuptools 78.1.1+) in /usr/local, but Trivy scans every copy — so the
+    # unpatched apt copies must be purged or the image scan fails.
+    && apt-get purge -y --auto-remove python3-msgpack python3-setuptools \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -38,7 +45,15 @@ WORKDIR /app
 COPY requirements.txt pyproject.toml ./
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    # Upgrade build-time/transitive packages with known HIGH CVEs
+    # (setuptools CVE-2025-47273, wheel CVE-2026-24049, msgpack GHSA-6v7p-g79w-8964,
+    #  jaraco.context CVE-2026-23949) — flagged by the CI trivy gate.
+    pip install --no-cache-dir --upgrade \
+        "setuptools>=78.1.1" \
+        "wheel>=0.46.2" \
+        "msgpack>=1.2.1" \
+        "jaraco-context>=6.1.0"
 
 # Copy application code (includes src/ directory)
 COPY . .
