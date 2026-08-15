@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React">
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/Redis-7.2-DC382D?logo=redis&logoColor=white" alt="Redis">
-  <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/UNION-BANK-/ci.yml?branch=main&label=CI&logo=github" alt="CI">
+  <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Union-Bank/ci.yml?branch=main&label=CI&logo=github" alt="CI">
   <img src="https://img.shields.io/badge/tests-386%20passing-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/coverage-73%25-yellowgreen" alt="Coverage">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
@@ -27,8 +27,26 @@
   <a href="#-engineering-case-studies">Case Studies</a> •
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-metrics">Metrics</a> •
-  <a href="docs/reference\SELF_AUDIT.md">Self-Audit</a>
+  <a href="docs/reference/SELF_AUDIT.md">Self-Audit</a>
 </p>
+
+<br>
+
+---
+
+## 📋 Table of Contents
+
+- [🎯 What This Demonstrates](#-what-this-demonstrates)
+- [🏗 Architecture](#-architecture)
+- [🔬 Engineering Case Studies](#-engineering-case-studies)
+- [🛡 Security Architecture](#-security-architecture)
+- [📊 Metrics](#-metrics)
+- [🧪 Testing Strategy](#-testing-strategy)
+- [🚀 Quick Start](#-quick-start)
+- [🚢 What I'd Do Differently at 10x Scale](#-what-id-do-differently-at-10x-scale-100000-users)
+- [📚 Documentation](#-documentation)
+- [📄 License](#-license)
+- [⭐ Show Your Support](#-show-your-support)
 
 <br>
 
@@ -136,7 +154,7 @@ flowchart TB
 
 ## 🔬 Engineering Case Studies
 
-> *Four deep dives into the hardest engineering decisions in this project — written in the Problem → Constraint → Decision → Trade-off format that senior engineering interviews test for. [Read the full case studies →](docs/reference\CASE_STUDY.md)*
+> *Four deep dives into the hardest engineering decisions in this project — written in the Problem → Constraint → Decision → Trade-off format that senior engineering interviews test for. [Read the full case studies →](docs/reference/CASE_STUDY.md)*
 
 ### 1️⃣ Data Integrity: Why I Test by Killing the Process Mid-Transfer
 
@@ -159,11 +177,11 @@ flowchart TB
 
 **Constraint:** The project had accumulated code from multiple development sessions: a Flask/JSON system at root, a newer SQLAlchemy system also at root, and a third copy in `src/`. Two independent audits confirmed that "which copy is even live is not obvious from the outside." Phantom features (TOTP fields that never verified, metrics middleware never wired) added to the confusion.
 
-**Decision:** A forensic inventory classified every module as LIVE, DEAD, or AMBIGUOUS using import-graph tracing. All dead code was deleted. All phantom features were either completed (TOTP 2FA now enforced on admin login) or removed. The result is one canonical tree with zero ambiguity — documented in `docs/reference\INVENTORY.md`.
+**Decision:** A forensic inventory classified every module as LIVE, DEAD, or AMBIGUOUS using import-graph tracing. All dead code was deleted. All phantom features were either completed (TOTP 2FA now enforced on admin login) or removed. The result is one canonical tree with zero ambiguity — documented in `docs/reference/INVENTORY.md`.
 
 **Trade-off:** Deleting dead code is low-risk (the tests tell you if something breaks) but requires discipline to maintain. The inventory document needs periodic updates. The alternative — leaving dead code with "maybe this is important" notes — is what causes the problem in the first place.
 
-**Deliverable:** `docs/reference\INVENTORY.md` — zero AMBIGUOUS entries, with full import-graph evidence for every classification.
+**Deliverable:** `docs/reference/INVENTORY.md` — zero AMBIGUOUS entries, with full import-graph evidence for every classification.
 </details>
 
 ### 3️⃣ Testing Strategy: From 26% to 73% Coverage Without Padding
@@ -217,7 +235,7 @@ flowchart TB
 | **Exception safety** | Bare `except: pass` banned by CI grep-check — all errors logged with context | ✅ |
 | **Account lockout** | 5 failed attempts → 15-minute freeze (per-account) | ✅ |
 
-[Full Threat Model →](docs/reference\THREAT_MODEL.md) • [Security ADR →](docs/decisions\ADR-0002-security-hardening.md)
+[Full Threat Model →](docs/reference/THREAT_MODEL.md) • [Security ADR →](docs/decisions/ADR-0002-security-hardening.md)
 
 ---
 
@@ -236,7 +254,7 @@ flowchart TB
 | **Python LOC** | ~15,000 |
 | **Frontend components** | 15+ React components |
 | **CI jobs** | 10 (backend, frontend, security, mutation, fuzz, docker, secrets, commitlint, postgres) |
-| **Audit improvement** | [3.8 → 8.1/10](docs/reference\SELF_AUDIT.md) |
+| **Audit improvement** | [3.8 → 8.1/10](docs/reference/SELF_AUDIT.md) |
 
 ---
 
@@ -270,7 +288,7 @@ cd frontend && npm test
 
 ```bash
 # 1. Clone & install (Python + git hooks)
-git clone https://github.com/themanoj-025/UNION-BANK-.git && cd UNION-BANK-
+git clone https://github.com/themanoj-025/Union-Bank.git && cd Union-Bank
 python -m venv venv && source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -e . && pip install -r requirements.txt && npm install
 
@@ -284,7 +302,7 @@ cd frontend && npm install && npm run dev
 open http://localhost:5173    # or http://localhost:8000/docs for API docs
 ```
 
-> 💡 **Live demo** — Deploy with `docker-compose -f docker-compose.prod.yml up` (see [deployment docs](docs/reference\RUNBOOK.md)).
+> 💡 **Live demo** — Deploy with `docker-compose -f docker-compose.prod.yml up` (see [deployment docs](docs/reference/RUNBOOK.md)).
 
 **Demo credentials:**
 | Role | Command |
@@ -312,17 +330,17 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
 
 | Document | Purpose |
 |----------|---------|
-| [ADR-0001](docs/decisions\ADR-0001-consolidate-service-layer.md) | Service layer consolidation — one canonical tree |
-| [ADR-0002](docs/decisions\ADR-0002-security-hardening.md) | Token strategy, 2FA, CSRF |
+| [ADR-0001](docs/decisions/ADR-0001-consolidate-service-layer.md) | Service layer consolidation — one canonical tree |
+| [ADR-0002](docs/decisions/ADR-0002-security-hardening.md) | Token strategy, 2FA, CSRF |
 | [ADR-0003](docs/decisions/ADR-0003-totp-2fa.md) | TOTP 2FA completion |
-| [ADR-0004](docs/decisions\ADR-0004-data-retention.md) | Data retention + idempotency |
-| [ADR-0005](docs/decisions\ADR-0005-database-migration.md) | PostgreSQL migration path |
+| [ADR-0004](docs/decisions/ADR-0004-data-retention.md) | Data retention + idempotency |
+| [ADR-0005](docs/decisions/ADR-0005-database-migration.md) | PostgreSQL migration path |
 | [ADR-0006](docs/decisions/ADR-0006-git-strategy.md) | Git strategy, commits, releases |
-| [INVENTORY.md](docs/reference\INVENTORY.md) | Forensic module classification |
-| [THREAT_MODEL.md](docs/reference\THREAT_MODEL.md) | Security threat analysis |
-| [RUNBOOK.md](docs/reference\RUNBOOK.md) | Incident response |
-| [CASE_STUDY.md](docs/reference\CASE_STUDY.md) | Engineering deep dives |
-| [SELF_AUDIT.md](docs/reference\SELF_AUDIT.md) | Audit reconciliation |
+| [INVENTORY.md](docs/reference/INVENTORY.md) | Forensic module classification |
+| [THREAT_MODEL.md](docs/reference/THREAT_MODEL.md) | Security threat analysis |
+| [RUNBOOK.md](docs/reference/RUNBOOK.md) | Incident response |
+| [CASE_STUDY.md](docs/reference/CASE_STUDY.md) | Engineering deep dives |
+| [SELF_AUDIT.md](docs/reference/SELF_AUDIT.md) | Audit reconciliation |
 
 ---
 
@@ -332,10 +350,26 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
 
 ---
 
+## ⭐ Show Your Support
+
+- ⭐ Star the repository if this portfolio reference helped you
+- 🐛 [Report a bug](https://github.com/themanoj-025/Union-Bank/issues)
+- 💡 [Request a feature](https://github.com/themanoj-025/Union-Bank/issues)
+
+---
+
 <p align="center">
   <sub>FastAPI · SQLAlchemy · React · PostgreSQL · Redis · Prometheus · Grafana · Docker · Kubernetes</sub>
   <br>
   <sub>Built for the Senior Software Engineering portfolio.</sub>
   <br>
-  <sub>Two independent audits: 3.8/10 → current: 8.1/10 (<a href="docs/reference\SELF_AUDIT.md">prove it</a>)</sub>
+  <sub>Two independent audits: 3.8/10 → current: 8.1/10 (<a href="docs/reference/SELF_AUDIT.md">prove it</a>)</sub>
 </p>
+---
+
+## ⭐ Star History
+
+[![Last Commit](https://img.shields.io/github/last-commit/themanoj-025/Union-Bank?style=flat-square)](https://github.com/themanoj-025/Union-Bank)
+[![Contributors](https://img.shields.io/github/contributors/themanoj-025/Union-Bank?style=flat-square)](https://github.com/themanoj-025/Union-Bank/graphs/contributors)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=themanoj-025/Union-Bank&type=Date)](https://star-history.com/#Union-Bank&Date)
