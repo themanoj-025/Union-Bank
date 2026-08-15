@@ -288,8 +288,7 @@ def _compute_average_txn_amount(txns: list) -> Decimal:
     if not txns:
         return Decimal("500.00")
     total = sum(
-        (Decimal(str(t.amount)) if not isinstance(t.amount, Decimal) else t.amount)
-        for t in txns
+        (Decimal(str(t.amount)) if not isinstance(t.amount, Decimal) else t.amount) for t in txns
     )
     return total / len(txns)
 
@@ -308,7 +307,9 @@ def classify_intent(query: str) -> list[dict]:
     return matched
 
 
-def extract_amount_range(query: str, intents: list[dict]) -> tuple[Optional[Decimal], Optional[Decimal]]:
+def extract_amount_range(
+    query: str, intents: list[dict]
+) -> tuple[Optional[Decimal], Optional[Decimal]]:
     """Extract min/max amount from a natural-language query."""
     min_amt, max_amt = None, None
 
@@ -431,6 +432,7 @@ def execute_query(
         all_txns = txn_service.get_statement(account_number)
     else:
         from unionbank.utils.logger import logger
+
         logger.warning("analyzr: No account number provided — returning empty results")
         all_txns = []
 
@@ -443,9 +445,7 @@ def execute_query(
 
         # Category filter
         txn_cat = (txn.category or "General").lower()
-        if category_filter and not any(
-            cf.lower() in txn_cat for cf in category_filter
-        ):
+        if category_filter and not any(cf.lower() in txn_cat for cf in category_filter):
             continue
 
         # Date filter
