@@ -167,7 +167,7 @@ jobs:
 
       - name: Run tests against PostgreSQL
         run: |
-          python -m pytest tests/ -v --tb=short
+          python -m pytest tests/ -v --tb=short -o faulthandler_timeout=60
         env:
           UNION_BANK_TESTING: "1"
           JWT_SECRET: "ci-test-secret"
