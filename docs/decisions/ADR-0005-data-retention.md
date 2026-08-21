@@ -1,10 +1,10 @@
-# ADR-0004: Data Retention & Idempotency
+# ADR-0005: Data Retention & Idempotency
 
 **Status:** Accepted  
 **Date:** 2026-07-16  
 **Deciders:** Engineering Team  
 **References:**
-- [ADR-0001: Consolidate Service Layer](ADR-0001-consolidate-service-layer.md)
+- [ADR-0002: Consolidate Service Layer](ADR-0002-consolidate-service-layer.md)
 - [THREAT_MODEL.md](./../reference/THREAT_MODEL.md)
 
 ---

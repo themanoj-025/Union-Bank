@@ -424,6 +424,6 @@ backups/              # Manual database backups
 | ---------- | --------- |
 | `docs/THREAT_MODEL.md` | Security threat model and mitigations |
 | `docs/ARCHITECTURE.md` | System architecture and data flow |
-| `docs/../decisions/ADR-0005-database-migration.md` | Database migration strategy |
+| `docs/../decisions/ADR-0006-database-migration.md` | Database migration strategy |
 | `docs/PERFORMANCE.md` | Performance characteristics and benchmarks |
 | `README.md` | Project overview and quick start |

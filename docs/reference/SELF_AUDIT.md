@@ -56,7 +56,7 @@ These are the three portfolio-ready achievements from this remediation:
 
 **Test:** `tests/test_edge_cases.py` proves transaction history survives account "deletion."
 
-**ADR:** [ADR-0004](../decisions/ADR-0004-data-retention.md) — Data retention and idempotency.
+**ADR:** [ADR-0005](../decisions/ADR-0005-data-retention.md) — Data retention and idempotency.
 
 ### 2. "I made the codebase honest about what it does"
 
@@ -66,7 +66,7 @@ These are the three portfolio-ready achievements from this remediation:
 
 **Deliverable:** `docs/INVENTORY.md` — zero AMBIGUOUS entries, one canonical tree.
 
-**ADR:** [ADR-0001](../decisions/ADR-0001-consolidate-service-layer.md) — Service layer consolidation.
+**ADR:** [ADR-0002](../decisions/ADR-0002-consolidate-service-layer.md) — Service layer consolidation.
 
 ### 3. "I proved money movement is idempotent and concurrency-safe under retry and race conditions"
 

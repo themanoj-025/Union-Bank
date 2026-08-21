@@ -69,8 +69,9 @@ None.
 ## 14. Remaining Manual Review Items
 
 1. **ADR-0001 numbering collision (Tier 2/3)** —
-   `decisions/ADR-0001-consolidate-codebase.md` and
-   `decisions/ADR-0001-consolidate-service-layer.md` share the number 0001.
+   ~~`decisions/ADR-0001-consolidate-codebase.md` and
+   `decisions/ADR-0001-consolidate-service-layer.md` share the number 0001.~~
+   ✅ **Fixed** — service-layer renumbered to ADR-0002, all ADRs shifted +1, cross-references updated.
    Already listed as a backlog item in `migration/migration_summary.md` and
    `file_move_ledger.md` ("renumber one and update cross-references").
    Renumbering one ADR + updating cross-refs is docs-only and low-risk, but

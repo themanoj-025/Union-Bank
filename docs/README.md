@@ -26,12 +26,12 @@ docs/
 │   └── SUPPORT.md                 support channels
 ├── decisions/
 │   ├── ADR-0001-consolidate-codebase.md    ADR: single canonical tree
-│   ├── ADR-0001-consolidate-service-layer.md  ADR: single service layer
-│   ├── ADR-0002-security-hardening.md
-│   ├── ADR-0003-totp-2fa.md
-│   ├── ADR-0004-data-retention.md
-│   ├── ADR-0005-database-migration.md
-│   └── ADR-0006-git-strategy.md
+│   ├── ADR-0002-consolidate-service-layer.md  ADR: single service layer
+│   ├── ADR-0003-security-hardening.md
+│   ├── ADR-0004-totp-2fa.md
+│   ├── ADR-0005-data-retention.md
+│   ├── ADR-0006-database-migration.md
+│   └── ADR-0007-git-strategy.md
 ├── design/
 │   ├── AppFlow.md                 app screens / states / flows
 │   └── Design.md                  design decisions
@@ -78,7 +78,7 @@ docs/
 | You want... | Read |
 |---|---|
 | How the system works end-to-end | [architecture.md](architecture.md) |
-| Architecture decisions | [decisions/ADR-0003-totp-2fa.md](decisions/ADR-0003-totp-2fa.md) |
+| Architecture decisions | [decisions/ADR-0004-totp-2fa.md](decisions/ADR-0004-totp-2fa.md) |
 | Threat model | [reference/THREAT_MODEL.md](reference/THREAT_MODEL.md) |
 | Ops runbook | [reference/RUNBOOK.md](reference/RUNBOOK.md) |
 | Baseline metrics | [reference/BASELINE_METRICS.md](reference/BASELINE_METRICS.md) |

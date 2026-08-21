@@ -39,7 +39,7 @@ and Tamasha.
 
 ## Flagged, not changed (see backlog)
 
-- `docs/decisions/ADR-0001-consolidate-codebase.md` + `ADR-0001-consolidate-service-layer.md`
+- `docs/decisions/ADR-0001-consolidate-codebase.md` + `ADR-0002-consolidate-service-layer.md` (renumbered from ADR-0001)
   — duplicate ADR number; renaming would break cross-references.
 - Untracked Windows artifacts on disk: `F:tempserver.log`, `nul`,
   `frontend/F:tempvite.log` — junk from botched redirects; not committed.
