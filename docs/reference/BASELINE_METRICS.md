@@ -18,7 +18,7 @@
 | **Total tracked files** | 192 | ~250+ | **+58** | Docs, monitoring, k8s, config files added |
 | **CI workflow files** | 1 (ci.yml) | **8** | **+7** | CI, commitlint, codeql, gitleaks, labeler, maintenance, stale, welcome |
 | **CI job count** | ~3 | **10+** | **+7** | Unit, frontend, security, mutation, schemathesis, docker, postgres, secrets, commitlint, etc. |
-| **Architecture Decision Records** | 0 | **7** | **+7** | ADR-0001 through ADR-0006 + ADR-0003-totp |
+| **Architecture Decision Records** | 0 | **7** | **+7** | ADR-0001 through ADR-0007 |
 | **Git tags** | 1 (pre-audit-baseline) | **2** | **+1** | v2.2.0 added |
 | **Total commits** | ~100 | **137** | **+37** | All Phase 1-9 work |
 

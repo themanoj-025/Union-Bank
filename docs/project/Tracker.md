@@ -39,18 +39,18 @@
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | TASK-0.1 | Forensic inventory | 🟢 | Owner | 06-01 | 06-03 | 06-03 | [INVENTORY.md](../reference/INVENTORY.md) |
 | TASK-0.2 | Delete dead code | 🟢 | Owner | 06-04 | 06-05 | 06-04 | 0 dup modules |
-| TASK-0.3 | Service consolidation | 🟢 | Owner | 06-05 | 06-06 | 06-06 | ADR-0001 |
+| TASK-0.3 | Service consolidation | 🟢 | Owner | 06-05 | 06-06 | 06-06 | ADR-0002 |
 | TASK-1.1 | begin_nested() transfer | 🟢 | Owner | 06-08 | 06-10 | 06-09 | — |
 | TASK-1.2 | Fault-injection crash test | 🟢 | Owner | 06-10 | 06-12 | 06-11 | Proves atomicity |
 | TASK-1.3 | Concurrency conservation | 🟢 | Owner | 06-12 | 06-13 | 06-12 | 10 transfers |
-| TASK-1.4 | Security hardening | 🟢 | Owner | 06-13 | 06-19 | 06-18 | ADR-0002 |
-| TASK-1.5 | 2FA completion | 🟢 | Owner | 06-19 | 06-21 | 06-20 | ADR-0003 |
+| TASK-1.4 | Security hardening | 🟢 | Owner | 06-13 | 06-19 | 06-18 | ADR-0003 |
+| TASK-1.5 | 2FA completion | 🟢 | Owner | 06-19 | 06-21 | 06-20 | ADR-0004 |
 | TASK-1.6 | Rate limiting + lockout | 🟢 | Owner | 06-21 | 06-23 | 06-22 | — |
 | TASK-2.1 | Async SQLAlchemy | 🟢 | Owner | 06-25 | 06-28 | 06-27 | — |
 | TASK-2.2 | Protocol-based DI | 🟢 | Owner | 06-28 | 06-30 | 06-29 | — |
 | TASK-2.3 | Cursor pagination | 🟢 | Owner | 06-30 | 07-02 | 07-01 | 10k accounts |
 | TASK-2.4 | Redis cache | 🟢 | Owner | 07-02 | 07-04 | 07-03 | 60s TTL |
-| TASK-2.5 | Alembic migrations | 🟢 | Owner | 07-04 | 07-07 | 07-06 | ADR-0005 |
+| TASK-2.5 | Alembic migrations | 🟢 | Owner | 07-04 | 07-07 | 07-06 | ADR-0006 |
 | TASK-3.1 | Prometheus metrics | 🟢 | Owner | 07-10 | 07-12 | 07-11 | — |
 | TASK-3.2 | JSON logging | 🟢 | Owner | 07-12 | 07-13 | 07-12 | bank.jsonl |
 | TASK-3.3 | Probes | 🟢 | Owner | 07-13 | 07-14 | 07-13 | /health /ready |

@@ -67,7 +67,7 @@ graph TD
 - **Auth failures spike** → check lockouts/rate limits; token version bump.
 - **Cache hit ratio drop** → verify invalidate-on-write wiring.
 - **Breaker open on notifications** → notifications degraded, transfers unaffected.
-- **High write contention** → SQLite→PostgreSQL path (ADR-0005).
+- **High write contention** → SQLite→PostgreSQL path (ADR-0006).
 
 ## 7. Related Documents
 

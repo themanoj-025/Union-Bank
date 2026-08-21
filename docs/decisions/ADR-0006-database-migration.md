@@ -1,9 +1,9 @@
-# ADR-0005: Database Migration & Performance
+# ADR-0006: Database Migration & Performance
 
 **Status:** Accepted  
 **Date:** 2026-07-16  
 **References:**
-- [ADR-0004: Data Retention & Idempotency](ADR-0004-data-retention.md)
+- [ADR-0005: Data Retention & Idempotency](ADR-0005-data-retention.md)
 - [THREAT_MODEL.md](./../reference/THREAT_MODEL.md)
 
 ---
@@ -30,7 +30,7 @@ concerns:
    in `requirements.txt`, causing silent failures and blocking migrations.
 
 6. **`ondelete="CASCADE"` still on TransactionModel FK** — Despite soft-delete
-   in ADR-0004, the FK constraint remained. A future hard-delete path would
+   in ADR-0005, the FK constraint remained. A future hard-delete path would
    still cascade.
 
 ---

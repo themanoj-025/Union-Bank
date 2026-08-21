@@ -61,7 +61,7 @@ erDiagram
 | amount | decimal(18,2) | N | — | > 0 CHECK | Amount |
 | type | enum | N | "transfer" | transfer/deposit/withdraw | Operation |
 | status | enum | N | "completed" | completed/failed/rolled_back | Outcome |
-| idempotency_key | string | Y | null | unique | Dedupe (ADR-0004) |
+| idempotency_key | string | Y | null | unique | Dedupe (ADR-0005) |
 | created_at | datetime | N | now() | — | Timestamp |
 
 ### TBL-refresh_token
@@ -145,7 +145,7 @@ erDiagram
 
 - Retention: financial records retained indefinitely (audit); refresh tokens purged after expiry + 30 days.
 - Deletion: accounts soft-frozen before close; hard delete only for unpopulated test rows.
-- ADR-0004 governs retention + idempotency.
+- ADR-0005 governs retention + idempotency.
 
 ## 7. Migrations Strategy
 

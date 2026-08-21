@@ -10,7 +10,7 @@
 | ID | Risk | Likelihood | Impact | Score | Mitigation | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R-01 | Local env dependency gap (`pybreaker` missing) | High | Medium | 8 | Add to requirements-lock; reinstall; CI unaffected | Owner | Open (Tracker blocker) |
-| R-02 | SQLite write serialization under concurrency | High | Low | 5 | Documented PostgreSQL path (ADR-0005) | Owner | Mitigated |
+| R-02 | SQLite write serialization under concurrency | High | Low | 5 | Documented PostgreSQL path (ADR-0006) | Owner | Mitigated |
 | R-03 | Token theft via XSS | Low | High | 6 | httpOnly + Strict cookies; CSP | Sec | Mitigated |
 | R-04 | Refresh token replay | Low | Medium | 4 | Rotation + family revocation | Sec | Mitigated |
 | R-05 | CSRF on state changes | Low | High | 6 | Double-submit pattern + tests | Sec | Mitigated |

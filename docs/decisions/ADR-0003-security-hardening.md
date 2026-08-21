@@ -1,4 +1,4 @@
-# ADR-0002: Security Hardening — Token Strategy, 2FA, and CSRF
+# ADR-0003: Security Hardening — Token Strategy, 2FA, and CSRF
 
 **Date:** July 2026  
 **Status:** Accepted  

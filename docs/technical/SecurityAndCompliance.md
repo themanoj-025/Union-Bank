@@ -49,14 +49,14 @@ Full model: `docs/../reference/THREAT_MODEL.md`.
 
 - Transit: TLS 1.2+ (prod ingress).
 - At rest: volume encryption (DB).
-- Tokens: RS256 signatures; refresh tokens bcrypt-hashed (ADR-0002).
+- Tokens: RS256 signatures; refresh tokens bcrypt-hashed (ADR-0003).
 
 ## 5. Compliance Checklist
 
-- [ ] Defense in depth documented in ADR-0002 + ../reference/THREAT_MODEL.md
+- [ ] Defense in depth documented in ADR-0003 + ../reference/THREAT_MODEL.md
 - [ ] SQLi/XSS/CSRF fixtures run in CI
 - [ ] Secret scan job in CI (10 jobs)
-- [ ] Data retention + idempotency policy (ADR-0004)
+- [ ] Data retention + idempotency policy (ADR-0005)
 - [ ] `except: pass` banned by CI grep
 - [ ] Portfolio scope: no regulated financial compliance claims (not PCI/SOC2-scoped)
 

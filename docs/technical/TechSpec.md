@@ -143,7 +143,7 @@ sequenceDiagram
 
 - Envelope API: `ApiResponse[T]` with error codes; v1 legacy returns raw.
 - Bare `except: pass` banned by CI grep — all errors logged with context.
-- Idempotency keys per ADR-0004; retry-safe transfers.
+- Idempotency keys per ADR-0005; retry-safe transfers.
 - Circuit breaker on notifications; failure is non-fatal to transfer.
 - Account lockout + rate limits bound abuse paths.
 
@@ -158,7 +158,7 @@ sequenceDiagram
 
 | Risk | Mitigation |
 | --- | --- |
-| SQLite write serialization | Documented PostgreSQL path (ADR-0005) |
+| SQLite write serialization | Documented PostgreSQL path (ADR-0006) |
 | Dependency gaps in local env | requirements-lock.txt + reinstall (see Tracker R-01) |
 | Coverage erosion | Coverage gate + mutation testing (mutmut) |
 | API drift v1/v2 | Envelope v2 + deprecation headers + contract tests |

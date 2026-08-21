@@ -41,7 +41,7 @@ gantt
 | --- | --- | --- | --- | --- | --- |
 | TASK-0.1 | Forensic inventory (import-graph) | — | Owner | 3d | [INVENTORY.md](../reference/INVENTORY.md) |
 | TASK-0.2 | Delete dead code | TASK-0.1 | Owner | 1d | ADR-0001 |
-| TASK-0.3 | Service-layer consolidation | TASK-0.2 | Owner | 2d | ADR-0001 |
+| TASK-0.3 | Service-layer consolidation | TASK-0.2 | Owner | 2d | ADR-0002 |
 
 ### Phase 1 — Core Banking (COMPLETE)
 
@@ -53,7 +53,7 @@ gantt
 | TASK-1.2 | Fault-injection crash test | TASK-1.1 | Owner | 2d | REQ-001 |
 | TASK-1.3 | Concurrency conservation test | TASK-1.1 | Owner | 1d | REQ-001 |
 | TASK-1.4 | Security hardening | TASK-1.1 | Owner | 5d | REQ-010..016 |
-| TASK-1.5 | 2FA completion | TASK-1.4 | Owner | 2d | REQ-012, ADR-0003 |
+| TASK-1.5 | 2FA completion | TASK-1.4 | Owner | 2d | REQ-012, ADR-0004 |
 | TASK-1.6 | Rate limiting + lockout | TASK-1.4 | Owner | 2d | REQ-014, REQ-015 |
 
 ### Phase 2 — Scale & Async (COMPLETE)
@@ -66,7 +66,7 @@ gantt
 | TASK-2.2 | Protocol-based DI | TASK-2.1 | Owner | 2d | REQ-020 |
 | TASK-2.3 | Cursor pagination | TASK-2.1 | Owner | 2d | REQ-022 |
 | TASK-2.4 | Redis cache + invalidate | TASK-2.1 | Owner | 2d | REQ-023 |
-| TASK-2.5 | Alembic SQLite↔Postgres | TASK-2.1 | Owner | 3d | REQ-021, ADR-0005 |
+| TASK-2.5 | Alembic SQLite↔Postgres | TASK-2.1 | Owner | 3d | REQ-021, ADR-0006 |
 
 ### Phase 3 — Ops (COMPLETE)
 

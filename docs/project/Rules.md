@@ -47,7 +47,7 @@ UNION-BANK-/
 - Branches: `feat/<slug>`, `fix/<slug>`, `chore/<slug>`, `security/<slug>`.
 - Commits: Conventional Commits (commitlint enforced).
 - PRs: ≥ 1 reviewer, all CI jobs green, squash merge; releases tagged.
-- Never force-push main; ADR-0006 defines release strategy.
+- Never force-push main; ADR-0007 defines release strategy.
 
 ## 4. Testing Requirements
 

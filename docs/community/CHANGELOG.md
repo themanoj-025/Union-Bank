@@ -75,7 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **`docs/adr/../decisions/ADR-0006-git-strategy.md`** — Git branch strategy, conventional commits policy, release process.
+- **`docs/adr/../decisions/ADR-0007-git-strategy.md`** — Git branch strategy, conventional commits policy, release process.
 - **`monitoring/prometheus.yml`** — Prometheus scrape config targeting API on port 8000.
 - **`monitoring/grafana/datasources/prometheus.yml`** — Auto-provisioned Prometheus datasource.
 - **`monitoring/grafana/dashboards/union-bank-dashboard.json`** — 6-panel Grafana dashboard.
@@ -108,7 +108,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dead code deleted** — Removed all root-level Flask/JSON files (`account.py`, `admin.py`, `bank.py`, `ui.py`, `config.py`, `container.py`, `database.py`, `logger.py`, `models.py`) and stale `templates/`, `static/` directories
 - **God module split** — `utils/auth.py` (was hashing + rate limiting + sessions + CSV export + interest + categories) split into focused modules: `hashing.py`, `rate_limit.py`, `csv_export.py`, `interest.py`, `categories.py`, `formatting.py`, `validation.py`
 - **Versioned API** — `/api/v1/` (legacy, deprecated) and `/api/v2/` (current, envelope-wrapped `ApiResponse[T]`) with deprecation headers
-- **ADR-0001** — Service layer consolidation: single canonical tree, protocol-based DI
+- **ADR-0002** — Service layer consolidation: single canonical tree, protocol-based DI
 
 #### 🛡 Security Hardening (Phase 2)
 - **Password leak fixed** — Removed password hash from all API responses. Test `test_password_leak.py` enforces no response model contains a "password" key.
@@ -120,24 +120,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security headers** — HSTS, X-Frame-Options, X-Content-Type-Options, CSP, Permissions-Policy, X-XSS-Protection via middleware
 - **Bare except:pass banned** — All exception handlers log with context. CI grep-check enforces no silent swallowing.
 - **../reference/THREAT_MODEL.md** — 10 threats documented with STRIDE classification, risk assessment, mitigations, and incident response procedures
-- **ADR-0002** — Token strategy, 2FA, and CSRF defense-in-depth architecture
-- **ADR-0003** — TOTP 2FA completion: enrollment, verification, login enforcement, disable
+- **ADR-0003** — Token strategy, 2FA, and CSRF defense-in-depth architecture
+- **ADR-0004** — TOTP 2FA completion: enrollment, verification, login enforcement, disable
 
 #### 💾 Data Integrity & Compliance (Phase 3)
 - **Soft-delete** — Accounts now use `deleted_at` timestamp instead of hard-delete. Default queries filter out soft-deleted records. Transaction history survives account "deletion."
 - **Idempotency keys** — `IdempotencyRecord` entity + `_check_idempotency()` in TransactionService. Deposit/withdraw/transfer endpoints accept `idempotency_key` — retries return cached result instead of re-executing.
 - **Concurrent transfer safety** — 10 parallel transfers with `ThreadPoolExecutor` prove no lost updates, no double-spending.
-- **ADR-0004** — Data retention: soft-delete + idempotency framed around banking regulatory norms
+- **ADR-0005** — Data retention: soft-delete + idempotency framed around banking regulatory norms
 
 #### 🗄 Database & Performance (Phase 4)
 - **Alembic migrations** — Migration infrastructure with versioned schema changes. 5 migration round-trip tests.
-- **PostgreSQL support** — `DATABASE_URL` env var for PostgreSQL. Migration path via Alembic. Documented in ADR-0005.
+- **PostgreSQL support** — `DATABASE_URL` env var for PostgreSQL. Migration path via Alembic. Documented in ADR-0006.
 - **Pagination** — Offset-based pagination on admin account list, admin transactions. Keyset (cursor-based) pagination on statements.
 - **Aggregated statistics** — `get_statistics()` consolidated from 9 separate queries to single pass.
 - **Redis caching** — Wired for admin account list with 60s TTL, invalidation-on-write pattern in `infrastructure/cache.py`.
 - **Bounded account number generation** — Hard cap at 1000 retries with `RuntimeError` (previously unbounded loop).
 - **Database indexes** — Composite indexes on accounts (status, name+number, created+deleted, mobile), transactions (account+timestamp, timestamp+type), loans, savings, notifications.
-- **ADR-0005** — PostgreSQL migration strategy
+- **ADR-0006** — PostgreSQL migration strategy
 
 #### 🔬 Observability (Phase 6)
 - **Prometheus metrics** — `MetricsMiddleware` wired on FastAPI app. `/metrics` endpoint exposes request rate, latency histogram, in-flight requests, error rate, cache hit/miss.
@@ -170,7 +170,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### 📚 Documentation & Portfolio Packaging (Phase 10)
 - **README rewrite** — Case-study structure: The Problem → Architecture → 3 Key Engineering Decisions → Security → Observability → Analyzr → Metrics → Testing → Quick Start → 10x Scale. Badges updated (256 tests, 72% coverage).
 - **../reference/SELF_AUDIT.md** — Finding-by-finding reconciliation of all 38 items from both original audits. Scoring: original 3.4/10 → current 8.1/10.
-- **6 Architecture Decision Records** — ADR-0001 through ADR-0005 covering consolidation, security, TOTP, data retention, PostgreSQL.
+- **7 Architecture Decision Records** — ADR-0001 through ADR-0007 covering consolidation, security, TOTP, data retention, PostgreSQL, and git strategy.
 - **../reference/THREAT_MODEL.md** — 10 threats with STRIDE, risk assessment, mitigation, incident response.
 - **../reference/RUNBOOK.md** — Operational runbook for production troubleshooting.
 - **../reference/TS_MIGRATION.md** — 3-phase TypeScript migration plan for the React frontend.

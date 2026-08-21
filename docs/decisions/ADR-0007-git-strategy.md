@@ -1,4 +1,4 @@
-# ADR-0006: Git Strategy — Branching, Commits, and Releases
+# ADR-0007: Git Strategy — Branching, Commits, and Releases
 
 **Status:** Adopted  
 **Date:** 2026-07-17  

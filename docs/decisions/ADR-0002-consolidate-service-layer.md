@@ -1,4 +1,4 @@
-# ADR-0001: Consolidate to a Single Service Layer
+# ADR-0002: Consolidate to a Single Service Layer
 
 ## Status
 

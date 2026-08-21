@@ -68,7 +68,7 @@ UNION-BANK- is a production-grade, concurrent-safe banking API and management sy
 | REQ-001 | Atomic transfer | begin_nested() savepoint; fault-injection proven | P0 | Live |
 | REQ-002 | Deposit / withdraw | All-or-nothing balance ops | P0 | Live |
 | REQ-003 | Transaction history | Paginated (cursor) records | P1 | Live |
-| REQ-004 | Idempotency | Duplicate-safe operations per ADR-0004 | P1 | Live |
+| REQ-004 | Idempotency | Duplicate-safe operations per ADR-0005 | P1 | Live |
 
 **Epic: Security**
 

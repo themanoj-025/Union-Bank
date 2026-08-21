@@ -53,7 +53,7 @@
 
 ### Git & Process
 
-- **Adopted Conventional Commits** with commitlint + husky pre-commit hook enforcement. Documented branch strategy (trunk-based with feature branches), semver releases, and CI gating in Architecture Decision Records (ADR-0006).
+- **Adopted Conventional Commits** with commitlint + husky pre-commit hook enforcement. Documented branch strategy (trunk-based with feature branches), semver releases, and CI gating in Architecture Decision Records (ADR-0007).
 
 ---
 
