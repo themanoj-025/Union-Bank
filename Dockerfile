@@ -58,8 +58,14 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 # Copy application code (includes src/ directory)
 COPY . .
 
-# Create data directory
-RUN mkdir -p /app/data && chmod +x scripts/docker-entrypoint.sh
+# Create non-root user
+RUN addgroup --system app && adduser --system --ingroup app app
+
+# Create data directory and fix ownership
+RUN mkdir -p /app/data && chmod +x scripts/docker-entrypoint.sh \
+    && chown -R app:app /app
+
+USER app
 
 # Expose port
 EXPOSE 8000
