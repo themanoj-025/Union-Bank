@@ -79,6 +79,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 FROM base AS api
 
 ENV ENTRYPOINT_TARGET=api
+STOPSIGNAL SIGTERM
 CMD ["sh", "-c", "exec scripts/docker-entrypoint.sh"]
 
 
