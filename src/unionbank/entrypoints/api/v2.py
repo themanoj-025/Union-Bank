@@ -17,6 +17,8 @@ from decimal import Decimal
 from typing import Optional
 
 import jwt
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
+
 from unionbank.entrypoints.api.common import (
     _get_verifying_key,
     create_token_pair,
@@ -60,7 +62,6 @@ from unionbank.entrypoints.api.models import (
     TransferRequest,
     UpdateProfileRequest,
 )
-from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 
 router = APIRouter(prefix="/api/v2")
 

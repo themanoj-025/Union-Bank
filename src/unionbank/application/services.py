@@ -10,11 +10,13 @@ from __future__ import annotations
 import json
 import threading
 from collections import defaultdict
+from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Generator, Optional
+from typing import Optional
 
+import pybreaker
 
 # ─
 from unionbank.config import settings
@@ -55,8 +57,6 @@ from .interfaces import (
     TokenVersionRepositoryProtocol,
     TransactionRepositoryProtocol,
 )
-
-import pybreaker
 
 # ─
 # Prevents a slow or unresponsive notification provider from blocking

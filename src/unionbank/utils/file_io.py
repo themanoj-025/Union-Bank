@@ -48,7 +48,7 @@ def load_json(filepath: str) -> dict:
             if not content:
                 return {}
             return json.loads(content)
-    except (json.JSONDecodeError, ValueError, IOError) as e:
+    except (OSError, json.JSONDecodeError, ValueError) as e:
         log = _get_logger()
         log.error(f"Corrupted JSON file detected: {filepath} — {e}")
 
@@ -65,7 +65,7 @@ def load_json(filepath: str) -> dict:
                             json.dump(data, fw, indent=4)
                         log.info(f"Recovered {filepath} from backup successfully.")
                         return data
-            except (json.JSONDecodeError, IOError):
+            except (OSError, json.JSONDecodeError):
                 log.error(f"Backup file also corrupted: {backup}")
 
         log.warning(f"Resetting corrupted file to empty: {filepath}")
@@ -84,7 +84,7 @@ def save_json(filepath: str, data) -> None:
     if os.path.exists(filepath):
         try:
             shutil.copy2(filepath, _backup_path(filepath))
-        except (IOError, shutil.Error) as e:
+        except (OSError, shutil.Error) as e:
             _get_logger().warning(f"Failed to create backup for {filepath}: {e}")
 
     try:
@@ -99,6 +99,6 @@ def save_json(filepath: str, data) -> None:
             os.fsync(fd)
 
         os.replace(tmp_path, filepath)
-    except (IOError, OSError) as e:
+    except OSError as e:
         _get_logger().error(f"Failed to save {filepath}: {e}")
         raise

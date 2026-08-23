@@ -8,7 +8,6 @@ no direct JSON reads or writes.
 import time as _time
 
 from unionbank.entrypoints.cli.account import Account
-from unionbank.utils.logger import logger
 from unionbank.entrypoints.cli.ui import (
     BOLD,
     CYAN,
@@ -35,6 +34,7 @@ from unionbank.utils import (
     validate_password,
     validate_phone,
 )
+from unionbank.utils.logger import logger
 
 
 class Bank:

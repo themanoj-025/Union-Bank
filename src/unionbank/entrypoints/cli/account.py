@@ -2,10 +2,10 @@
 account.py  –  Account model + all account-level operations (with logging).
 """
 
+import contextlib
 from datetime import datetime
 
 from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
-from unionbank.utils.logger import logger
 from unionbank.entrypoints.cli.ui import (
     BOLD,
     CYAN,
@@ -22,6 +22,7 @@ from unionbank.entrypoints.cli.ui import (
     success,
     warning,
 )
+from unionbank.infrastructure.database import init_db
 from unionbank.utils import (
     export_transactions_to_csv,
     fmt_currency,
@@ -38,8 +39,7 @@ from unionbank.utils import (
     validate_phone,
     verify_password,
 )
-
-from unionbank.infrastructure.database import init_db
+from unionbank.utils.logger import logger
 
 # Ensure SQLite tables exist
 init_db()
@@ -78,8 +78,8 @@ class Account:
         """Save the account — writes to SQLite only (no JSON)."""
         from decimal import Decimal
 
-        from unionbank.infrastructure.container import get_container
         from unionbank.domain.entities import Account as DomainAccount
+        from unionbank.infrastructure.container import get_container
 
         c = get_container()
         repo = c.account_repo()
@@ -93,10 +93,8 @@ class Account:
         # Parse string created_at to datetime if it's a string
         created_at_dt = None
         if isinstance(self.created_at, str) and self.created_at:
-            try:
+            with contextlib.suppress(ValueError, TypeError):
                 created_at_dt = datetime.fromisoformat(self.created_at.replace(" ", "T"))
-            except (ValueError, TypeError):
-                pass
 
         domain_acc = DomainAccount(
             account_number=self.account_number,
@@ -124,10 +122,11 @@ class Account:
         """Log a transaction — writes to SQLite only (no JSON)."""
         from decimal import Decimal
 
-        from unionbank.infrastructure.container import get_container
+        from sqlalchemy.exc import IntegrityError
+
         from unionbank.domain.entities import Transaction as DomainTransaction
         from unionbank.domain.entities import TransactionType
-        from sqlalchemy.exc import IntegrityError
+        from unionbank.infrastructure.container import get_container
 
         c = get_container()
         txn_id = generate_transaction_id()
@@ -592,6 +591,7 @@ class Account:
 
     def _contribute_to_goal(self):
         from decimal import Decimal
+
         from unionbank.infrastructure.container import get_container
 
         c = get_container()
@@ -639,6 +639,7 @@ class Account:
 
     def _edit_goal(self):
         from decimal import Decimal
+
         from unionbank.infrastructure.container import get_container
 
         c = get_container()

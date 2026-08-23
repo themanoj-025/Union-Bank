@@ -79,6 +79,12 @@ strict = true
 python_version = "3.11"
 ignore_missing_imports = true
 
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+ignore = ["E501", "E402", "D203", "D211"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]

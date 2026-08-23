@@ -35,8 +35,8 @@ def save_goals(acc_no: str, goals: list) -> None:
     Note: This replaces ALL goals for the account with the provided list.
     For fine-grained operations, use the container's SavingsGoalService directly.
     """
-    from unionbank.infrastructure.container import get_container
     from unionbank.domain.entities import SavingsGoal
+    from unionbank.infrastructure.container import get_container
 
     c = get_container()
     goal_repo = c.savings_goal_repo()

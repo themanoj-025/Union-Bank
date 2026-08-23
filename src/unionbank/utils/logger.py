@@ -20,6 +20,7 @@ request_id (if set), account_number (if set), and any extra context.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import os
@@ -59,10 +60,8 @@ def get_account_context() -> Optional[str]:
 def clear_context() -> None:
     """Clear all thread-local context (call at end of request)."""
     for attr in ("request_id", "account_number"):
-        try:
+        with contextlib.suppress(AttributeError):
             delattr(_request_context, attr)
-        except AttributeError:
-            pass
 
 
 #  Structured JSON Formatter

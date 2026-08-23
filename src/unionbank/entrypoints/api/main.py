@@ -17,6 +17,7 @@ import io
 import logging
 import os
 import secrets
+from contextlib import asynccontextmanager
 from decimal import Decimal
 from typing import Optional
 
@@ -37,7 +38,7 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from contextlib import asynccontextmanager
+from unionbank.config import settings
 
 # ─
 from unionbank.entrypoints.api.common import (
@@ -55,12 +56,7 @@ from unionbank.entrypoints.api.common import (
 
 # ─
 from unionbank.entrypoints.api.v2 import router as v2_router
-from unionbank.config import settings
-
-# ─
-from unionbank.utils.account_rate_limit import get_account_rate_limiter
 from unionbank.infrastructure.metrics import MetricsMiddleware, metrics_response
-from unionbank.utils.logger import clear_context, logger, set_request_id
 
 # ─
 from unionbank.utils import (
@@ -73,6 +69,10 @@ from unionbank.utils import (
     validate_phone,
     verify_password,
 )
+
+# ─
+from unionbank.utils.account_rate_limit import get_account_rate_limiter
+from unionbank.utils.logger import clear_context, logger, set_request_id
 
 
 @asynccontextmanager
@@ -227,7 +227,7 @@ class CSRFProtectMiddleware(BaseHTTPMiddleware):
         if request.url.path in self.CSRF_EXEMPT_PATHS:
             return await call_next(request)
 
-        from unionbank.utils.cookie_auth import validate_csrf_token, CSRF_TOKEN_COOKIE
+        from unionbank.utils.cookie_auth import CSRF_TOKEN_COOKIE, validate_csrf_token
 
         # If no CSRF cookie is present, this is a Bearer-token-only client — allow through
         if CSRF_TOKEN_COOKIE not in request.cookies:
@@ -296,6 +296,7 @@ _uvicorn_error_logger.propagate = False
 # directly in the response body.  We only transform V2 routes so V1 endpoints
 # (which use bare {"detail": "message"}) are unaffected.
 from fastapi.exception_handlers import http_exception_handler as _v1_http_handler
+
 from unionbank.entrypoints.api.models import ApiResponse as _V2ApiResponse
 
 
@@ -1318,8 +1319,8 @@ def admin_view_accounts(
     admin: dict = Depends(get_current_admin),
 ):
     """View all registered accounts with pagination (admin only)."""
-    from unionbank.infrastructure.container import get_container
     from unionbank.infrastructure.cache import get_cache
+    from unionbank.infrastructure.container import get_container
 
     cache = get_cache()
     cache_key = f"admin:accounts:page:{page}:per:{per_page}"
@@ -1330,7 +1331,7 @@ def admin_view_accounts(
         return [AccountListItem(**item) for item in cached]
 
     # Use SQL-level pagination instead of loading all accounts into memory
-    domain_accounts, total = (
+    domain_accounts, _total = (
         get_container().admin_service().list_accounts_paginated(page=page, per_page=per_page)
     )
     page_accounts = domain_accounts
@@ -1379,8 +1380,8 @@ def admin_search_accounts(
     admin: dict = Depends(get_current_admin),
 ):
     """Search accounts by account number or name (admin only)."""
-    from unionbank.infrastructure.container import get_container
     from unionbank.infrastructure.cache import get_cache
+    from unionbank.infrastructure.container import get_container
 
     cache = get_cache()
     cache_key = f"admin:accounts:search:{q}:page:{page}:per:{per_page}"
@@ -1521,7 +1522,7 @@ def admin_view_transactions(
             acc_no=account, page=page, per_page=per_page
         )
     else:
-        domain_txns, total = c.transaction_service().get_paginated_transactions(
+        domain_txns, _total = c.transaction_service().get_paginated_transactions(
             page=page, per_page=per_page
         )
 
@@ -1585,9 +1586,9 @@ def refresh_token(request: Request, req: Optional[RefreshRequest] = None):
     The previous refresh token is revoked (rotation) so it cannot be reused.
     """
     from unionbank.utils.cookie_auth import (
+        clear_auth_cookies,
         get_token_from_cookies,
         set_auth_cookies,
-        clear_auth_cookies,
     )
     from unionbank.utils.logger import logger
 
@@ -1808,8 +1809,9 @@ def liveness_probe():
 @app.get("/api/readyz")
 def readiness_probe():
     """Kubernetes readiness probe — checks database connectivity."""
-    from unionbank.infrastructure.database import get_session
     from sqlalchemy import text
+
+    from unionbank.infrastructure.database import get_session
 
     try:
         session = get_session()

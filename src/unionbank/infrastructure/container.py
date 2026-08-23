@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from typing import Optional
 
+from sqlalchemy.orm import Session
+
 from unionbank.application.notifications import LogNotificationSender, NotificationService
 from unionbank.application.services import (
     AccountService,
@@ -33,7 +35,6 @@ from unionbank.infrastructure.repositories import (
     SqlAlchemyTokenVersionRepository,
     SqlAlchemyTransactionRepository,
 )
-from sqlalchemy.orm import Session
 
 
 class Container:

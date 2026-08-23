@@ -344,12 +344,11 @@ class TestFileIoEdgeCases:
 class TestFakesErrorSimulation:
     def test_duplicate_key_simulation(self):
         """SimulatedDuplicateKeyError should be raised when simulate_duplicate_key is True."""
-        from unionbank.domain.entities import Account
-
         from tests.fakes import (
             FakeAccountRepository,
             SimulatedDuplicateKeyError,
         )
+        from unionbank.domain.entities import Account
 
         repo = FakeAccountRepository()
         repo.simulate_duplicate_key = True
@@ -363,9 +362,8 @@ class TestFakesErrorSimulation:
 
     def test_duplicate_key_off_does_not_raise(self):
         """When simulate_duplicate_key is False (default), duplicates should be silently overwritten."""
-        from unionbank.domain.entities import Account
-
         from tests.fakes import FakeAccountRepository
+        from unionbank.domain.entities import Account
 
         repo = FakeAccountRepository()
         acc = Account(account_number="1000000001", name="Test", password="pw")
@@ -405,14 +403,13 @@ class TestFakesErrorSimulation:
 class TestServiceEdgeCases:
     def test_auth_service_customer_register_welcome_notification_fails_gracefully(self):
         """Welcome notification failure should not prevent successful registration."""
-        from unionbank.application.services import AuthService
-
         from tests.fakes import (
             FakeAccountRepository,
             FakeAdminRepository,
             FakeLoginAttemptRepository,
             FakeTokenVersionRepository,
         )
+        from unionbank.application.services import AuthService
 
         auth = AuthService(
             account_repo=FakeAccountRepository(),
@@ -434,15 +431,14 @@ class TestServiceEdgeCases:
 
     def test_account_service_change_password_token_version_incremented(self):
         """Password change should increment token version."""
-        from unionbank.application.services import AccountService
-        from unionbank.domain.entities import Account
-        from unionbank.utils.hashing import hash_password
-
         from tests.fakes import (
             FakeAccountRepository,
             FakeTokenVersionRepository,
             FakeTransactionRepository,
         )
+        from unionbank.application.services import AccountService
+        from unionbank.domain.entities import Account
+        from unionbank.utils.hashing import hash_password
 
         repo = FakeAccountRepository()
         token_repo = FakeTokenVersionRepository()
@@ -470,14 +466,13 @@ class TestServiceEdgeCases:
 
     def test_transaction_service_deposit_with_idempotency_repo(self):
         """Deposit with idempotency repo configured should work."""
-        from unionbank.application.services import TransactionService
-        from unionbank.domain.entities import Account
-        from unionbank.utils.hashing import hash_password
-
         from tests.fakes import (
             FakeAccountRepository,
             FakeTransactionRepository,
         )
+        from unionbank.application.services import TransactionService
+        from unionbank.domain.entities import Account
+        from unionbank.utils.hashing import hash_password
 
         repo = FakeAccountRepository()
         svc = TransactionService(
@@ -501,11 +496,10 @@ class TestServiceEdgeCases:
 
     def test_admin_service_list_accounts_paginated(self):
         """Admin paginated listing should work."""
+        from tests.fakes import FakeAccountRepository
         from unionbank.application.services import AdminService
         from unionbank.domain.entities import Account
         from unionbank.utils.hashing import hash_password
-
-        from tests.fakes import FakeAccountRepository
 
         repo = FakeAccountRepository()
         for i in range(25):
@@ -537,13 +531,12 @@ class TestServiceEdgeCases:
 
     def test_savings_goal_delete_nonexistent_fails(self):
         """Delete a non-existent goal should fail."""
-        from unionbank.application.services import SavingsGoalService
-
         from tests.fakes import (
             FakeAccountRepository,
             FakeSavingsGoalRepository,
             FakeTransactionRepository,
         )
+        from unionbank.application.services import SavingsGoalService
 
         svc = SavingsGoalService(
             goal_repo=FakeSavingsGoalRepository(),

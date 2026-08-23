@@ -13,9 +13,9 @@ import tempfile
 
 import pytest
 from fastapi.testclient import TestClient
+
 from unionbank.infrastructure.container import get_container, reset_container
 from unionbank.utils.hashing import hash_password
-
 
 #  Fixtures
 
@@ -103,8 +103,9 @@ def admin_token(client: TestClient) -> dict:
 
     Clears cookies after login for Bearer-only auth.
     """
-    from unionbank.domain.entities import AdminUser
     import os
+
+    from unionbank.domain.entities import AdminUser
 
     c = get_container()
     username = f"testadmin_{os.urandom(4).hex()}"

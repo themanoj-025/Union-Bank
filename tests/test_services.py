@@ -10,15 +10,6 @@ from __future__ import annotations
 from decimal import Decimal
 
 import pytest
-from unionbank.application.services import (
-    AccountService,
-    AdminService,
-    AuthService,
-    SavingsGoalService,
-    TransactionService,
-)
-from unionbank.domain.entities import Account, AdminUser, SavingsGoal
-from unionbank.utils.hashing import hash_password
 
 from tests.fakes import (
     FakeAccountRepository,
@@ -29,6 +20,15 @@ from tests.fakes import (
     FakeTokenVersionRepository,
     FakeTransactionRepository,
 )
+from unionbank.application.services import (
+    AccountService,
+    AdminService,
+    AuthService,
+    SavingsGoalService,
+    TransactionService,
+)
+from unionbank.domain.entities import Account, AdminUser, SavingsGoal
+from unionbank.utils.hashing import hash_password
 
 #  Fixtures
 

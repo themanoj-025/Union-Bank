@@ -13,9 +13,10 @@ os.environ["UNION_BANK_TESTING"] = "1"
 # The unionbank package is installed via pip install -e ., so all
 # imports use the unionbank. prefix. No sys.path manipulation needed.
 
-import httpx
-import anyio
 import re
+
+import anyio
+import httpx
 
 
 def _ensure_admin_exists():
@@ -23,9 +24,9 @@ def _ensure_admin_exists():
     from unionbank.infrastructure.database import init_db
 
     init_db()
+    from unionbank.domain.entities import AdminUser
     from unionbank.infrastructure.container import get_container
     from unionbank.utils.hashing import hash_password
-    from unionbank.domain.entities import AdminUser
 
     c = get_container()
     admin_repo = c.admin_repo()

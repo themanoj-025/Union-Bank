@@ -17,10 +17,6 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from unionbank.application.services import (
-    TransactionService,
-)
-from unionbank.domain.entities import Account
 from hypothesis import HealthCheck, assume, given, settings
 from hypothesis import strategies as st
 from hypothesis.stateful import RuleBasedStateMachine, invariant, rule
@@ -29,6 +25,10 @@ from tests.fakes import (
     FakeAccountRepository,
     FakeTransactionRepository,
 )
+from unionbank.application.services import (
+    TransactionService,
+)
+from unionbank.domain.entities import Account
 
 # Pre-computed bcrypt hash for "TestPass1" — avoids slow bcrypt in property-based tests
 _BCRYPT_TEST_HASH = "$2b$12$LJ3m4ys3Lk0TSwHnbfOMqeM5YsgCJTiEP6Kj.EXON7pE0uuo1VcuS"

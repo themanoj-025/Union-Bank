@@ -15,9 +15,10 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 import jwt
-from unionbank.config import settings
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from unionbank.config import settings
 from unionbank.utils.logger import set_account_context
 
 #  JWT Configuration
@@ -144,8 +145,8 @@ def create_token_pair(subject: str, role: str) -> dict:
     # Persist refresh token in the DB — store HASHED token_id, not plaintext
     hashed_id = hash_token_id(refresh_token_id)
     try:
-        from unionbank.infrastructure.container import get_container
         from unionbank.domain.entities import RefreshToken
+        from unionbank.infrastructure.container import get_container
 
         c = get_container()
         token_entity = RefreshToken(

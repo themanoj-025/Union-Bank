@@ -19,8 +19,8 @@ import json
 # The unionbank package is installed via pip install -e ., so all
 # imports use the unionbank. prefix. No sys.path manipulation needed.
 from unionbank.utils.analyzr_core import (
-    execute_query,
     INTENT_PATTERNS,
+    execute_query,
 )
 
 
@@ -58,7 +58,7 @@ def _format_results(results: list, query: str) -> str:
 def _print_results(formatted: str, query: str, intents: list[str]) -> None:
     """Print formatted results to stdout."""
     try:
-        from colorama import init, Fore, Style
+        from colorama import Fore, Style, init
 
         init()
         CYAN = Fore.CYAN
@@ -78,7 +78,7 @@ def _print_results(formatted: str, query: str, intents: list[str]) -> None:
 def list_queries() -> None:
     """Print all supported query patterns."""
     try:
-        from colorama import init, Fore, Style
+        from colorama import Fore, Style, init
 
         init()
         H = Fore.CYAN

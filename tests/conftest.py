@@ -42,7 +42,7 @@ def _unset_env_vars_for_safety():
 def _clean_postgres_db():
     """Clean Postgres database between tests."""
     if "postgres" in os.environ.get("DATABASE_URL", ""):
-        from unionbank.infrastructure.database import get_engine, ModelBase
+        from unionbank.infrastructure.database import ModelBase, get_engine
 
         engine = get_engine()
         ModelBase.metadata.drop_all(engine)
@@ -114,6 +114,7 @@ def sample_account():
     both fake repositories (unit tests) and real repositories (integration tests).
     """
     from decimal import Decimal
+
     from unionbank.domain.entities import Account
     from unionbank.utils.hashing import hash_password
 

@@ -19,8 +19,9 @@ import functools
 import hashlib
 import json
 import logging
+from collections.abc import Callable
 from datetime import timedelta
-from typing import Any, Callable, Optional
+from typing import Any, Optional
 
 logger = logging.getLogger("union_bank.cache")
 

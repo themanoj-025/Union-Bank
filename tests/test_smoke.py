@@ -2,15 +2,15 @@
 Smoke tests – verify that all project modules import correctly after changes.
 """
 
+from unionbank.entrypoints.cli.account import Account
+from unionbank.entrypoints.cli.admin import Admin
+from unionbank.entrypoints.cli.bank import Bank
+from unionbank.entrypoints.cli.main import main_menu
 from unionbank.utils import (
     hash_password,
     validate_email,
 )
 from unionbank.utils.logger import logger
-from unionbank.entrypoints.cli.account import Account
-from unionbank.entrypoints.cli.bank import Bank
-from unionbank.entrypoints.cli.admin import Admin
-from unionbank.entrypoints.cli.main import main_menu
 
 
 class TestSmoke:

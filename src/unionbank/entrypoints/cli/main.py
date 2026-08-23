@@ -16,8 +16,8 @@ import sys
 
 from unionbank.entrypoints.cli.admin import Admin
 from unionbank.entrypoints.cli.bank import Bank
-from unionbank.utils.logger import logger
 from unionbank.entrypoints.cli.ui import BOLD, CYAN, GREEN, RESET, YELLOW, error
+from unionbank.utils.logger import logger
 
 
 def main_menu():
@@ -75,8 +75,8 @@ def create_admin_bootstrap():
     """
     import getpass
 
-    from unionbank.infrastructure.container import get_container, init_db
     from unionbank.domain.entities import AdminUser
+    from unionbank.infrastructure.container import get_container, init_db
     from unionbank.utils import hash_password, validate_password
 
     init_db()
