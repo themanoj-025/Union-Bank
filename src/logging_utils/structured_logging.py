@@ -34,7 +34,8 @@ _configured_loggers: set[str] = set()
 
 
 class JSONFormatter(logging.Formatter):
-    """Format log records as newline-delimited JSON for structured ingestion.
+    """
+    Format log records as newline-delimited JSON for structured ingestion.
 
     Every log line is a valid JSON object with ``timestamp``, ``level``,
     ``logger``, ``message``, ``request_id``, and any extra context keys.
@@ -79,7 +80,8 @@ def setup_logger(
     level: int = logging.INFO,
     context: Optional[dict[str, Any]] = None,
 ) -> logging.Logger:
-    """Get or create a logger with JSON file and console handlers.
+    """
+    Get or create a logger with JSON file and console handlers.
 
     Parameters
     ----------
