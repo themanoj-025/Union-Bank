@@ -124,3 +124,9 @@ docker-compose.override.yml
 *.pid
 *.seed
 *.pid.lock
+
+# Runtime balance log
+radar_balance.txt
+
+# Legacy lock file (superseded by requirements.lock)
+requirements-lock.txt
