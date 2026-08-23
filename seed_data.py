@@ -23,8 +23,8 @@ os.environ.setdefault("UNION_BANK_TESTING", "1")
 os.environ.setdefault("JWT_SECRET", secrets.token_hex(32))
 os.environ.setdefault("FLASK_SECRET_KEY", secrets.token_hex(24))
 
-from unionbank.utils.hashing import hash_password
 from unionbank.config import settings
+from unionbank.utils.hashing import hash_password
 
 NUM_ACCOUNTS = 5000
 MIN_TXNS_PER_ACCOUNT = 8
@@ -522,19 +522,19 @@ def seed_data(fast_mode: bool = True):
         fast_mode: If True, use a single pre-computed bcrypt hash for all accounts
                    (much faster, ~2 seconds vs ~15 seconds for 5000 accounts).
     """
+    from unionbank.domain.entities import Account, Transaction, TransactionType
     from unionbank.infrastructure.database import (
-        get_session,
-        close_session,
-        reset_engine,
         ModelBase,
+        close_session,
         get_engine,
-    )
-    from unionbank.infrastructure.repositories import (
-        SqlAlchemyTransactionRepository,
+        get_session,
+        reset_engine,
     )
     from unionbank.infrastructure.mappers import map_account_to_model
     from unionbank.infrastructure.persistence import AccountModel
-    from unionbank.domain.entities import Account, Transaction, TransactionType
+    from unionbank.infrastructure.repositories import (
+        SqlAlchemyTransactionRepository,
+    )
 
     print(f"\n  {'=' * 50}")
     print(f"  Seeding {NUM_ACCOUNTS:,} sample accounts...")

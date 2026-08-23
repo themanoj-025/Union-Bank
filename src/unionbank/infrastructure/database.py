@@ -16,15 +16,17 @@ from __future__ import annotations
 
 import os
 import threading
+from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
-from typing import AsyncGenerator, Generator, Optional
+from typing import Optional
 
-from unionbank.config import settings
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
+
+from unionbank.config import settings
+from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
 
 #  Model Base (re-exported for Alembic)
 

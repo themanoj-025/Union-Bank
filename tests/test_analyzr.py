@@ -10,7 +10,6 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
-
 # Import pure functions from analyzr_core (no DB bootstrap needed)
 from unionbank.utils.analyzr_core import (
     INTENT_PATTERNS,
@@ -205,11 +204,11 @@ class TestAmountExtraction:
         assert max_amt == Decimal("500")
 
     def test_extract_currency_symbol_inr(self):
-        min_amt, max_amt = extract_amount_range("deposits over ₹1000", [])
+        min_amt, _max_amt = extract_amount_range("deposits over ₹1000", [])
         assert min_amt == Decimal("1000")
 
     def test_extract_currency_symbol_usd(self):
-        min_amt, max_amt = extract_amount_range("over $500", [])
+        min_amt, _max_amt = extract_amount_range("over $500", [])
         assert min_amt == Decimal("500")
 
     def test_extract_exact_amount(self):
@@ -225,7 +224,7 @@ class TestAmountExtraction:
 
     def test_extract_with_commas(self):
         """Amounts with comma separators should be parsed correctly."""
-        min_amt, max_amt = extract_amount_range("transactions over 1,000", [])
+        min_amt, _max_amt = extract_amount_range("transactions over 1,000", [])
         assert min_amt == Decimal("1000")
 
     def test_extract_range_with_category(self):
@@ -247,7 +246,7 @@ class TestAmountExtraction:
         assert "last_month" in names
 
     def test_extract_greater_than(self):
-        min_amt, max_amt = extract_amount_range("greater than 750", [])
+        min_amt, _max_amt = extract_amount_range("greater than 750", [])
         assert min_amt == Decimal("750")
 
 

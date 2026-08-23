@@ -17,8 +17,9 @@ import tempfile
 from decimal import Decimal
 
 import pytest
-from unionbank.infrastructure.container import get_container, reset_container
+
 from unionbank.domain.entities import Account, TransactionType
+from unionbank.infrastructure.container import get_container, reset_container
 
 #  Fixtures
 

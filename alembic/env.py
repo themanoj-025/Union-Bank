@@ -10,6 +10,7 @@ from logging.config import fileConfig
 from pathlib import Path
 
 from sqlalchemy import engine_from_config, pool
+
 from alembic import context
 
 # Compute project root for data directory fallback
@@ -23,7 +24,8 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # Import models AFTER logging is configured
-from unionbank.infrastructure.database import ModelBase as Base, get_db_url, is_sqlite  # noqa: E402
+from unionbank.infrastructure.database import ModelBase as Base  # noqa: E402
+from unionbank.infrastructure.database import get_db_url, is_sqlite
 
 target_metadata = Base.metadata
 

@@ -7,10 +7,10 @@ Create Date: 2026-07-16 23:45:00.000000
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
+from typing import Union
 
 from alembic import op
-
 
 # revision identifiers, used by Alembic.
 revision: str = "bc2a4f8e9d1b"

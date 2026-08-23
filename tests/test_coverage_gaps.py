@@ -10,9 +10,7 @@ Focuses on:
 
 from decimal import Decimal
 
-
 from unionbank.domain.entities import Account
-
 
 #  Loan Rejection Error Paths
 

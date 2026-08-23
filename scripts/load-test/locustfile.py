@@ -15,8 +15,8 @@ Requires:
 from __future__ import annotations
 
 import random
-from locust import HttpUser, task, between, tag
 
+from locust import HttpUser, between, tag, task
 
 # Pre-generated test data (valid account numbers from seed data)
 TEST_ACCOUNTS = [

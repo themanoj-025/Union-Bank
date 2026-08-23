@@ -6,7 +6,6 @@ import os
 import tempfile
 import time
 
-
 from unionbank.entrypoints.cli.account import Account
 from unionbank.utils import (
     MAX_LOGIN_ATTEMPTS,
@@ -419,9 +418,9 @@ class TestAtomicTransfer:
         """
         self._setup_accounts(tmp_data_dir)
 
-        from unionbank.infrastructure.persistence import AccountModel as DbAccount
         from unionbank.infrastructure.backward_compat import get_db_balance
         from unionbank.infrastructure.database import atomic_session
+        from unionbank.infrastructure.persistence import AccountModel as DbAccount
 
         # Start an atomic transaction, make a change, then simulate a crash
         try:
@@ -459,10 +458,9 @@ class TestAtomicTransfer:
         """Verify close_account is atomic."""
         self._setup_accounts(tmp_data_dir)
 
-        from unionbank.infrastructure.persistence import AccountModel as DbAccount
-
         from unionbank.infrastructure.backward_compat import atomic_close_account
         from unionbank.infrastructure.database import get_session
+        from unionbank.infrastructure.persistence import AccountModel as DbAccount
 
         result = atomic_close_account(self.SENDER)
         assert result is True

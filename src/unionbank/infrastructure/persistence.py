@@ -10,7 +10,6 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
 from sqlalchemy import (
     Boolean,
     CheckConstraint,
@@ -23,6 +22,8 @@ from sqlalchemy import (
     String,
 )
 from sqlalchemy.orm import relationship
+
+from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
 
 from .database import ModelBase
 

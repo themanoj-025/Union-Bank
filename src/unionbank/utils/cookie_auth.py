@@ -20,7 +20,6 @@ from typing import Optional
 
 from fastapi import Request, Response
 
-
 #  Cookie names
 
 ACCESS_TOKEN_COOKIE = "ub_access_token"

@@ -23,11 +23,19 @@ from typing import Optional
 
 from unionbank.infrastructure.container import get_container
 from unionbank.infrastructure.database import (
-    atomic_session as _atomic_session,
-    close_session as _close_session,
-    get_session as _get_session,
-    init_db as _init_db,
     ModelBase,
+)
+from unionbank.infrastructure.database import (
+    atomic_session as _atomic_session,
+)
+from unionbank.infrastructure.database import (
+    close_session as _close_session,
+)
+from unionbank.infrastructure.database import (
+    get_session as _get_session,
+)
+from unionbank.infrastructure.database import (
+    init_db as _init_db,
 )
 from unionbank.infrastructure.persistence import AccountModel
 

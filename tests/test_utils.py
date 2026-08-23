@@ -5,7 +5,6 @@ Tests for utils.py – validation helpers, password hashing, generators, etc.
 import os
 import tempfile
 
-
 from unionbank.utils import (
     fmt_currency,
     generate_account_number,
@@ -130,7 +129,7 @@ class TestPasswordValidation:
         assert "digit" in msg
 
     def test_empty_password(self):
-        valid, msg = validate_password("")
+        valid, _msg = validate_password("")
         assert valid is False
 
 

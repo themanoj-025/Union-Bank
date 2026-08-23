@@ -16,8 +16,9 @@ import tempfile
 from decimal import Decimal
 
 import pytest
-from unionbank.infrastructure.container import get_container, reset_container
 from fastapi.testclient import TestClient
+
+from unionbank.infrastructure.container import get_container, reset_container
 
 #  Fixtures
 

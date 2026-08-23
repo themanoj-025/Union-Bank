@@ -451,17 +451,11 @@ def execute_query(
         # Date filter
         txn_ts = txn.timestamp
         if txn_ts and from_date:
-            if txn_ts.tzinfo is None:
-                txn_dt = txn_ts.replace(tzinfo=timezone.utc)
-            else:
-                txn_dt = txn_ts
+            txn_dt = txn_ts.replace(tzinfo=timezone.utc) if txn_ts.tzinfo is None else txn_ts
             if txn_dt < from_date:
                 continue
         if txn_ts and to_date:
-            if txn_ts.tzinfo is None:
-                txn_dt = txn_ts.replace(tzinfo=timezone.utc)
-            else:
-                txn_dt = txn_ts
+            txn_dt = txn_ts.replace(tzinfo=timezone.utc) if txn_ts.tzinfo is None else txn_ts
             if txn_dt > to_date:
                 continue
 

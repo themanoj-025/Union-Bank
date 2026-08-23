@@ -11,6 +11,9 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from typing import Optional
 
+from sqlalchemy import case, func, or_
+from sqlalchemy.orm import Session
+
 from unionbank.application.interfaces import KeysetPage
 from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
 from unionbank.domain.entities import (
@@ -35,8 +38,6 @@ from unionbank.infrastructure.mappers import (
     map_savings_goal,
     map_transaction,
 )
-from sqlalchemy import case, func, or_
-from sqlalchemy.orm import Session
 
 from .persistence import (
     AccountModel,
