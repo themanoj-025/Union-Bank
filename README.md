@@ -32,23 +32,15 @@
 
 <br>
 
----
+## 💡 Why I Built This
 
-## 📋 Table of Contents
+I built this project to deeply understand how real ledgers handle concurrency and prevent lost money. I wanted to move beyond basic CRUD apps and solve the hard problems of atomic financial transactions and defense-in-depth security.
 
-- [🎯 What This Demonstrates](#-what-this-demonstrates)
-- [🏗 Architecture](#-architecture)
-- [🔬 Engineering Case Studies](#-engineering-case-studies)
-- [🛡 Security Architecture](#-security-architecture)
-- [📊 Metrics](#-metrics)
-- [🧪 Testing Strategy](#-testing-strategy)
-- [🚀 Quick Start](#-quick-start)
-- [🚢 What I'd Do Differently at 10x Scale](#-what-id-do-differently-at-10x-scale-100000-users)
-- [📚 Documentation](#-documentation)
-- [📄 License](#-license)
-- [⭐ Show Your Support](#-show-your-support)
+## ⚠️ Known Limitations
 
-<br>
+- **Database Lock Contention:** Under extreme concurrency, SQLite WAL mode experiences write lock contention. A true high-throughput deployment would require Postgres and connection pooling (e.g., PgBouncer).
+- **Single Point of Failure:** The architecture currently relies on a single database instance, meaning it lacks horizontal read-scaling.
+- **Fault-Injection Testing Coverage:** While we test transaction constraints and concurrency, we lack an automated hard-process-kill fault-injection harness.
 
 ---
 
@@ -58,7 +50,7 @@
 
 | # | Skill | Evidence in This Project |
 |---|-------|--------------------------|
-| 1 | **Atomic financial transactions under concurrency** | Crash-mid-transfer test proves no partial write survives. 10 parallel transfers with `ThreadPoolExecutor` verify money conservation — no lost updates, no double-spending. [See the test →](tests/test_integration.py) |
+| 1 | **Atomic financial transactions under concurrency** | Proved no partial write survives via transfer constraint validation and concurrent threading tests, leveraging SQLite savepoints. 10 parallel transfers verify money conservation — no lost updates, no double-spending. [See the test →](tests/test_integration.py) |
 | 2 | **Defense-in-depth security architecture** | RS256 JWT + TOTP 2FA + httpOnly cookies + refresh token rotation + CSRF double-submit + account-based rate limiting + SQL injection test fixtures. Every layer is independently testable. |
 | 3 | **Async migration strategy** | Synchronous → async SQLAlchemy migration without downtime. Hot paths (transfer, deposit, withdraw) converted first. Protocol-based DI means swapping implementations is a configuration change. |
 | 4 | **Database evolution at scale** | SQLite local dev → PostgreSQL production via Alembic. CHECK constraints enforced at both DB and app level (defense in depth). Pagination moved from in-memory slicing to SQL-level cursor pagination — flat memory usage from 100 to 10,000 accounts. |
