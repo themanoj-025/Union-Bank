@@ -99,8 +99,11 @@ def prompt_new_password(prompt: str = "  Enter new password: ") -> str:
 
 
 def clear_screen() -> None:
-    """Clear the terminal screen."""
-    os.system("cls" if os.name == "nt" else "clear")
+    """Clear the terminal screen safely via subprocess."""
+    import subprocess
+
+    cmd = "cls" if os.name == "nt" else "clear"
+    subprocess.run([cmd], check=False, shell=False)
 
 
 # ─
