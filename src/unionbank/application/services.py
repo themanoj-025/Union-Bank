@@ -209,7 +209,7 @@ class AuthService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping welcome notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send welcome notification", exc_info=True)
@@ -413,7 +413,7 @@ class TransactionService:
         try:
             self.idempotency_repo.create(record)
             self.idempotency_repo.commit()
-        except Exception:
+        except (OSError, ValueError, TypeError):
             from unionbank.utils.logger import logger
 
             logger.warning("Failed to persist idempotency record", exc_info=True)
@@ -478,7 +478,7 @@ class TransactionService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping deposit notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send deposit notification", exc_info=True)
@@ -551,7 +551,7 @@ class TransactionService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping withdraw notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send withdraw notification", exc_info=True)
@@ -671,10 +671,10 @@ class TransactionService:
                 sender_txn_id = sender_txn.txn_id
                 receiver_txn_id = receiver_txn.txn_id
 
-        except Exception:
+        except (OSError, ValueError, TypeError) as exc:
             from unionbank.utils.logger import logger
 
-            logger.error("Transfer failed, rolling back", exc_info=True)
+            logger.error("Transfer failed, rolling back: %s", exc)
             self.account_repo.rollback()
             return TransferResult(
                 success=False,
@@ -702,7 +702,7 @@ class TransactionService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping transfer notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send transfer notification", exc_info=True)
@@ -732,7 +732,7 @@ class TransactionService:
                 )
                 self.idempotency_repo.create(record)
                 self.idempotency_repo.commit()
-            except Exception:
+            except (OSError, ValueError, TypeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to persist idempotency record for transfer", exc_info=True)
@@ -784,7 +784,7 @@ class TransactionService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping interest notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send interest notification", exc_info=True)
@@ -933,7 +933,7 @@ class AdminService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping freeze notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send freeze notification", exc_info=True)
@@ -974,7 +974,7 @@ class AdminService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping unfreeze notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send unfreeze notification", exc_info=True)
@@ -1301,7 +1301,7 @@ class LoanService:
                 logger.warning(
                     "Notification circuit breaker open, skipping loan approval notification"
                 )
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send loan approval notification", exc_info=True)
@@ -1353,7 +1353,7 @@ class LoanService:
                 logger.warning(
                     "Notification circuit breaker open, skipping loan rejection notification"
                 )
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send loan rejection notification", exc_info=True)
@@ -1459,7 +1459,7 @@ class LoanService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Notification circuit breaker open, skipping EMI notification")
-            except Exception:
+            except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send EMI notification", exc_info=True)
