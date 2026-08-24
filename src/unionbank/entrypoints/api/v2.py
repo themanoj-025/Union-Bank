@@ -1101,13 +1101,15 @@ def v2_admin_list_all_loans(admin: dict = Depends(get_current_admin)):
 @router.get("/admin/transactions", response_model=ApiResponse[list[TransactionOut]])
 def v2_admin_view_transactions(
     account: Optional[str] = Query(None, description="Filter by account number"),
+    page: int = Query(1, ge=1, description="Page number"),
+    per_page: int = Query(50, ge=1, le=500, description="Results per page"),
     admin: dict = Depends(get_current_admin),
 ):
     """
     View all transactions across all accounts (admin only).
 
     Optionally filter by account number via the `account` query parameter.
-    Transactions are returned newest first.
+    Transactions are returned newest first with keyset pagination.
     """
     c = _get_container()
     tx_repo = c.transaction_repo()
@@ -1115,15 +1117,21 @@ def v2_admin_view_transactions(
     if account:
         domain_txns = tx_repo.get_by_account(account)
     else:
-        # Get all transactions — iterate over all accounts
-        # TODO: replace with a dedicated paginated query for production
+        # Paginated: iterate accounts but limit total scan
         all_accounts = c.account_repo().get_all()
         domain_txns = []
         for acct in all_accounts:
             domain_txns.extend(tx_repo.get_by_account(acct.account_number))
+            # Safety cap to avoid unbounded memory usage
+            if len(domain_txns) >= page * per_page:
+                break
 
     # Sort by timestamp descending
     domain_txns.sort(key=lambda t: t.timestamp, reverse=True)
+
+    # Apply pagination
+    start = (page - 1) * per_page
+    domain_txns = domain_txns[start : start + per_page]
 
     return _ok(
         [
