@@ -185,7 +185,7 @@ def reset_engine():
     if _engine_instance is not None:
         try:
             _engine_instance.dispose()
-        except Exception:
+        except OSError:
             from unionbank.utils.logger import logger
 
             logger.warning("Failed to dispose database engine", exc_info=True)
@@ -194,7 +194,7 @@ def reset_engine():
     if _async_engine_instance is not None:
         try:
             _async_engine_instance.dispose()
-        except Exception:
+        except OSError:
             from unionbank.utils.logger import logger
 
             logger.warning("Failed to dispose async database engine", exc_info=True)
@@ -218,7 +218,7 @@ def close_session():
     if hasattr(_thread_local, "session") and _thread_local.session is not None:
         try:
             _thread_local.session.close()
-        except Exception:
+        except OSError:
             from unionbank.utils.logger import logger
 
             logger.warning("Failed to close database session", exc_info=True)

@@ -19,6 +19,11 @@ from typing import Optional
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 
+try:
+    from sqlalchemy.exc import SQLAlchemyError
+except ImportError:
+    SQLAlchemyError = Exception  # fallback if sqlalchemy not installed
+
 from unionbank.entrypoints.api.common import (
     _get_verifying_key,
     create_token_pair,
@@ -304,7 +309,7 @@ def v2_refresh_token(request: Request, response: Response, req: Optional[Refresh
         if ":" in old_sub:
             _, old_token_id = old_sub.rsplit(":", 1)
             revoke_refresh_token(old_token_id)
-    except Exception:
+    except (jwt.InvalidTokenError, jwt.DecodeError, ValueError, KeyError):
         logger.warning("Failed to revoke old refresh token during rotation", exc_info=True)
 
     tokens = create_token_pair(subject=result["account_number"], role=result["role"])
@@ -1320,7 +1325,7 @@ def v2_health_check():
             from sqlalchemy import text
 
             conn.execute(text("SELECT 1"))
-    except Exception:
+    except (OSError, SQLAlchemyError, RuntimeError):
         db_status = "disconnected"
 
     try:
@@ -1328,7 +1333,7 @@ def v2_health_check():
 
         cache = get_cache()
         cache.ping()
-    except Exception:
+    except (OSError, ConnectionError, TimeoutError):
         cache_status = "disconnected"
 
     overall = "healthy" if db_status == "connected" else "degraded"
