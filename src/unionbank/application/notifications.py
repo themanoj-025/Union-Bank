@@ -171,10 +171,10 @@ class NotificationService:
                     to_phone=account.mobile,
                     message=f"Union Bank: {title} - {message[:120]}",
                 )
-        except Exception:
+        except (OSError, ConnectionError) as e:
             from unionbank.utils.logger import logger
 
-            logger.warning(f"Failed to send alerts for {acc_no}", exc_info=True)
+            logger.warning(f"Failed to send alerts for {acc_no}: {e}")
 
     # ── Convenience methods for common notification types ───────────────────
 

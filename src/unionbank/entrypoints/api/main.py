@@ -1364,10 +1364,10 @@ def _invalidate_admin_account_cache():
         from unionbank.infrastructure.cache import get_cache
 
         get_cache().clear_pattern("admin:accounts:*")
-    except Exception:
+    except (OSError, ConnectionError) as e:
         from unionbank.utils.logger import logger
 
-        logger.warning("Failed to invalidate admin account cache", exc_info=True)
+        logger.warning("Failed to invalidate admin account cache: %s", e)
 
 
 @app.get("/api/admin/accounts/search", response_model=list[AccountListItem])
@@ -1627,8 +1627,8 @@ def refresh_token(request: Request, req: Optional[RefreshRequest] = None):
         if ":" in old_sub:
             _, old_token_id = old_sub.rsplit(":", 1)
             revoke_refresh_token(old_token_id)
-    except Exception:
-        logger.warning("Failed to revoke old refresh token during rotation", exc_info=True)
+    except (ValueError, OSError) as e:
+        logger.warning("Failed to revoke old refresh token during rotation: %s", e)
 
     tokens = create_token_pair(subject=result["account_number"], role=result["role"])
 
