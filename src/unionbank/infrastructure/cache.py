@@ -110,7 +110,7 @@ class Cache:
                 result = func(*args, **kwargs)
                 try:
                     self.set_json(cache_key, result, ttl=ttl)
-                except Exception:
+                except (OSError, ConnectionError):
                     logger.warning("Cache set failed for key %s", cache_key, exc_info=True)
                 return result
 
@@ -198,7 +198,7 @@ class RedisCache(Cache):
             self._redis.ping()
             self._available = True
             logger.info("Redis cache connected at %s:%s/%s", self._host, self._port, self._db)
-        except Exception as exc:
+        except (OSError, ConnectionError) as exc:
             logger.warning("Redis unavailable — falling back to NullCache: %s", exc)
             self._redis = None
         return self._available
@@ -208,7 +208,7 @@ class RedisCache(Cache):
             return None
         try:
             return self._redis.get(key)
-        except Exception as exc:
+        except (OSError, ConnectionError) as exc:
             logger.warning("Redis get(%r) failed: %s", key, exc)
             return None
 
@@ -217,7 +217,7 @@ class RedisCache(Cache):
             return
         try:
             self._redis.setex(key, timedelta(seconds=ttl), value)
-        except Exception as exc:
+        except (OSError, ConnectionError) as exc:
             logger.warning("Redis set(%r) failed: %s", key, exc)
 
     def delete(self, key: str) -> None:
@@ -225,7 +225,7 @@ class RedisCache(Cache):
             return
         try:
             self._redis.delete(key)
-        except Exception as exc:
+        except (OSError, ConnectionError) as exc:
             logger.warning("Redis delete(%r) failed: %s", key, exc)
 
     def clear_pattern(self, pattern: str) -> None:
@@ -239,7 +239,7 @@ class RedisCache(Cache):
                     self._redis.delete(*keys)
                 if cursor == 0:
                     break
-        except Exception as exc:
+        except (OSError, ConnectionError) as exc:
             logger.warning("Redis clear_pattern(%r) failed: %s", pattern, exc)
 
     def ping(self) -> bool:
@@ -277,7 +277,7 @@ def get_cache() -> Cache:
                     db=int(parsed.path.lstrip("/") or 0),
                     password=parsed.password,
                 )
-            except Exception:
+            except (ValueError, TypeError, OSError):
                 logger.warning(
                     "Failed to parse REDIS_URL, falling back to NullCache", exc_info=True
                 )

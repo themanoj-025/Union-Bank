@@ -59,10 +59,10 @@ def _get_token_version(account_number: str) -> int:
 
         c = get_container()
         return c.token_version_repo().get_version(account_number)
-    except Exception:
+    except (OSError, KeyError) as e:
         from unionbank.utils.logger import logger
 
-        logger.warning("Failed to fetch token version", exc_info=True)
+        logger.warning("Failed to fetch token version: %s", e)
         return 0
 
 
@@ -185,10 +185,10 @@ def revoke_refresh_token(refresh_token_id: str) -> bool:
         # Hash before lookup — DB stores hashed token IDs
         hashed_id = hash_token_id(refresh_token_id)
         return c.refresh_token_repo().revoke(hashed_id)
-    except Exception:
+    except (OSError, KeyError) as e:
         from unionbank.utils.logger import logger
 
-        logger.warning("Failed to revoke refresh token", exc_info=True)
+        logger.warning("Failed to revoke refresh token: %s", e)
         return False
 
 

@@ -156,11 +156,11 @@ class Config:
                 from cryptography.fernet import Fernet
 
                 Fernet(self.TOKEN_ENCRYPTION_KEY.encode())
-            except Exception:
+            except (ValueError, OSError) as e:
                 raise RuntimeError(
-                    "TOKEN_ENCRYPTION_KEY is not a valid Fernet key. "
+                    f"TOKEN_ENCRYPTION_KEY is not a valid Fernet key: {e}. "
                     'Generate one with: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"'
-                ) from None
+                ) from e
 
     # ── Transaction categories ────────────────────────────────────────────────
     TRANSACTION_CATEGORIES: list[str] = field(

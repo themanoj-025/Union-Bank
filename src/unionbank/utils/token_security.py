@@ -62,8 +62,8 @@ def _get_fernet():
 
         _fernet_instance = Fernet(key.encode() if isinstance(key, str) else key)
         return _fernet_instance
-    except Exception:
-        logger.error("Failed to initialize Fernet cipher", exc_info=True)
+    except (ValueError, OSError) as e:
+        logger.error("Failed to initialize Fernet cipher: %s", e)
         return None
 
 
@@ -85,8 +85,8 @@ def encrypt_totp_secret(secret: Optional[str]) -> Optional[str]:
     try:
         encrypted = fernet.encrypt(secret.encode("utf-8")).decode("utf-8")
         return f"enc:{encrypted}"
-    except Exception:
-        logger.error("Failed to encrypt TOTP secret", exc_info=True)
+    except (ValueError, OSError) as e:
+        logger.error("Failed to encrypt TOTP secret: %s", e)
         return f"plain:{secret}"
 
 
@@ -110,8 +110,8 @@ def decrypt_totp_secret(encrypted_secret: Optional[str]) -> Optional[str]:
             return None
         try:
             return fernet.decrypt(ciphertext.encode("utf-8")).decode("utf-8")
-        except Exception:
-            logger.error("Failed to decrypt TOTP secret", exc_info=True)
+        except (ValueError, OSError) as e:
+            logger.error("Failed to decrypt TOTP secret: %s", e)
             return None
 
     if encrypted_secret.startswith("plain:"):
