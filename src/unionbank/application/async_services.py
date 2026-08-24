@@ -37,6 +37,11 @@ from unionbank.utils.formatting import (
 )
 from unionbank.utils.hashing import hash_password, verify_password
 
+try:
+    from sqlalchemy.exc import SQLAlchemyError
+except ImportError:
+    SQLAlchemyError = Exception  # fallback if sqlalchemy not installed
+
 from .interfaces import (
     KeysetPage,
 )
@@ -149,7 +154,7 @@ class AsyncTransactionService:
         try:
             await self.idempotency_repo.create(record)
             await self.idempotency_repo.commit()
-        except Exception:
+        except (SQLAlchemyError, OSError):
             from unionbank.utils.logger import logger
 
             logger.warning("Failed to persist idempotency record", exc_info=True)
@@ -209,7 +214,7 @@ class AsyncTransactionService:
         if self.notif_service and account:
             try:
                 await self.notif_service.notify_deposit(acc_no, amount, account.balance, txn.txn_id)
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send deposit notification", exc_info=True)
@@ -279,7 +284,7 @@ class AsyncTransactionService:
                 await self.notif_service.notify_withdraw(
                     acc_no, amount, account.balance, txn.txn_id
                 )
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send withdraw notification", exc_info=True)
@@ -380,10 +385,10 @@ class AsyncTransactionService:
                 await self.txn_repo.create(sender_txn)
                 await self.txn_repo.create(receiver_txn)
                 await self.account_repo.commit()
-            except Exception:
+            except (SQLAlchemyError, OSError) as exc:
                 from unionbank.utils.logger import logger
 
-                logger.error("Transfer failed, rolling back", exc_info=True)
+                logger.error("Transfer failed, rolling back: %s", exc, exc_info=True)
                 await self.account_repo.rollback()
                 return TransferResult(
                     success=False,
@@ -407,7 +412,7 @@ class AsyncTransactionService:
                     receiver.balance,
                     receiver_txn.txn_id,
                 )
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send transfer notification", exc_info=True)
@@ -437,7 +442,7 @@ class AsyncTransactionService:
                 )
                 await self.idempotency_repo.create(record)
                 await self.idempotency_repo.commit()
-            except Exception:
+            except (SQLAlchemyError, OSError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to persist idempotency record for transfer", exc_info=True)
@@ -485,7 +490,7 @@ class AsyncTransactionService:
                 await self.notif_service.notify_interest(
                     acc_no, interest, account.balance, txn.txn_id
                 )
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send interest notification", exc_info=True)
@@ -698,7 +703,7 @@ class AsyncAuthService:
         if self.notif_service:
             try:
                 await self.notif_service.notify_welcome(acc_no)
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send welcome notification", exc_info=True)
@@ -813,7 +818,7 @@ class AsyncAdminService:
         if self.notif_service:
             try:
                 await self.notif_service.notify_account_frozen(acc_no, reason=reason or "")
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send freeze notification", exc_info=True)
@@ -845,7 +850,7 @@ class AsyncAdminService:
         if self.notif_service:
             try:
                 await self.notif_service.notify_account_unfrozen(acc_no)
-            except Exception:
+            except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send unfreeze notification", exc_info=True)
