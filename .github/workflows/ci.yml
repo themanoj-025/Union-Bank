@@ -286,6 +286,15 @@ jobs:
           JWT_SECRET: "ci-test-secret"
           FLASK_SECRET_KEY: "ci-test-flask-secret"
 
+  hadolint:
+    name: Container lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+
   docker-build:
     runs-on: ubuntu-latest
     steps:
