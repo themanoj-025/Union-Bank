@@ -16,6 +16,7 @@ from typing import Optional
 
 import jwt
 from fastapi import Depends, HTTPException, status
+from sqlalchemy.exc import SQLAlchemyError
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from unionbank.config import settings
@@ -157,12 +158,12 @@ def create_token_pair(subject: str, role: str) -> dict:
         )
         c.refresh_token_repo().create(token_entity)
         c.refresh_token_repo().commit()
-    except Exception:
+    except (SQLAlchemyError, OSError) as exc:
         from unionbank.utils.logger import logger
 
         logger.warning(
-            "Failed to persist refresh token — falling back to memory-only",
-            exc_info=True,
+            "Failed to persist refresh token — falling back to memory-only: %s",
+            exc,
         )
 
     return {
