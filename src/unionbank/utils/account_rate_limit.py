@@ -14,7 +14,6 @@ from __future__ import annotations
 
 import time
 from collections import defaultdict
-from typing import Optional
 
 from unionbank.config import settings
 
@@ -52,7 +51,7 @@ class AccountRateLimiter:
         cutoff = time.time() - self._window_seconds
         self._operations[acc_no] = [ts for ts in self._operations[acc_no] if ts > cutoff]
 
-    def check_and_record(self, acc_no: str) -> tuple[bool, Optional[str]]:
+    def check_and_record(self, acc_no: str) -> tuple[bool, str | None]:
         """
         Check if an operation is allowed for this account, and record it.
 
@@ -85,7 +84,7 @@ class AccountRateLimiter:
 
 
 # Singleton instance
-_account_rate_limiter: Optional[AccountRateLimiter] = None
+_account_rate_limiter: AccountRateLimiter | None = None
 
 
 def get_account_rate_limiter() -> AccountRateLimiter:

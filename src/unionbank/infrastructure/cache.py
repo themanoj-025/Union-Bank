@@ -21,7 +21,7 @@ import json
 import logging
 from collections.abc import Callable
 from datetime import timedelta
-from typing import Any, Optional
+from typing import Any
 
 logger = logging.getLogger("union_bank.cache")
 
@@ -37,11 +37,11 @@ class Cache:
     — failures are logged and treated as cache misses.
     """
 
-    def get(self, key: str) -> Optional[str]:
+    def get(self, key: str) -> str | None:
         """Get a value from cache. Returns None on miss or error."""
         raise NotImplementedError
 
-    def get_json(self, key: str) -> Optional[Any]:
+    def get_json(self, key: str) -> Any | None:
         """Get a JSON-deserialized value from cache."""
         raw = self.get(key)
         if raw is None:
@@ -133,7 +133,7 @@ class NullCache(Cache):
     Used when Redis is not configured or unavailable.
     """
 
-    def get(self, key: str) -> Optional[str]:
+    def get(self, key: str) -> str | None:
         return None
 
     def set(self, key: str, value: str, ttl: int = 60) -> None:
@@ -164,7 +164,7 @@ class RedisCache(Cache):
         host: str = "localhost",
         port: int = 6379,
         db: int = 0,
-        password: Optional[str] = None,
+        password: str | None = None,
         socket_timeout: int = 2,
         **kwargs,
     ):
@@ -203,7 +203,7 @@ class RedisCache(Cache):
             self._redis = None
         return self._available
 
-    def get(self, key: str) -> Optional[str]:
+    def get(self, key: str) -> str | None:
         if not self._connect():
             return None
         try:
@@ -248,7 +248,7 @@ class RedisCache(Cache):
 
 #  Global singleton (lazy initialised from settings)
 
-_cache_instance: Optional[Cache] = None
+_cache_instance: Cache | None = None
 
 
 def get_cache() -> Cache:

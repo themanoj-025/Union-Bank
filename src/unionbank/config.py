@@ -8,7 +8,6 @@ The app will refuse to boot if required env vars are missing (outside TESTING mo
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 # ─
 BASE_DIR = Path(__file__).resolve().parent
@@ -16,7 +15,7 @@ DATA_DIR = BASE_DIR / "data"
 
 
 # ─
-def _require_env(name: str, default: Optional[str] = None) -> str:
+def _require_env(name: str, default: str | None = None) -> str:
     """Read an env var. If missing and no default, raise RuntimeError."""
     value = os.environ.get(name, default)
     if value is None:
@@ -28,7 +27,7 @@ def _require_env(name: str, default: Optional[str] = None) -> str:
 
 
 # ─
-def _optional_env(name: str, default: Optional[str] = None) -> Optional[str]:
+def _optional_env(name: str, default: str | None = None) -> str | None:
     return os.environ.get(name, default)
 
 
@@ -79,7 +78,7 @@ class Config:
     SAVINGS_INTEREST_RATE: float = 3.5  # % per annum
 
     # ── Cache (Redis) ─────────────────────────────────────────────────────────
-    REDIS_URL: Optional[str] = field(default_factory=lambda: _optional_env("REDIS_URL"))
+    REDIS_URL: str | None = field(default_factory=lambda: _optional_env("REDIS_URL"))
     CACHE_DEFAULT_TTL: int = int(os.environ.get("CACHE_DEFAULT_TTL", "120"))
 
     # ── CORS ──────────────────────────────────────────────────────────────────
@@ -116,7 +115,7 @@ class Config:
     ENV: str = field(default_factory=lambda: os.environ.get("ENV", "development"))
 
     # ── Database ─────────────────────────────────────────────────────────────
-    DATABASE_URL: Optional[str] = field(default_factory=lambda: _optional_env("DATABASE_URL"))
+    DATABASE_URL: str | None = field(default_factory=lambda: _optional_env("DATABASE_URL"))
 
     # ── PostgreSQL connection pool ────────────────────────────────────────────
     DB_POOL_SIZE: int = int(os.environ.get("DB_POOL_SIZE", "10"))

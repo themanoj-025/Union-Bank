@@ -12,7 +12,6 @@ api/common.py    → no dependency on api.py or api/v2.py
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Optional
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -193,7 +192,7 @@ def revoke_refresh_token(refresh_token_id: str) -> bool:
         return False
 
 
-def verify_refresh_token(refresh_token: str) -> Optional[dict]:
+def verify_refresh_token(refresh_token: str) -> dict | None:
     """Verify a refresh token and return the subject + role if valid."""
     from unionbank.utils.token_security import hash_token_id
 

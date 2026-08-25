@@ -15,7 +15,6 @@ import asyncio
 import json
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
 
 from unionbank.config import settings
 from unionbank.domain.clock import utcnow as _utcnow
@@ -103,8 +102,8 @@ class AsyncTransactionService:
             raise ValueError(f"Insufficient balance for {operation}.")
 
     async def _check_idempotency(
-        self, idempotency_key: Optional[str], acc_no: str, operation: str, amount: Decimal
-    ) -> Optional[ServiceResult]:
+        self, idempotency_key: str | None, acc_no: str, operation: str, amount: Decimal
+    ) -> ServiceResult | None:
         """Check if a request with this idempotency_key has already been processed."""
         if not idempotency_key or not self.idempotency_repo:
             return None
@@ -129,7 +128,7 @@ class AsyncTransactionService:
 
     async def _store_idempotency(
         self,
-        idempotency_key: Optional[str],
+        idempotency_key: str | None,
         acc_no: str,
         operation: str,
         amount: Decimal,
@@ -165,7 +164,7 @@ class AsyncTransactionService:
         acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> ServiceResult:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
@@ -226,7 +225,7 @@ class AsyncTransactionService:
         acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> ServiceResult:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
@@ -297,7 +296,7 @@ class AsyncTransactionService:
         receiver_acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> TransferResult:
         if amount <= 0:
             return TransferResult(success=False, error_message="Amount must be positive.")
@@ -507,12 +506,12 @@ class AsyncTransactionService:
 
     async def get_paginated_transactions(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]:
         return await self.txn_repo.get_paginated(
             acc_no=acc_no,
@@ -525,12 +524,12 @@ class AsyncTransactionService:
 
     async def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]:
         """Keyset (cursor-based) pagination."""
         return await self.txn_repo.get_paginated_keyset(
@@ -559,7 +558,7 @@ class AsyncAccountService:
         self.txn_repo = txn_repo
         self.token_version_repo = token_version_repo
 
-    async def get_profile(self, acc_no: str) -> Optional[Account]:
+    async def get_profile(self, acc_no: str) -> Account | None:
         return await self.account_repo.get(acc_no)
 
     async def update_profile(self, acc_no: str, **kwargs) -> ServiceResult:
@@ -606,7 +605,7 @@ class AsyncAccountService:
         await self.account_repo.commit()
         return ServiceResult(success=True, message="Account closed successfully.")
 
-    async def get_balance(self, acc_no: str) -> Optional[Decimal]:
+    async def get_balance(self, acc_no: str) -> Decimal | None:
         account = await self.account_repo.get(acc_no)
         return account.balance if account else None
 
@@ -769,10 +768,10 @@ class AsyncAdminService:
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None:
         """Write an immutable audit log entry."""
         if self.audit_log_repo:
@@ -793,7 +792,7 @@ class AsyncAdminService:
         return await self.account_repo.search(query)
 
     async def freeze_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
@@ -828,7 +827,7 @@ class AsyncAdminService:
         )
 
     async def unfreeze_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
@@ -860,7 +859,7 @@ class AsyncAdminService:
         )
 
     async def delete_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
@@ -949,7 +948,7 @@ class AsyncSavingsGoalService:
         return await self.goal_repo.get_by_account(acc_no)
 
     async def create_goal(
-        self, acc_no: str, name: str, target_amount: Decimal, target_date: Optional[str] = None
+        self, acc_no: str, name: str, target_amount: Decimal, target_date: str | None = None
     ) -> ServiceResult:
         if not name or len(name) < 2:
             return ServiceResult(success=False, message="Goal name must be at least 2 characters.")

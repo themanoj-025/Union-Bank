@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from typing import Optional
 
 from sqlalchemy import case, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -68,7 +67,7 @@ class AsyncSqlAlchemyAccountRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, acc_no: str) -> Optional[Account]:
+    async def get(self, acc_no: str) -> Account | None:
         result = await self.session.execute(
             select(AccountModel).where(
                 AccountModel.account_number == acc_no,
@@ -184,7 +183,7 @@ class AsyncSqlAlchemyAccountRepository:
         model.is_active = True
         return True
 
-    async def get_deleted(self, acc_no: str) -> Optional[Account]:
+    async def get_deleted(self, acc_no: str) -> Account | None:
         result = await self.session.execute(
             select(AccountModel).where(
                 AccountModel.account_number == acc_no,
@@ -259,7 +258,7 @@ class AsyncSqlAlchemyAccountRepository:
         )
         return result.scalar() or 0
 
-    async def get_by_email(self, email: str) -> Optional[Account]:
+    async def get_by_email(self, email: str) -> Account | None:
         result = await self.session.execute(
             select(AccountModel).where(
                 AccountModel.email == email,
@@ -406,12 +405,12 @@ class AsyncSqlAlchemyTransactionRepository:
 
     async def get_paginated(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]:
         query = select(TransactionModel)
 
@@ -448,12 +447,12 @@ class AsyncSqlAlchemyTransactionRepository:
 
     async def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]:
         query = select(TransactionModel)
 
@@ -502,7 +501,7 @@ class AsyncSqlAlchemyAdminRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_by_username(self, username: str) -> Optional[AdminUser]:
+    async def get_by_username(self, username: str) -> AdminUser | None:
         result = await self.session.execute(
             select(AdminModel).where(AdminModel.username == username)
         )
@@ -533,7 +532,7 @@ class AsyncSqlAlchemyAdminRepository:
         return True
 
     async def update_totp(
-        self, username: str, totp_secret: Optional[str], totp_enabled: bool
+        self, username: str, totp_secret: str | None, totp_enabled: bool
     ) -> bool:
         from unionbank.utils.token_security import encrypt_totp_secret
 
@@ -574,7 +573,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
         models = result.scalars().all()
         return [map_savings_goal(m) for m in models]
 
-    async def get(self, goal_id: str) -> Optional[SavingsGoal]:
+    async def get(self, goal_id: str) -> SavingsGoal | None:
         result = await self.session.execute(
             select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
         )
@@ -606,7 +605,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
             model.is_completed = goal.is_completed
         return goal
 
-    async def contribute(self, goal_id: str, amount: Decimal) -> Optional[SavingsGoal]:
+    async def contribute(self, goal_id: str, amount: Decimal) -> SavingsGoal | None:
         result = await self.session.execute(
             select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
         )
@@ -618,7 +617,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
             model.is_completed = True
         return map_savings_goal(model)
 
-    async def delete(self, goal_id: str) -> Optional[SavingsGoal]:
+    async def delete(self, goal_id: str) -> SavingsGoal | None:
         result = await self.session.execute(
             select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
         )
@@ -645,7 +644,7 @@ class AsyncSqlAlchemyLoanRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, loan_id: str) -> Optional[Loan]:
+    async def get(self, loan_id: str) -> Loan | None:
         result = await self.session.execute(select(LoanModel).where(LoanModel.loan_id == loan_id))
         model = result.scalar_one_or_none()
         return map_loan(model) if model else None
@@ -763,7 +762,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, key: str) -> Optional[LoginAttempt]:
+    async def get(self, key: str) -> LoginAttempt | None:
         result = await self.session.execute(
             select(LoginAttemptModel).where(LoginAttemptModel.key == key)
         )
@@ -887,7 +886,7 @@ class AsyncSqlAlchemyNotificationRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, notif_id: str) -> Optional[Notification]:
+    async def get(self, notif_id: str) -> Notification | None:
         result = await self.session.execute(
             select(NotificationModel).where(NotificationModel.notif_id == notif_id)
         )
@@ -994,7 +993,7 @@ class AsyncSqlAlchemyNotificationPreferenceRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, acc_no: str) -> Optional[NotificationPreference]:
+    async def get(self, acc_no: str) -> NotificationPreference | None:
         result = await self.session.execute(
             select(NotificationPreferenceModel).where(
                 NotificationPreferenceModel.account_number == acc_no
@@ -1066,7 +1065,7 @@ class AsyncSqlAlchemyRefreshTokenRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, token_id: str) -> Optional[RefreshToken]:
+    async def get(self, token_id: str) -> RefreshToken | None:
         result = await self.session.execute(
             select(RefreshTokenModel).where(RefreshTokenModel.token_id == token_id)
         )
@@ -1143,7 +1142,7 @@ class AsyncSqlAlchemyIdempotencyRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get(self, idempotency_key: str) -> Optional[IdempotencyRecord]:
+    async def get(self, idempotency_key: str) -> IdempotencyRecord | None:
         result = await self.session.execute(
             select(IdempotencyModel).where(IdempotencyModel.idempotency_key == idempotency_key)
         )
@@ -1190,10 +1189,10 @@ class AsyncSqlAlchemyAuditLogRepository:
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None:
         model = AuditLogModel(
             actor=actor,

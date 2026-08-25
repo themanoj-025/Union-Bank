@@ -23,7 +23,6 @@ from __future__ import annotations
 import re
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from typing import Optional
 
 #  Intent Recognition
 
@@ -309,7 +308,7 @@ def classify_intent(query: str) -> list[dict]:
 
 def extract_amount_range(
     query: str, intents: list[dict]
-) -> tuple[Optional[Decimal], Optional[Decimal]]:
+) -> tuple[Decimal | None, Decimal | None]:
     """Extract min/max amount from a natural-language query."""
     min_amt, max_amt = None, None
 
@@ -338,7 +337,7 @@ def extract_amount_range(
     return min_amt, max_amt
 
 
-def compute_time_window(intents: list[dict]) -> tuple[Optional[datetime], Optional[datetime]]:
+def compute_time_window(intents: list[dict]) -> tuple[datetime | None, datetime | None]:
     """Compute from_date/to_date from matched time-window intents."""
     now = datetime.now(timezone.utc)
     from_date, to_date = None, None
@@ -382,7 +381,7 @@ def compute_time_window(intents: list[dict]) -> tuple[Optional[datetime], Option
 
 def execute_query(
     query: str,
-    account_number: Optional[str] = None,
+    account_number: str | None = None,
     max_results: int = 50,
 ) -> dict:
     """

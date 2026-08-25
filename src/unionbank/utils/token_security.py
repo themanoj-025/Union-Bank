@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import hashlib
 import logging
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +66,7 @@ def _get_fernet() -> Any:
         return None
 
 
-def encrypt_totp_secret(secret: Optional[str]) -> Optional[str]:
+def encrypt_totp_secret(secret: str | None) -> str | None:
     """
     Encrypt a TOTP secret for storage in the DB.
 
@@ -90,7 +89,7 @@ def encrypt_totp_secret(secret: Optional[str]) -> Optional[str]:
         return f"plain:{secret}"
 
 
-def decrypt_totp_secret(encrypted_secret: Optional[str]) -> Optional[str]:
+def decrypt_totp_secret(encrypted_secret: str | None) -> str | None:
     """
     Decrypt a TOTP secret retrieved from the DB.
 

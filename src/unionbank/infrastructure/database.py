@@ -19,7 +19,6 @@ import threading
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 from pathlib import Path
-from typing import Optional
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
@@ -47,12 +46,12 @@ def get_db_url() -> str:
     return settings.DATABASE_URL or f"sqlite:///{_get_db_path()}"
 
 
-def is_sqlite(url: Optional[str] = None) -> bool:
+def is_sqlite(url: str | None = None) -> bool:
     """Check if the given (or current) database URL is SQLite."""
     return (url or get_db_url()).startswith("sqlite")
 
 
-def is_postgres(url: Optional[str] = None) -> bool:
+def is_postgres(url: str | None = None) -> bool:
     """Check if the given (or current) database URL is PostgreSQL."""
     return (url or get_db_url()).startswith("postgresql")
 
