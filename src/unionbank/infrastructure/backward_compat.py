@@ -71,7 +71,7 @@ def ensure_account_exists(acc_no: str, name: str = "", balance: float = 0.0):
     return account
 
 
-def sync_account_from_json(acc_no: str, json_data: dict):
+def sync_account_from_json(acc_no: str, json_data: dict) -> None:
     """Sync or create an AccountModel row from JSON data (migration helper)."""
     session = _get_session()
     account = session.query(AccountModel).filter_by(account_number=acc_no).first()

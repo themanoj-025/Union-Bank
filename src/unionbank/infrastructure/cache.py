@@ -300,6 +300,6 @@ def reset_cache() -> None:
 
 
 # Pre-export the cached decorator from the active cache
-def cached(ttl: int = 60, key_prefix: str = ""):
+def cached(ttl: int = 60, key_prefix: str = "") -> Any:
     """Wrap the global cache's cached method as a convenience decorator."""
     return get_cache().cached(ttl=ttl, key_prefix=key_prefix)

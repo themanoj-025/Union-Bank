@@ -74,7 +74,7 @@ router = APIRouter(prefix="/api/v2")
 #  Helpers
 
 
-def _get_container():
+def _get_container() -> ApiResponse:
     """Lazy-import the DI container."""
     from unionbank.infrastructure.container import get_container
 
@@ -114,7 +114,7 @@ def _err(message: str, status_code: int = 400, error_code: str | None = None):
 
 
 # Exception handlers must be added to the FastAPI app instance, not APIRouter
-async def v2_http_exception_handler(request, exc: HTTPException):
+async def v2_http_exception_handler(request, exc: HTTPException) -> ApiResponse:
     """
     Override FastAPI's default exception handler for the v2 router.
 
@@ -149,7 +149,7 @@ async def v2_generic_exception_handler(request, exc: Exception):
 
 
 @router.post("/auth/login", response_model=ApiResponse[TokenData])
-def v2_customer_login(req: LoginRequest, request: Request, response: Response):
+def v2_customer_login(req: LoginRequest, request: Request, response: Response) -> ApiResponse:
     """
     Authenticate a customer and return a JWT access + refresh token pair.
 
@@ -227,7 +227,7 @@ def v2_customer_register(req: RegisterRequest):
 
 
 @router.post("/auth/admin-login", response_model=ApiResponse[TokenData])
-def v2_admin_login(req: AdminLoginRequest, request: Request, response: Response):
+def v2_admin_login(req: AdminLoginRequest, request: Request, response: Response) -> ApiResponse:
     """
     Authenticate as admin and return a JWT access + refresh token pair.
 
@@ -267,7 +267,7 @@ def v2_admin_login(req: AdminLoginRequest, request: Request, response: Response)
 
 
 @router.post("/auth/refresh", response_model=ApiResponse[TokenData])
-def v2_refresh_token(request: Request, response: Response, req: Optional[RefreshRequest] = None):
+def v2_refresh_token(request: Request, response: Response, req: Optional[RefreshRequest] = None) -> ApiResponse:
     """
     Exchange a refresh token for a new access + refresh token pair.
 
@@ -337,7 +337,7 @@ def v2_refresh_token(request: Request, response: Response, req: Optional[Refresh
 
 
 @router.get("/account/profile", response_model=ApiResponse[ProfileData])
-def v2_get_profile(customer: dict = Depends(get_current_customer)):
+def v2_get_profile(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Get the authenticated customer's profile details."""
     from unionbank.entrypoints.api.common import get_account_status
 
@@ -425,7 +425,7 @@ def v2_change_password(req: ChangePasswordRequest, customer: dict = Depends(get_
 
 
 @router.post("/account/close", response_model=ApiResponse[MessageData])
-def v2_close_account(req: CloseAccountRequest, customer: dict = Depends(get_current_customer)):
+def v2_close_account(req: CloseAccountRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Close the authenticated customer's account."""
     if req.confirm_text != "CLOSE":
         _err("Please type 'CLOSE' to confirm.")
@@ -471,7 +471,7 @@ def v2_get_balance(customer: dict = Depends(get_current_customer)):
 
 
 @router.post("/account/deposit", response_model=ApiResponse[MessageData])
-def v2_deposit_money(req: TransactionRequest, customer: dict = Depends(get_current_customer)):
+def v2_deposit_money(req: TransactionRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Deposit money into the authenticated customer's account."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -505,7 +505,7 @@ def v2_withdraw_money(req: TransactionRequest, customer: dict = Depends(get_curr
 
 
 @router.post("/account/transfer", response_model=ApiResponse[MessageData])
-def v2_transfer_funds(req: TransferRequest, customer: dict = Depends(get_current_customer)):
+def v2_transfer_funds(req: TransferRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Transfer funds to another account."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -537,7 +537,7 @@ def v2_transfer_funds(req: TransferRequest, customer: dict = Depends(get_current
 
 
 @router.get("/account/statements", response_model=ApiResponse[list[TransactionOut]])
-def v2_get_full_statement(customer: dict = Depends(get_current_customer)):
+def v2_get_full_statement(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Get the full transaction statement (newest first)."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -561,7 +561,7 @@ def v2_get_full_statement(customer: dict = Depends(get_current_customer)):
 
 
 @router.get("/account/statements/mini", response_model=ApiResponse[list[TransactionOut]])
-def v2_get_mini_statement(customer: dict = Depends(get_current_customer)):
+def v2_get_mini_statement(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Get the last 5 transactions (mini statement)."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -589,7 +589,7 @@ def v2_get_statement_keyset(
     cursor: Optional[str] = Query(None, description="Timestamp cursor from previous page"),
     limit: int = Query(20, ge=1, le=100, description="Items per page"),
     customer: dict = Depends(get_current_customer),
-):
+) -> ApiResponse:
     """
     Get paginated statement using keyset (cursor-based) pagination.
 
@@ -636,7 +636,7 @@ def v2_get_statement_keyset(
 
 
 @router.get("/account/export-csv", response_model=None)
-def v2_export_csv(customer: dict = Depends(get_current_customer)):
+def v2_export_csv(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Download transaction history as a CSV file."""
     import csv
     import io
@@ -676,7 +676,7 @@ def v2_export_csv(customer: dict = Depends(get_current_customer)):
 
 
 @router.get("/savings", response_model=ApiResponse[SavingsGoalsSummary])
-def v2_list_savings_goals(customer: dict = Depends(get_current_customer)):
+def v2_list_savings_goals(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """List all savings goals for the authenticated customer."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -722,7 +722,7 @@ def v2_list_savings_goals(customer: dict = Depends(get_current_customer)):
 @router.post(
     "/savings", response_model=ApiResponse[SavingsGoalOut], status_code=status.HTTP_201_CREATED
 )
-def v2_create_savings_goal(req: SavingsGoalCreate, customer: dict = Depends(get_current_customer)):
+def v2_create_savings_goal(req: SavingsGoalCreate, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Create a new savings goal."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -756,7 +756,7 @@ def v2_create_savings_goal(req: SavingsGoalCreate, customer: dict = Depends(get_
 @router.post("/savings/{goal_id}/contribute", response_model=ApiResponse[SavingsGoalOut])
 def v2_contribute_to_goal(
     goal_id: str, req: SavingsGoalContribute, customer: dict = Depends(get_current_customer)
-):
+) -> ApiResponse:
     """Contribute money from your balance to a savings goal."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -806,7 +806,7 @@ def v2_delete_savings_goal(goal_id: str, customer: dict = Depends(get_current_cu
 
 
 @router.get("/loans", response_model=ApiResponse[LoanSummaryData])
-def v2_list_loans(customer: dict = Depends(get_current_customer)):
+def v2_list_loans(customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """List all loans for the authenticated customer."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -880,7 +880,7 @@ def v2_list_loans(customer: dict = Depends(get_current_customer)):
 @router.post(
     "/loans/apply", response_model=ApiResponse[MessageData], status_code=status.HTTP_201_CREATED
 )
-def v2_apply_loan(req: LoanApplyRequest, customer: dict = Depends(get_current_customer)):
+def v2_apply_loan(req: LoanApplyRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Apply for a new loan."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -949,7 +949,7 @@ def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)):
 @router.post("/loans/{loan_id}/pay-emi", response_model=ApiResponse[MessageData])
 def v2_pay_emi(
     loan_id: str, req: LoanPayEMIRequest, customer: dict = Depends(get_current_customer)
-):
+) -> ApiResponse:
     """Pay the monthly EMI for a loan."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -978,7 +978,7 @@ def v2_calculate_emi(req: EMICalculateRequest):
 
 
 @router.get("/admin/loans", response_model=ApiResponse[LoanAdminStats])
-def v2_admin_list_loans(admin: dict = Depends(get_current_admin)):
+def v2_admin_list_loans(admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """View all loan applications with statistics (admin only)."""
     c = _get_container()
     stats = c.loan_service().get_loan_statistics()
@@ -999,7 +999,7 @@ def v2_admin_list_loans(admin: dict = Depends(get_current_admin)):
 
 
 @router.get("/admin/loans/pending", response_model=ApiResponse[list[LoanOut]])
-def v2_admin_list_pending_loans(admin: dict = Depends(get_current_admin)):
+def v2_admin_list_pending_loans(admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """View all pending loan applications (admin only)."""
     c = _get_container()
     loans = c.loan_service().list_pending()
@@ -1046,7 +1046,7 @@ def v2_admin_approve_loan(loan_id: str, admin: dict = Depends(get_current_admin)
 @router.post("/admin/loans/{loan_id}/reject", response_model=ApiResponse[MessageData])
 def v2_admin_reject_loan(
     loan_id: str, req: LoanRejectRequest, admin: dict = Depends(get_current_admin)
-):
+) -> ApiResponse:
     """Reject a pending loan application (admin only)."""
     c = _get_container()
     result = c.loan_service().reject_loan(
@@ -1063,7 +1063,7 @@ def v2_admin_reject_loan(
 
 
 @router.get("/admin/loans/all", response_model=ApiResponse[list[LoanOut]])
-def v2_admin_list_all_loans(admin: dict = Depends(get_current_admin)):
+def v2_admin_list_all_loans(admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """View all loan applications (admin only)."""
     c = _get_container()
     loans = c.loan_service().list_all()
@@ -1104,7 +1104,7 @@ def v2_admin_view_transactions(
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(50, ge=1, le=500, description="Results per page"),
     admin: dict = Depends(get_current_admin),
-):
+) -> ApiResponse:
     """
     View all transactions across all accounts (admin only).
 
@@ -1156,7 +1156,7 @@ def v2_admin_view_accounts(
     per_page: int = Query(20, ge=1, le=100, description="Items per page"),
     response: Response = None,
     admin: dict = Depends(get_current_admin),
-):
+) -> ApiResponse:
     """
     View all registered accounts with pagination (admin only).
 
@@ -1189,7 +1189,7 @@ def v2_admin_view_accounts(
 def v2_admin_search_accounts(
     q: str = Query(..., min_length=1, description="Search by account number or name"),
     admin: dict = Depends(get_current_admin),
-):
+) -> ApiResponse:
     """Search accounts by account number or name (admin only)."""
     c = _get_container()
     domain_accounts = c.admin_service().search_accounts(q)
@@ -1250,7 +1250,7 @@ def v2_admin_delete_account(acc_no: str, admin: dict = Depends(get_current_admin
 
 
 @router.get("/admin/statistics", response_model=ApiResponse[StatisticsData])
-def v2_admin_statistics(admin: dict = Depends(get_current_admin)):
+def v2_admin_statistics(admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """View bank-wide statistics (admin only)."""
     c = _get_container()
     s = c.admin_service().get_statistics()
@@ -1286,7 +1286,7 @@ def v2_list_categories():
 
 
 @router.post("/analyzr/query", response_model=ApiResponse[dict])
-def v2_analyzr_query(req: AnalyzrQueryRequest):
+def v2_analyzr_query(req: AnalyzrQueryRequest) -> ApiResponse:
     """
     Natural-language transaction search.
 
@@ -1311,7 +1311,7 @@ def v2_analyzr_query(req: AnalyzrQueryRequest):
 
 
 @router.get("/health", response_model=ApiResponse[HealthData])
-def v2_health_check():
+def v2_health_check() -> ApiResponse:
     """
     Health check endpoint.
 

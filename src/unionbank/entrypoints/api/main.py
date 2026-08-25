@@ -654,7 +654,7 @@ def admin_login(request: Request, req: AdminLoginRequest):
 
 @app.get("/api/account/profile", response_model=ProfileResponse)
 @limiter.limit("30/minute")
-def get_profile(request: Request, customer: dict = Depends(get_current_customer)):
+def get_profile(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the authenticated customer's profile details."""
     return ProfileResponse(
         account_number=customer["account_number"],
@@ -676,7 +676,7 @@ def update_profile(
     request: Request,
     req: UpdateProfileRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Update the authenticated customer's profile details."""
     acc_no = customer["account_number"]
 
@@ -745,7 +745,7 @@ def change_password(
     request: Request,
     req: ChangePasswordRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Change the authenticated customer's password."""
     acc_no = customer["account_number"]
 
@@ -788,7 +788,7 @@ def close_account(
     request: Request,
     req: CloseAccountRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Close the authenticated customer's account."""
     acc_no = customer["account_number"]
 
@@ -812,7 +812,7 @@ def close_account(
 
 @app.get("/api/account/balance", response_model=BalanceResponse)
 @limiter.limit("30/minute")
-def get_balance(request: Request, customer: dict = Depends(get_current_customer)):
+def get_balance(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the current account balance."""
     from unionbank.infrastructure.container import get_container
 
@@ -833,7 +833,7 @@ def deposit_money(
     request: Request,
     req: TransactionRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Deposit money into the authenticated customer's account."""
     acc_no = customer["account_number"]
 
@@ -863,7 +863,7 @@ def withdraw_money(
     request: Request,
     req: TransactionRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Withdraw money from the authenticated customer's account."""
     acc_no = customer["account_number"]
 
@@ -893,7 +893,7 @@ def transfer_funds(
     request: Request,
     req: TransferRequest,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Transfer funds to another account."""
     acc_no = customer["account_number"]
     target_acc_no = req.target_account
@@ -958,7 +958,7 @@ def transfer_funds(
 
 @app.get("/api/account/statements", response_model=list[TransactionOut])
 @limiter.limit("30/minute")
-def get_full_statement(request: Request, customer: dict = Depends(get_current_customer)):
+def get_full_statement(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the full transaction statement (newest first)."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -983,7 +983,7 @@ def get_full_statement(request: Request, customer: dict = Depends(get_current_cu
 
 @app.get("/api/account/statements/mini", response_model=list[TransactionOut])
 @limiter.limit("30/minute")
-def get_mini_statement(request: Request, customer: dict = Depends(get_current_customer)):
+def get_mini_statement(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the last 5 transactions (mini statement)."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1008,7 +1008,7 @@ def get_mini_statement(request: Request, customer: dict = Depends(get_current_cu
 
 @app.get("/api/account/export-csv")
 @limiter.limit("10/minute")
-def export_csv(request: Request, customer: dict = Depends(get_current_customer)):
+def export_csv(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Download transaction history as a CSV file."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1087,7 +1087,7 @@ class SavingsGoalsSummary(BaseModel):
 
 @app.get("/api/savings", response_model=SavingsGoalsSummary)
 @limiter.limit("30/minute")
-def list_savings_goals(request: Request, customer: dict = Depends(get_current_customer)):
+def list_savings_goals(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """List all savings goals for the authenticated customer."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1135,7 +1135,7 @@ def create_savings_goal(
     request: Request,
     req: SavingsGoalCreate,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Create a new savings goal."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1177,7 +1177,7 @@ def update_savings_goal(
     goal_id: str,
     req: SavingsGoalUpdate,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Update a savings goal."""
     from unionbank.infrastructure.container import get_container
 
@@ -1222,7 +1222,7 @@ def contribute_to_goal(
     goal_id: str,
     req: SavingsGoalContribute,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Contribute money from your balance to a savings goal."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1273,7 +1273,7 @@ def delete_savings_goal(
     request: Request,
     goal_id: str,
     customer: dict = Depends(get_current_customer),
-):
+) -> dict:
     """Delete a savings goal and refund the amount to your balance."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1287,7 +1287,7 @@ def delete_savings_goal(
 
 @app.post("/api/account/apply-interest", response_model=MessageResponse)
 @limiter.limit("5/minute")
-def apply_interest(request: Request, customer: dict = Depends(get_current_customer)):
+def apply_interest(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Apply monthly interest (3.5% p.a.) using an atomic SQLite transaction."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -1317,7 +1317,7 @@ def admin_view_accounts(
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(20, ge=1, le=100, description="Items per page"),
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """View all registered accounts with pagination (admin only)."""
     from unionbank.infrastructure.cache import get_cache
     from unionbank.infrastructure.container import get_container
@@ -1358,7 +1358,7 @@ def admin_view_accounts(
     return result
 
 
-def _invalidate_admin_account_cache():
+def _invalidate_admin_account_cache() -> dict:
     """Invalidate all cached admin account list pages after a write."""
     try:
         from unionbank.infrastructure.cache import get_cache
@@ -1378,7 +1378,7 @@ def admin_search_accounts(
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(20, ge=1, le=100, description="Items per page"),
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Search accounts by account number or name (admin only)."""
     from unionbank.infrastructure.cache import get_cache
     from unionbank.infrastructure.container import get_container
@@ -1423,7 +1423,7 @@ def admin_freeze_account(
     request: Request,
     acc_no: str,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Freeze a customer account (admin only)."""
     from unionbank.infrastructure.container import get_container
 
@@ -1443,7 +1443,7 @@ def admin_unfreeze_account(
     request: Request,
     acc_no: str,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Unfreeze a customer account (admin only)."""
     from unionbank.infrastructure.container import get_container
 
@@ -1463,7 +1463,7 @@ def admin_delete_account(
     request: Request,
     acc_no: str,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Permanently delete a customer account and all its transactions (admin only)."""
     from unionbank.infrastructure.container import get_container
 
@@ -1477,7 +1477,7 @@ def admin_delete_account(
 
 @app.get("/api/admin/statistics", response_model=StatisticsResponse)
 @limiter.limit("30/minute")
-def admin_statistics(request: Request, admin: dict = Depends(get_current_admin)):
+def admin_statistics(request: Request, admin: dict = Depends(get_current_admin)) -> dict:
     """View bank-wide statistics (admin only)."""
     from unionbank.infrastructure.container import get_container
 
@@ -1505,7 +1505,7 @@ def admin_view_transactions(
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(50, ge=1, le=500, description="Items per page"),
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """
     View all transactions, optionally filtered by account (admin only).
 
@@ -1548,7 +1548,7 @@ def admin_change_password(
     request: Request,
     req: AdminChangePasswordRequest,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Change the admin password (admin only)."""
     username = admin.get("username")
     from unionbank.infrastructure.container import get_container
@@ -1575,7 +1575,7 @@ def admin_change_password(
 
 @app.post("/api/auth/refresh", response_model=TokenResponse)
 @limiter.limit("10/minute")
-def refresh_token(request: Request, req: Optional[RefreshRequest] = None):
+def refresh_token(request: Request, req: Optional[RefreshRequest] = None) -> dict:
     """
     Exchange a refresh token for a new access + refresh token pair.
 
@@ -1684,7 +1684,7 @@ def admin_totp_status(request: Request, admin: dict = Depends(get_current_admin)
 
 @app.get("/api/admin/2fa/setup", response_model=TOTPSetupResponse)
 @limiter.limit("5/minute")
-def admin_totp_setup(request: Request, admin: dict = Depends(get_current_admin)):
+def admin_totp_setup(request: Request, admin: dict = Depends(get_current_admin)) -> dict:
     """Generate a new TOTP secret and provisioning URI for the admin user."""
     import pyotp
 
@@ -1719,7 +1719,7 @@ def admin_totp_verify(
     request: Request,
     req: TOTPVerifyRequest,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Verify a TOTP code to enable 2FA for the admin account."""
     import pyotp
 
@@ -1754,7 +1754,7 @@ def admin_totp_disable(
     request: Request,
     req: TOTPVerifyRequest,
     admin: dict = Depends(get_current_admin),
-):
+) -> dict:
     """Disable 2FA for the admin account (requires current TOTP code)."""
     import pyotp
 
@@ -1795,7 +1795,7 @@ def list_categories(request: Request):
 
 @app.get("/api/health", response_model=HealthResponse)
 @limiter.limit("30/minute")
-def health_check(request: Request):
+def health_check(request: Request) -> dict:
     """Health check endpoint."""
     return HealthResponse()
 
@@ -1807,7 +1807,7 @@ def liveness_probe():
 
 
 @app.get("/api/readyz")
-def readiness_probe():
+def readiness_probe() -> dict:
     """Kubernetes readiness probe — checks database connectivity."""
     from sqlalchemy import text
 
@@ -1827,7 +1827,7 @@ def readiness_probe():
 
 
 @app.get("/metrics")
-def metrics_endpoint():
+def metrics_endpoint() -> dict:
     """Prometheus metrics endpoint. Scraped by Prometheus or any metrics collector."""
     from fastapi.responses import Response
 
