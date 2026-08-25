@@ -14,7 +14,6 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Optional
 
 import pybreaker
 
@@ -124,8 +123,8 @@ class AuthService:
         account_repo: AccountRepositoryProtocol,
         admin_repo: AdminRepositoryProtocol,
         login_attempt_repo: LoginAttemptRepositoryProtocol,
-        token_version_repo: Optional[TokenVersionRepositoryProtocol] = None,
-        notif_service: Optional[NotificationServiceProtocol] = None,
+        token_version_repo: TokenVersionRepositoryProtocol | None = None,
+        notif_service: NotificationServiceProtocol | None = None,
     ):
         self.account_repo = account_repo
         self.admin_repo = admin_repo
@@ -261,13 +260,13 @@ class AccountService:
         self,
         account_repo: AccountRepositoryProtocol,
         txn_repo: TransactionRepositoryProtocol,
-        token_version_repo: Optional[TokenVersionRepositoryProtocol] = None,
+        token_version_repo: TokenVersionRepositoryProtocol | None = None,
     ):
         self.account_repo = account_repo
         self.txn_repo = txn_repo
         self.token_version_repo = token_version_repo
 
-    def get_profile(self, acc_no: str) -> Optional[Account]:
+    def get_profile(self, acc_no: str) -> Account | None:
         return self.account_repo.get(acc_no)
 
     def update_profile(self, acc_no: str, **kwargs) -> ServiceResult:
@@ -314,7 +313,7 @@ class AccountService:
         self.account_repo.commit()
         return ServiceResult(success=True, message="Account closed successfully.")
 
-    def get_balance(self, acc_no: str) -> Optional[Decimal]:
+    def get_balance(self, acc_no: str) -> Decimal | None:
         account = self.account_repo.get(acc_no)
         return account.balance if account else None
 
@@ -335,8 +334,8 @@ class TransactionService:
         self,
         account_repo: AccountRepositoryProtocol,
         txn_repo: TransactionRepositoryProtocol,
-        notif_service: Optional[NotificationServiceProtocol] = None,
-        idempotency_repo: Optional[IdempotencyRepositoryProtocol] = None,
+        notif_service: NotificationServiceProtocol | None = None,
+        idempotency_repo: IdempotencyRepositoryProtocol | None = None,
     ):
         self.account_repo = account_repo
         self.txn_repo = txn_repo
@@ -357,8 +356,8 @@ class TransactionService:
             raise ValueError(f"Insufficient balance for {operation}.")
 
     def _check_idempotency(
-        self, idempotency_key: Optional[str], acc_no: str, operation: str, amount: Decimal
-    ) -> Optional[ServiceResult]:
+        self, idempotency_key: str | None, acc_no: str, operation: str, amount: Decimal
+    ) -> ServiceResult | None:
         """
         Check if a request with this idempotency_key has already been processed.
 
@@ -388,7 +387,7 @@ class TransactionService:
 
     def _store_idempotency(
         self,
-        idempotency_key: Optional[str],
+        idempotency_key: str | None,
         acc_no: str,
         operation: str,
         amount: Decimal,
@@ -424,7 +423,7 @@ class TransactionService:
         acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> ServiceResult:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
@@ -490,7 +489,7 @@ class TransactionService:
         acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> ServiceResult:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
@@ -564,7 +563,7 @@ class TransactionService:
         receiver_acc_no: str,
         amount: Decimal,
         category: str = "General",
-        idempotency_key: Optional[str] = None,
+        idempotency_key: str | None = None,
     ) -> TransferResult:
         if amount <= 0:
             return TransferResult(success=False, error_message="Amount must be positive.")
@@ -801,12 +800,12 @@ class TransactionService:
 
     def get_paginated_transactions(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]:
         return self.txn_repo.get_paginated(
             acc_no=acc_no,
@@ -819,12 +818,12 @@ class TransactionService:
 
     def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]:
         """
         Keyset (cursor-based) pagination — more efficient than OFFSET on large datasets.
@@ -862,8 +861,8 @@ class AdminService:
         account_repo: AccountRepositoryProtocol,
         txn_repo: TransactionRepositoryProtocol,
         admin_repo: AdminRepositoryProtocol,
-        audit_log_repo: Optional[AuditLogRepositoryProtocol] = None,
-        notif_service: Optional[NotificationServiceProtocol] = None,
+        audit_log_repo: AuditLogRepositoryProtocol | None = None,
+        notif_service: NotificationServiceProtocol | None = None,
     ):
         self.account_repo = account_repo
         self.txn_repo = txn_repo
@@ -875,10 +874,10 @@ class AdminService:
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None:
         """Write an immutable audit log entry (silently skip if no repo configured)."""
         if self.audit_log_repo:
@@ -899,7 +898,7 @@ class AdminService:
         return self.account_repo.search(query)
 
     def freeze_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
@@ -943,7 +942,7 @@ class AdminService:
         )
 
     def unfreeze_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
@@ -984,7 +983,7 @@ class AdminService:
         )
 
     def delete_account(
-        self, acc_no: str, actor: str = "admin", reason: Optional[str] = None
+        self, acc_no: str, actor: str = "admin", reason: str | None = None
     ) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
@@ -1085,8 +1084,8 @@ class LoanService:
         loan_repo: LoanRepositoryProtocol,
         account_repo: AccountRepositoryProtocol,
         txn_repo: TransactionRepositoryProtocol,
-        audit_log_repo: Optional[AuditLogRepositoryProtocol] = None,
-        notif_service: Optional[NotificationServiceProtocol] = None,
+        audit_log_repo: AuditLogRepositoryProtocol | None = None,
+        notif_service: NotificationServiceProtocol | None = None,
     ):
         self.loan_repo = loan_repo
         self.account_repo = account_repo
@@ -1095,7 +1094,7 @@ class LoanService:
         self.notif_service = notif_service
 
     def _audit_log(
-        self, actor: str, action: str, target: Optional[str] = None, details: Optional[str] = None
+        self, actor: str, action: str, target: str | None = None, details: str | None = None
     ) -> None:
         if self.audit_log_repo:
             self.audit_log_repo.log(
@@ -1111,7 +1110,7 @@ class LoanService:
     def list_loans(self, acc_no: str) -> list[Loan]:
         return self.loan_repo.get_by_account(acc_no)
 
-    def get_loan(self, loan_id: str) -> Optional[Loan]:
+    def get_loan(self, loan_id: str) -> Loan | None:
         return self.loan_repo.get(loan_id)
 
     def list_pending(self) -> list[Loan]:
@@ -1365,7 +1364,7 @@ class LoanService:
 
     # ── Pay EMI ─────────────────────────────────────────────────────────────────
 
-    def pay_emi(self, acc_no: str, loan_id: str, amount: Optional[Decimal] = None) -> ServiceResult:
+    def pay_emi(self, acc_no: str, loan_id: str, amount: Decimal | None = None) -> ServiceResult:
         """
         Pay the monthly EMI for a loan.
 
@@ -1515,7 +1514,7 @@ class SavingsGoalService:
         return self.goal_repo.get_by_account(acc_no)
 
     def create_goal(
-        self, acc_no: str, name: str, target_amount: Decimal, target_date: Optional[str] = None
+        self, acc_no: str, name: str, target_amount: Decimal, target_date: str | None = None
     ) -> ServiceResult:
         if not name or len(name) < 2:
             return ServiceResult(success=False, message="Goal name must be at least 2 characters.")

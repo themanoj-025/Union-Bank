@@ -19,7 +19,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Optional
 
 from unionbank.infrastructure.container import get_container
 from unionbank.infrastructure.database import (
@@ -97,7 +96,7 @@ def sync_account_from_json(acc_no: str, json_data: dict) -> None:
     session.commit()
 
 
-def get_db_balance(acc_no: str) -> Optional[Decimal]:
+def get_db_balance(acc_no: str) -> Decimal | None:
     """Get the current balance from the SQLite DB."""
     session = _get_session()
     account = session.query(AccountModel).filter_by(account_number=acc_no).first()

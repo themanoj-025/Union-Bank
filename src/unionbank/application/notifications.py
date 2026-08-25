@@ -9,7 +9,6 @@ via an optional dependency pattern (same as audit_log_repo).
 from __future__ import annotations
 
 from decimal import Decimal
-from typing import Optional
 
 from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import Notification, NotificationPreference, ServiceResult
@@ -77,7 +76,7 @@ class NotificationService:
         notif_repo: NotificationRepositoryProtocol,
         pref_repo: NotificationPreferenceRepositoryProtocol,
         account_repo: AccountRepositoryProtocol,
-        sender: Optional[NotificationSenderProtocol] = None,
+        sender: NotificationSenderProtocol | None = None,
     ):
         self.notif_repo = notif_repo
         self.pref_repo = pref_repo
@@ -113,7 +112,7 @@ class NotificationService:
         notif_type: str,
         title: str,
         message: str,
-        related_txn_id: Optional[str] = None,
+        related_txn_id: str | None = None,
     ) -> Notification:
         """
         Create an in-app notification and send alerts based on preferences.
@@ -144,7 +143,7 @@ class NotificationService:
         notif_type: str,
         title: str,
         message: str,
-        related_txn_id: Optional[str] = None,
+        related_txn_id: str | None = None,
     ) -> Notification:
         """Create notification and commit immediately."""
         notif = self.notify(acc_no, notif_type, title, message, related_txn_id)

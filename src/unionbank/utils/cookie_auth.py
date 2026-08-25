@@ -16,7 +16,6 @@ Design decisions:
 from __future__ import annotations
 
 import secrets
-from typing import Optional
 
 from fastapi import Request, Response
 
@@ -50,8 +49,8 @@ def set_auth_cookies(
     response: Response,
     request: Request,
     access_token: str,
-    refresh_token: Optional[str] = None,
-    role: Optional[str] = None,
+    refresh_token: str | None = None,
+    role: str | None = None,
 ) -> None:
     """
     Set httpOnly auth cookies on the response.
@@ -123,7 +122,7 @@ def clear_auth_cookies(response: Response) -> None:
 
 def get_token_from_cookies(
     request: Request, cookie_name: str = ACCESS_TOKEN_COOKIE
-) -> Optional[str]:
+) -> str | None:
     """Extract a token from cookies."""
     return request.cookies.get(cookie_name)
 

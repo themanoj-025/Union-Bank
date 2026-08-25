@@ -7,7 +7,6 @@ All dependencies flow inward: interfaces → application services → infrastruc
 
 from __future__ import annotations
 
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -41,7 +40,7 @@ class Container:
     """Dependency injection container for Union Bank."""
 
     def __init__(self):
-        self._session: Optional[Session] = None
+        self._session: Session | None = None
 
     # ── Session management ─────────────────────────────────────────────────
 
@@ -158,7 +157,7 @@ class Container:
 
 # ─
 
-_container: Optional[Container] = None
+_container: Container | None = None
 
 
 def get_container() -> Container:

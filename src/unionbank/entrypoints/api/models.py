@@ -8,7 +8,7 @@ models used by v1 and v2 endpoints.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field
 
@@ -111,9 +111,9 @@ class ApiResponse(BaseModel, Generic[T]):
     """
 
     success: bool = True
-    data: Optional[T] = None
-    error: Optional[str] = None
-    meta: Optional[dict[str, Any]] = None
+    data: T | None = None
+    error: str | None = None
+    meta: dict[str, Any | None] = None
 
 
 #  Pagination meta
@@ -131,7 +131,7 @@ class PageMeta(BaseModel):
 class KeysetMeta(BaseModel):
     """Keyset (cursor) pagination metadata for ApiResponse.meta."""
 
-    cursor: Optional[str] = None
+    cursor: str | None = None
     has_more: bool = False
     cursor_key: str = "timestamp"
 
@@ -170,10 +170,10 @@ class TokenData(BaseModel):
     """Payload inside ApiResponse.data for /auth/* endpoints."""
 
     access_token: str
-    refresh_token: Optional[str] = None
+    refresh_token: str | None = None
     token_type: str = "bearer"
     role: str
-    expires_in: Optional[int] = None
+    expires_in: int | None = None
 
 
 #  Transaction Request Models
@@ -182,7 +182,7 @@ class TokenData(BaseModel):
 class TransactionRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Positive transaction amount")
     category: str = Field(default="General", description="Transaction category")
-    idempotency_key: Optional[str] = Field(
+    idempotency_key: str | None = Field(
         default=None, description="Idempotency key for retry-safe operations"
     )
 
@@ -191,7 +191,7 @@ class TransferRequest(BaseModel):
     target_account: str = Field(..., description="Recipient account number")
     amount: float = Field(..., gt=0, description="Transfer amount")
     category: str = Field(default="General", description="Transaction category")
-    idempotency_key: Optional[str] = Field(
+    idempotency_key: str | None = Field(
         default=None, description="Idempotency key for retry-safe operations"
     )
 
@@ -206,11 +206,11 @@ class ChangePasswordRequest(BaseModel):
 
 
 class UpdateProfileRequest(BaseModel):
-    name: Optional[str] = None
-    age: Optional[int] = Field(default=None, ge=18, le=120)
-    gender: Optional[str] = None
-    mobile: Optional[str] = None
-    email: Optional[str] = None
+    name: str | None = None
+    age: int | None = Field(default=None, ge=18, le=120)
+    gender: str | None = None
+    mobile: str | None = None
+    email: str | None = None
 
 
 class CloseAccountRequest(BaseModel):
@@ -273,7 +273,7 @@ class TransactionOut(BaseModel):
     balance: float
     description: str
     category: str
-    target_account: Optional[str] = None
+    target_account: str | None = None
 
 
 #  Loan Models
@@ -314,8 +314,8 @@ class LoanOut(BaseModel):
     remaining_amount: float
     status: str
     application_date: str
-    approval_date: Optional[str] = None
-    next_emi_date: Optional[str] = None
+    approval_date: str | None = None
+    next_emi_date: str | None = None
     purpose: str = ""
     admin_notes: str = ""
     progress_pct: float = 0.0
@@ -347,7 +347,7 @@ class LoanAdminStats(BaseModel):
 
 
 class LoanPayEMIRequest(BaseModel):
-    amount: Optional[float] = Field(None, gt=0, description="Amount to pay (defaults to full EMI)")
+    amount: float | None = Field(None, gt=0, description="Amount to pay (defaults to full EMI)")
 
 
 class LoanRejectRequest(BaseModel):
@@ -360,13 +360,13 @@ class LoanRejectRequest(BaseModel):
 class SavingsGoalCreate(BaseModel):
     name: str = Field(..., min_length=2, description="Goal name")
     target_amount: float = Field(..., gt=0, description="Savings target")
-    target_date: Optional[str] = Field(None, description="Optional target date (YYYY-MM-DD)")
+    target_date: str | None = Field(None, description="Optional target date (YYYY-MM-DD)")
 
 
 class SavingsGoalUpdate(BaseModel):
-    name: Optional[str] = None
-    target_amount: Optional[float] = Field(default=None, gt=0)
-    target_date: Optional[str] = None
+    name: str | None = None
+    target_amount: float | None = Field(default=None, gt=0)
+    target_date: str | None = None
 
 
 class SavingsGoalContribute(BaseModel):
@@ -378,7 +378,7 @@ class SavingsGoalOut(BaseModel):
     name: str
     target_amount: float
     current_amount: float
-    target_date: Optional[str] = None
+    target_date: str | None = None
     created_at: str
     is_completed: bool
     progress_pct: float = 0.0
@@ -429,7 +429,7 @@ class AnalyzrQueryRequest(BaseModel):
     query: str = Field(
         ..., min_length=1, description="Natural-language query (e.g. 'large deposits last month')"
     )
-    account_number: Optional[str] = Field(None, description="Account number to scope the search")
+    account_number: str | None = Field(None, description="Account number to scope the search")
     max_results: int = Field(50, ge=1, le=200, description="Maximum number of results")
 
 

@@ -25,7 +25,7 @@ import json
 import logging
 import os
 import threading
-from typing import Any, Optional
+from typing import Any
 
 # ─
 LOG_FILE = os.path.join(os.path.dirname(__file__), "data", "bank.log")
@@ -42,17 +42,17 @@ def set_request_id(request_id: str) -> None:
     _request_context.request_id = request_id
 
 
-def get_request_id() -> Optional[str]:
+def get_request_id() -> str | None:
     """Get the current thread's request ID."""
     return getattr(_request_context, "request_id", None)
 
 
-def set_account_context(account_number: Optional[str]) -> None:
+def set_account_context(account_number: str | None) -> None:
     """Set an account number context for the current thread."""
     _request_context.account_number = account_number
 
 
-def get_account_context() -> Optional[str]:
+def get_account_context() -> str | None:
     """Get the current thread's account context."""
     return getattr(_request_context, "account_number", None)
 
@@ -79,7 +79,7 @@ class JsonFormatter(logging.Formatter):
     uses time.strftime which does NOT support the %f (microsecond) directive.
     """
 
-    def formatTime(self, record: logging.LogRecord, datefmt: Optional[str] = None) -> str:
+    def formatTime(self, record: logging.LogRecord, datefmt: str | None = None) -> str:
         """Format time using datetime.strftime (supports %f for microseconds)."""
         from datetime import datetime as dt
 
@@ -159,8 +159,8 @@ def log_with_context(
     level: int,
     message: str,
     *,
-    request_id: Optional[str] = None,
-    account: Optional[str] = None,
+    request_id: str | None = None,
+    account: str | None = None,
     **extra: Any,
 ) -> None:
     """

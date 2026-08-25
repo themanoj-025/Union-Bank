@@ -19,7 +19,6 @@ import os
 import secrets
 from contextlib import asynccontextmanager
 from decimal import Decimal
-from typing import Optional
 
 import jwt
 from fastapi import (
@@ -347,17 +346,17 @@ class RegisterRequest(BaseModel):
 class AdminLoginRequest(BaseModel):
     username: str = Field(..., description="Admin username")
     password: str = Field(..., min_length=1, description="Admin password")
-    totp_code: Optional[str] = Field(
+    totp_code: str | None = Field(
         None, min_length=6, max_length=6, description="TOTP code (required if 2FA is enabled)"
     )
 
 
 class TokenResponse(BaseModel):
     access_token: str
-    refresh_token: Optional[str] = None
+    refresh_token: str | None = None
     token_type: str = "bearer"
     role: str
-    expires_in: Optional[int] = None
+    expires_in: int | None = None
 
 
 class RefreshRequest(BaseModel):
@@ -388,11 +387,11 @@ class ChangePasswordRequest(BaseModel):
 
 
 class UpdateProfileRequest(BaseModel):
-    name: Optional[str] = None
-    age: Optional[int] = Field(default=None, ge=18, le=120)
-    gender: Optional[str] = None
-    mobile: Optional[str] = None
-    email: Optional[str] = None
+    name: str | None = None
+    age: int | None = Field(default=None, ge=18, le=120)
+    gender: str | None = None
+    mobile: str | None = None
+    email: str | None = None
 
 
 class CloseAccountRequest(BaseModel):
@@ -442,8 +441,8 @@ class TransactionOut(BaseModel):
     balance: float
     description: str
     category: str
-    target_account: Optional[str] = None
-    account_number: Optional[str] = None  # For admin views that show transactions across accounts
+    target_account: str | None = None
+    account_number: str | None = None  # For admin views that show transactions across accounts
 
 
 class AccountListItem(BaseModel):
@@ -1048,13 +1047,13 @@ def export_csv(request: Request, customer: dict = Depends(get_current_customer))
 class SavingsGoalCreate(BaseModel):
     name: str = Field(..., min_length=2, description="Goal name")
     target_amount: float = Field(..., gt=0, description="Savings target")
-    target_date: Optional[str] = Field(None, description="Optional target date (YYYY-MM-DD)")
+    target_date: str | None = Field(None, description="Optional target date (YYYY-MM-DD)")
 
 
 class SavingsGoalUpdate(BaseModel):
-    name: Optional[str] = None
-    target_amount: Optional[float] = Field(default=None, gt=0)
-    target_date: Optional[str] = None
+    name: str | None = None
+    target_amount: float | None = Field(default=None, gt=0)
+    target_date: str | None = None
 
 
 class SavingsGoalContribute(BaseModel):
@@ -1066,7 +1065,7 @@ class SavingsGoalOut(BaseModel):
     name: str
     target_amount: float
     current_amount: float
-    target_date: Optional[str] = None
+    target_date: str | None = None
     created_at: str
     is_completed: bool
     progress_pct: float = 0.0
@@ -1501,7 +1500,7 @@ def admin_statistics(request: Request, admin: dict = Depends(get_current_admin))
 @limiter.limit("30/minute")
 def admin_view_transactions(
     request: Request,
-    account: Optional[str] = Query(None, description="Filter by account number"),
+    account: str | None = Query(None, description="Filter by account number"),
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(50, ge=1, le=500, description="Items per page"),
     admin: dict = Depends(get_current_admin),
@@ -1575,7 +1574,7 @@ def admin_change_password(
 
 @app.post("/api/auth/refresh", response_model=TokenResponse)
 @limiter.limit("10/minute")
-def refresh_token(request: Request, req: Optional[RefreshRequest] = None) -> dict:
+def refresh_token(request: Request, req: RefreshRequest | None = None) -> dict:
     """
     Exchange a refresh token for a new access + refresh token pair.
 

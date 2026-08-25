@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from typing import Optional
 
 from sqlalchemy import case, func, or_
 from sqlalchemy.orm import Session
@@ -63,7 +62,7 @@ class SqlAlchemyAccountRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, acc_no: str) -> Optional[Account]:
+    def get(self, acc_no: str) -> Account | None:
         model = (
             self.session.query(AccountModel)
             .filter_by(account_number=acc_no, deleted_at=None)
@@ -179,7 +178,7 @@ class SqlAlchemyAccountRepository:
         model.is_active = True
         return True
 
-    def get_deleted(self, acc_no: str) -> Optional[Account]:
+    def get_deleted(self, acc_no: str) -> Account | None:
         """Get a soft-deleted account (bypasses the active-only filter)."""
         model = (
             self.session.query(AccountModel)
@@ -251,7 +250,7 @@ class SqlAlchemyAccountRepository:
             .count()
         )
 
-    def get_by_email(self, email: str) -> Optional[Account]:
+    def get_by_email(self, email: str) -> Account | None:
         model = self.session.query(AccountModel).filter_by(email=email, deleted_at=None).first()
         return map_account(model) if model else None
 
@@ -389,12 +388,12 @@ class SqlAlchemyTransactionRepository:
 
     def get_paginated(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]:
         query = self.session.query(TransactionModel)
 
@@ -417,12 +416,12 @@ class SqlAlchemyTransactionRepository:
 
     def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]:
         """
         Keyset (cursor-based) pagination for transactions.
@@ -478,7 +477,7 @@ class SqlAlchemyAdminRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get_by_username(self, username: str) -> Optional[AdminUser]:
+    def get_by_username(self, username: str) -> AdminUser | None:
         model = self.session.query(AdminModel).filter_by(username=username).first()
         return map_admin(model) if model else None
 
@@ -503,7 +502,7 @@ class SqlAlchemyAdminRepository:
         model.password = new_hashed
         return True
 
-    def update_totp(self, username: str, totp_secret: Optional[str], totp_enabled: bool) -> bool:
+    def update_totp(self, username: str, totp_secret: str | None, totp_enabled: bool) -> bool:
         model = self.session.query(AdminModel).filter_by(username=username).first()
         if model is None:
             return False
@@ -537,7 +536,7 @@ class SqlAlchemySavingsGoalRepository:
         models = self.session.query(SavingsGoalModel).filter_by(account_number=acc_no).all()
         return [map_savings_goal(m) for m in models]
 
-    def get(self, goal_id: str) -> Optional[SavingsGoal]:
+    def get(self, goal_id: str) -> SavingsGoal | None:
         model = self.session.query(SavingsGoalModel).filter_by(goal_id=goal_id).first()
         return map_savings_goal(model) if model else None
 
@@ -563,7 +562,7 @@ class SqlAlchemySavingsGoalRepository:
             model.is_completed = goal.is_completed
         return goal
 
-    def contribute(self, goal_id: str, amount: Decimal) -> Optional[SavingsGoal]:
+    def contribute(self, goal_id: str, amount: Decimal) -> SavingsGoal | None:
         model = self.session.query(SavingsGoalModel).filter_by(goal_id=goal_id).first()
         if model is None:
             return None
@@ -572,7 +571,7 @@ class SqlAlchemySavingsGoalRepository:
             model.is_completed = True
         return map_savings_goal(model)
 
-    def delete(self, goal_id: str) -> Optional[SavingsGoal]:
+    def delete(self, goal_id: str) -> SavingsGoal | None:
         model = self.session.query(SavingsGoalModel).filter_by(goal_id=goal_id).first()
         if model is None:
             return None
@@ -599,7 +598,7 @@ class SqlAlchemyLoanRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, loan_id: str) -> Optional[Loan]:
+    def get(self, loan_id: str) -> Loan | None:
         model = self.session.query(LoanModel).filter_by(loan_id=loan_id).first()
         return map_loan(model) if model else None
 
@@ -707,7 +706,7 @@ class SqlAlchemyLoginAttemptRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, key: str) -> Optional[LoginAttempt]:
+    def get(self, key: str) -> LoginAttempt | None:
         model = self.session.query(LoginAttemptModel).filter_by(key=key).first()
         if model is None:
             return None
@@ -818,7 +817,7 @@ class SqlAlchemyNotificationRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, notif_id: str) -> Optional[Notification]:
+    def get(self, notif_id: str) -> Notification | None:
         model = self.session.query(NotificationModel).filter_by(notif_id=notif_id).first()
         return map_notification(model) if model else None
 
@@ -905,7 +904,7 @@ class SqlAlchemyNotificationPreferenceRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, acc_no: str) -> Optional[NotificationPreference]:
+    def get(self, acc_no: str) -> NotificationPreference | None:
         model = (
             self.session.query(NotificationPreferenceModel).filter_by(account_number=acc_no).first()
         )
@@ -973,7 +972,7 @@ class SqlAlchemyRefreshTokenRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, token_id: str) -> Optional[RefreshToken]:
+    def get(self, token_id: str) -> RefreshToken | None:
         model = self.session.query(RefreshTokenModel).filter_by(token_id=token_id).first()
         return map_refresh_token(model) if model else None
 
@@ -1046,7 +1045,7 @@ class SqlAlchemyIdempotencyRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, idempotency_key: str) -> Optional[IdempotencyRecord]:
+    def get(self, idempotency_key: str) -> IdempotencyRecord | None:
         """Retrieve an existing idempotency record by key."""
         model = (
             self.session.query(IdempotencyModel).filter_by(idempotency_key=idempotency_key).first()
@@ -1094,10 +1093,10 @@ class SqlAlchemyAuditLogRepository:
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None:
         """Append an immutable audit log entry."""
         from datetime import timezone

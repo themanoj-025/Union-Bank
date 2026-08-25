@@ -14,7 +14,6 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from decimal import Decimal
-from typing import Optional
 
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -90,7 +89,7 @@ def _fmt_currency(val: float) -> str:
 #  Response helpers
 
 
-def _ok(data, meta: Optional[dict] = None) -> ApiResponse:
+def _ok(data, meta: dict | None = None) -> ApiResponse:
     """Build a success response."""
     return ApiResponse(success=True, data=data, meta=meta)
 
@@ -267,7 +266,7 @@ def v2_admin_login(req: AdminLoginRequest, request: Request, response: Response)
 
 
 @router.post("/auth/refresh", response_model=ApiResponse[TokenData])
-def v2_refresh_token(request: Request, response: Response, req: Optional[RefreshRequest] = None) -> ApiResponse:
+def v2_refresh_token(request: Request, response: Response, req: RefreshRequest | None = None) -> ApiResponse:
     """
     Exchange a refresh token for a new access + refresh token pair.
 
@@ -586,7 +585,7 @@ def v2_get_mini_statement(customer: dict = Depends(get_current_customer)) -> Api
 
 @router.get("/account/statements/keyset", response_model=ApiResponse[list[TransactionOut]])
 def v2_get_statement_keyset(
-    cursor: Optional[str] = Query(None, description="Timestamp cursor from previous page"),
+    cursor: str | None = Query(None, description="Timestamp cursor from previous page"),
     limit: int = Query(20, ge=1, le=100, description="Items per page"),
     customer: dict = Depends(get_current_customer),
 ) -> ApiResponse:
@@ -599,7 +598,7 @@ def v2_get_statement_keyset(
     acc_no = customer["account_number"]
     c = _get_container()
 
-    cursor_dt: Optional[datetime] = None
+    cursor_dt: datetime | None = None
     if cursor:
         try:
             cursor_dt = datetime.fromisoformat(cursor)
@@ -1100,7 +1099,7 @@ def v2_admin_list_all_loans(admin: dict = Depends(get_current_admin)) -> ApiResp
 
 @router.get("/admin/transactions", response_model=ApiResponse[list[TransactionOut]])
 def v2_admin_view_transactions(
-    account: Optional[str] = Query(None, description="Filter by account number"),
+    account: str | None = Query(None, description="Filter by account number"),
     page: int = Query(1, ge=1, description="Page number"),
     per_page: int = Query(50, ge=1, le=500, description="Results per page"),
     admin: dict = Depends(get_current_admin),

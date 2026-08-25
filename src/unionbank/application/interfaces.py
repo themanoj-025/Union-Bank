@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
-from typing import Any, Generic, Optional, Protocol, TypeVar, runtime_checkable
+from typing import Any, Generic, Protocol, TypeVar, runtime_checkable
 
 from unionbank.domain.entities import (
     Account,
@@ -61,7 +61,7 @@ class KeysetPage(Generic[T]):
 class AccountRepositoryProtocol(Protocol):
     """Interface for account data access."""
 
-    def get(self, acc_no: str) -> Optional[Account]: ...
+    def get(self, acc_no: str) -> Account | None: ...
 
     def get_all(self) -> list[Account]: ...
 
@@ -91,7 +91,7 @@ class AccountRepositoryProtocol(Protocol):
 
     def closed_count(self) -> int: ...
 
-    def get_by_email(self, email: str) -> Optional[Account]: ...
+    def get_by_email(self, email: str) -> Account | None: ...
 
     def get_statistics(self) -> dict: ...
 
@@ -127,22 +127,22 @@ class TransactionRepositoryProtocol(Protocol):
 
     def get_paginated(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]: ...
 
     def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]: ...
 
     def commit(self) -> None: ...
@@ -157,14 +157,14 @@ class TransactionRepositoryProtocol(Protocol):
 class AdminRepositoryProtocol(Protocol):
     """Interface for admin user data access."""
 
-    def get_by_username(self, username: str) -> Optional[AdminUser]: ...
+    def get_by_username(self, username: str) -> AdminUser | None: ...
 
     def create(self, admin: AdminUser) -> AdminUser: ...
 
     def update_password(self, username: str, new_hashed: str) -> bool: ...
 
     def update_totp(
-        self, username: str, totp_secret: Optional[str], totp_enabled: bool
+        self, username: str, totp_secret: str | None, totp_enabled: bool
     ) -> bool: ...
 
     def admin_count(self) -> int: ...
@@ -183,15 +183,15 @@ class SavingsGoalRepositoryProtocol(Protocol):
 
     def get_by_account(self, acc_no: str) -> list[SavingsGoal]: ...
 
-    def get(self, goal_id: str) -> Optional[SavingsGoal]: ...
+    def get(self, goal_id: str) -> SavingsGoal | None: ...
 
     def create(self, goal: SavingsGoal) -> SavingsGoal: ...
 
     def update(self, goal: SavingsGoal) -> SavingsGoal: ...
 
-    def contribute(self, goal_id: str, amount: Decimal) -> Optional[SavingsGoal]: ...
+    def contribute(self, goal_id: str, amount: Decimal) -> SavingsGoal | None: ...
 
-    def delete(self, goal_id: str) -> Optional[SavingsGoal]: ...
+    def delete(self, goal_id: str) -> SavingsGoal | None: ...
 
     def commit(self) -> None: ...
 
@@ -205,7 +205,7 @@ class SavingsGoalRepositoryProtocol(Protocol):
 class LoginAttemptRepositoryProtocol(Protocol):
     """Interface for rate-limiting data access."""
 
-    def get(self, key: str) -> Optional[LoginAttempt]: ...
+    def get(self, key: str) -> LoginAttempt | None: ...
 
     def record_failure(self, key: str, max_attempts: int = 5, lockout_minutes: int = 15) -> int: ...
 
@@ -241,7 +241,7 @@ class TokenVersionRepositoryProtocol(Protocol):
 class LoanRepositoryProtocol(Protocol):
     """Interface for loan data access."""
 
-    def get(self, loan_id: str) -> Optional[Loan]: ...
+    def get(self, loan_id: str) -> Loan | None: ...
 
     def get_by_account(self, acc_no: str) -> list[Loan]: ...
 
@@ -273,7 +273,7 @@ class LoanRepositoryProtocol(Protocol):
 class NotificationRepositoryProtocol(Protocol):
     """Interface for in-app notification data access."""
 
-    def get(self, notif_id: str) -> Optional[Notification]: ...
+    def get(self, notif_id: str) -> Notification | None: ...
 
     def get_by_account(self, acc_no: str, limit: int = 50) -> list[Notification]: ...
 
@@ -298,7 +298,7 @@ class NotificationRepositoryProtocol(Protocol):
 class NotificationPreferenceRepositoryProtocol(Protocol):
     """Interface for notification preference data access."""
 
-    def get(self, acc_no: str) -> Optional[NotificationPreference]: ...
+    def get(self, acc_no: str) -> NotificationPreference | None: ...
 
     def create_or_update(self, pref: NotificationPreference) -> NotificationPreference: ...
 
@@ -326,7 +326,7 @@ class NotificationSenderProtocol(Protocol):
 class RefreshTokenRepositoryProtocol(Protocol):
     """Interface for DB-backed refresh token storage."""
 
-    def get(self, token_id: str) -> Optional[RefreshToken]: ...
+    def get(self, token_id: str) -> RefreshToken | None: ...
 
     def get_by_account(self, account_number: str) -> list[RefreshToken]: ...
 
@@ -347,7 +347,7 @@ class RefreshTokenRepositoryProtocol(Protocol):
 class IdempotencyRepositoryProtocol(Protocol):
     """Interface for idempotency key storage."""
 
-    def get(self, idempotency_key: str) -> Optional[IdempotencyRecord]: ...
+    def get(self, idempotency_key: str) -> IdempotencyRecord | None: ...
 
     def create(self, record: IdempotencyRecord) -> IdempotencyRecord: ...
 
@@ -404,10 +404,10 @@ class AuditLogRepositoryProtocol(Protocol):
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None: ...
 
     def get_recent(self, limit: int = 50) -> list: ...

@@ -11,7 +11,6 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from decimal import Decimal
 from enum import Enum
-from typing import Optional
 
 from unionbank.domain.clock import (
     utcnow as _utcnow,  # noqa: F401 — used as default factory in field() decorators
@@ -83,7 +82,7 @@ class Account:
     is_frozen: bool = False
     created_at: datetime = field(default_factory=_utcnow)
     updated_at: datetime = field(default_factory=_utcnow)
-    deleted_at: Optional[datetime] = None
+    deleted_at: datetime | None = None
 
     @property
     def is_deleted(self) -> bool:
@@ -117,7 +116,7 @@ class Transaction:
     balance: Decimal
     description: str = ""
     category: str = "General"
-    target_account: Optional[str] = None
+    target_account: str | None = None
     timestamp: datetime = field(default_factory=_utcnow)
 
     def __repr__(self) -> str:
@@ -134,7 +133,7 @@ class SavingsGoal:
     name: str
     target_amount: Decimal
     current_amount: Decimal = Decimal("0.00")
-    target_date: Optional[str] = None
+    target_date: str | None = None
     created_at: datetime = field(default_factory=_utcnow)
     is_completed: bool = False
 
@@ -153,11 +152,11 @@ class SavingsGoal:
 class AdminUser:
     """Admin user."""
 
-    id: Optional[int] = None
+    id: int | None = None
     username: str = ""
     password: str = ""
     role: str = "admin"
-    totp_secret: Optional[str] = None
+    totp_secret: str | None = None
     totp_enabled: bool = False
     created_at: datetime = field(default_factory=_utcnow)
 
@@ -172,8 +171,8 @@ class LoginAttempt:
 
     key: str
     count: int = 0
-    first_failed: Optional[datetime] = None
-    lockout_until: Optional[datetime] = None
+    first_failed: datetime | None = None
+    lockout_until: datetime | None = None
     updated_at: datetime = field(default_factory=_utcnow)
 
     @property
@@ -213,8 +212,8 @@ class Loan:
     remaining_amount: Decimal = Decimal("0.00")
     status: str = LoanStatus.PENDING.value
     application_date: datetime = field(default_factory=_utcnow)
-    approval_date: Optional[datetime] = None
-    next_emi_date: Optional[datetime] = None
+    approval_date: datetime | None = None
+    next_emi_date: datetime | None = None
     purpose: str = ""
     admin_notes: str = ""
 
@@ -261,7 +260,7 @@ class Notification:
     message: str
     is_read: bool = False
     created_at: datetime = field(default_factory=_utcnow)
-    related_txn_id: Optional[str] = None
+    related_txn_id: str | None = None
 
     def __repr__(self) -> str:
         """Return a debug-friendly representation of the notification."""
@@ -276,7 +275,7 @@ class RefreshToken:
     account_number: str
     role: str  # "customer" or "admin"
     expires_at: datetime
-    revoked_at: Optional[datetime] = None
+    revoked_at: datetime | None = None
     created_at: datetime = field(default_factory=_utcnow)
 
     @property
@@ -338,4 +337,4 @@ class TransferResult:
 class ServiceResult:
     success: bool
     message: str = ""
-    data: Optional[dict] = None
+    data: dict | None = None

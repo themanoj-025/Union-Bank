@@ -23,7 +23,6 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -152,7 +151,7 @@ class AsyncContainer:
         await self._session.close()
 
 
-_async_container: Optional[AsyncContainer] = None
+_async_container: AsyncContainer | None = None
 
 
 async def get_async_container() -> AsyncContainer:
