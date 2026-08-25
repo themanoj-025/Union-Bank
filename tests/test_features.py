@@ -429,8 +429,8 @@ class TestAtomicTransfer:
                 # Make a change (debit sender)
                 sender.balance -= 300.0
                 # ⚡ CRASH: Exception before commit → rollback
-                raise Exception("Simulated crash during transaction!")
-        except Exception:
+                raise RuntimeError("Simulated crash during transaction!")
+        except RuntimeError:
             pass  # Expected — the rollback happened
 
         # Verify rollback: sender balance must be unchanged
