@@ -41,7 +41,7 @@ def hash_token_id(token_id: str) -> str:
 _fernet_instance = None
 
 
-def _get_fernet():
+def _get_fernet() -> Any:
     """Lazy-init the Fernet cipher from the TOKEN_ENCRYPTION_KEY env var."""
     global _fernet_instance
     if _fernet_instance is not None:

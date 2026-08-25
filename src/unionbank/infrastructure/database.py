@@ -64,7 +64,7 @@ _session_maker = None
 _thread_local = threading.local()
 
 
-def get_engine():
+def get_engine() -> Any:
     """
     Get or create the synchronous SQLAlchemy engine.
 
@@ -177,7 +177,7 @@ def get_async_engine():
 #  Synchronous session management
 
 
-def reset_engine():
+def reset_engine() -> None:
     """Dispose the current engine and clear all sessions — for testing."""
     global _engine_instance, _session_maker
     global _async_engine_instance, _async_session_maker
@@ -213,7 +213,7 @@ def get_session() -> Session:
     return _thread_local.session
 
 
-def close_session():
+def close_session() -> None:
     """Close the current thread's database session."""
     if hasattr(_thread_local, "session") and _thread_local.session is not None:
         try:
@@ -282,7 +282,7 @@ async def async_atomic_session() -> AsyncGenerator[AsyncSession, None]:
 #  DB Initialization
 
 
-def init_db():
+def init_db() -> None:
     """
     Create all tables if they don't exist.
 

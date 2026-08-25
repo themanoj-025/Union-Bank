@@ -119,7 +119,7 @@ def get_float(prompt: str):
         return None
 
 
-def get_int(prompt: str):
+def get_int(prompt: str) -> float:
     try:
         return int(input(prompt))
     except ValueError:

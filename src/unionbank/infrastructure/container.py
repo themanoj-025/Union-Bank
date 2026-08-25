@@ -170,7 +170,7 @@ def get_container() -> Container:
     return _container
 
 
-def reset_container():
+def reset_container() -> None:
     """Reset the DI container and close all active sessions (useful for testing)."""
     global _container
     # Close any existing session before resetting

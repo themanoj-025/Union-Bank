@@ -20,7 +20,7 @@ from unionbank.entrypoints.cli.ui import BOLD, CYAN, GREEN, RESET, YELLOW, error
 from unionbank.utils.logger import logger
 
 
-def main_menu():
+def main_menu() -> None:
     bank = Bank()
     admin = Admin()
 
@@ -63,7 +63,7 @@ def main_menu():
             error("Something went wrong. Please try again.")
 
 
-def create_admin_bootstrap():
+def create_admin_bootstrap() -> None:
     """
     CLI command: create the initial admin user with a strong password.
 

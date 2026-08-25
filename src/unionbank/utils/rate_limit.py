@@ -18,7 +18,7 @@ SESSION_TIMEOUT_SECONDS = settings.SESSION_TIMEOUT_SECONDS
 #  Rate limiting (via container's LoginAttemptRepository)
 
 
-def _get_login_attempt_repo():
+def _get_login_attempt_repo() -> Any:
     """Get the LoginAttemptRepository from the container."""
     from unionbank.infrastructure.container import get_container
 
