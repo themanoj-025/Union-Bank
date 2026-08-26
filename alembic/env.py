@@ -23,8 +23,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Import models AFTER logging is configured
-from unionbank.infrastructure.database import ModelBase as Base  # noqa: E402
+from unionbank.infrastructure.database import ModelBase as Base
 from unionbank.infrastructure.database import get_db_url, is_sqlite
 
 target_metadata = Base.metadata
