@@ -5,7 +5,7 @@
 #  See requirements-lock.txt for a complete transitive-dependency snapshot.
 # ═══════════════════════════════════════════════════════════════════════════════
 
-alembic==1.18.4
+alembic==1.19.1
 bcrypt==5.0.0
 colorama==0.4.6
 fastapi==0.141.1
