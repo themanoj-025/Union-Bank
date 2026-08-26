@@ -13,7 +13,7 @@ prometheus-client==0.24.1
 pytest==9.1.1
 pytest-cov==7.1.0
 httpx==0.28.1
-hypothesis==6.124.0
+hypothesis==6.165.10
 PyJWT==2.13.0
 pyotp==2.9.0
 pybreaker==1.4.1  # circuit breaker used by application/services.py (was only in pyproject)
