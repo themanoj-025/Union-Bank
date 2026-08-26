@@ -22,7 +22,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from typing import Optional
 
 from unionbank.application.interfaces import KeysetPage
 from unionbank.domain.entities import (
@@ -142,7 +141,7 @@ class FakeAccountRepository:
         self.simulate_race_condition = False
         self.simulate_timeout = False
 
-    def get(self, acc_no: str) -> Optional[Account]:
+    def get(self, acc_no: str) -> Account | None:
         return self._accounts.get(acc_no)
 
     def get_all(self) -> list[Account]:
@@ -253,7 +252,7 @@ class FakeAccountRepository:
         start = (page - 1) * per_page
         return accounts[start : start + per_page], total
 
-    def get_by_email(self, email: str) -> Optional[Account]:
+    def get_by_email(self, email: str) -> Account | None:
         for a in self._accounts.values():
             if a.email == email:
                 return a
@@ -314,12 +313,12 @@ class FakeTransactionRepository:
 
     def get_paginated(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         page: int = 1,
         per_page: int = 20,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> tuple[list[Transaction], int]:
         filtered = self._filter_txns(acc_no, from_date, to_date, txn_type)
         filtered.sort(key=lambda t: t.timestamp or _utcnow(), reverse=True)
@@ -329,12 +328,12 @@ class FakeTransactionRepository:
 
     def get_paginated_keyset(
         self,
-        acc_no: Optional[str] = None,
+        acc_no: str | None = None,
         limit: int = 20,
-        cursor: Optional[datetime] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        cursor: datetime | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> KeysetPage[Transaction]:
         filtered = self._filter_txns(acc_no, from_date, to_date, txn_type)
         filtered.sort(key=lambda t: t.timestamp or _utcnow(), reverse=True)
@@ -355,10 +354,10 @@ class FakeTransactionRepository:
 
     def _filter_txns(
         self,
-        acc_no: Optional[str] = None,
-        from_date: Optional[datetime] = None,
-        to_date: Optional[datetime] = None,
-        txn_type: Optional[str] = None,
+        acc_no: str | None = None,
+        from_date: datetime | None = None,
+        to_date: datetime | None = None,
+        txn_type: str | None = None,
     ) -> list[Transaction]:
         """Filter transactions by optional criteria."""
         filtered = list(self._transactions)
@@ -388,7 +387,7 @@ class FakeAdminRepository:
     def __init__(self):
         self._admins: dict[str, AdminUser] = {}
 
-    def get_by_username(self, username: str) -> Optional[AdminUser]:
+    def get_by_username(self, username: str) -> AdminUser | None:
         return self._admins.get(username)
 
     def create(self, admin: AdminUser) -> AdminUser:
@@ -401,7 +400,7 @@ class FakeAdminRepository:
         self._admins[username].password = new_hashed
         return True
 
-    def update_totp(self, username: str, totp_secret: Optional[str], totp_enabled: bool) -> bool:
+    def update_totp(self, username: str, totp_secret: str | None, totp_enabled: bool) -> bool:
         if username not in self._admins:
             return False
         self._admins[username].totp_secret = totp_secret
@@ -430,7 +429,7 @@ class FakeSavingsGoalRepository:
     def get_by_account(self, acc_no: str) -> list[SavingsGoal]:
         return [g for g in self._goals.values() if g.account_number == acc_no]
 
-    def get(self, goal_id: str) -> Optional[SavingsGoal]:
+    def get(self, goal_id: str) -> SavingsGoal | None:
         return self._goals.get(goal_id)
 
     def create(self, goal: SavingsGoal) -> SavingsGoal:
@@ -441,7 +440,7 @@ class FakeSavingsGoalRepository:
         self._goals[goal.goal_id] = goal
         return goal
 
-    def contribute(self, goal_id: str, amount: Decimal) -> Optional[SavingsGoal]:
+    def contribute(self, goal_id: str, amount: Decimal) -> SavingsGoal | None:
         goal = self._goals.get(goal_id)
         if goal is None:
             return None
@@ -450,7 +449,7 @@ class FakeSavingsGoalRepository:
             goal.is_completed = True
         return goal
 
-    def delete(self, goal_id: str) -> Optional[SavingsGoal]:
+    def delete(self, goal_id: str) -> SavingsGoal | None:
         return self._goals.pop(goal_id, None)
 
     def commit(self) -> None:
@@ -469,7 +468,7 @@ class FakeLoginAttemptRepository:
     def __init__(self):
         self._records: dict[str, LoginAttempt] = {}
 
-    def get(self, key: str) -> Optional[LoginAttempt]:
+    def get(self, key: str) -> LoginAttempt | None:
         return self._records.get(key)
 
     def record_failure(self, key: str, max_attempts: int = 5, lockout_minutes: int = 15) -> int:
@@ -549,7 +548,7 @@ class FakeNotificationRepository:
     def __init__(self):
         self._notifications: list[Notification] = []
 
-    def get(self, notif_id: str) -> Optional[Notification]:
+    def get(self, notif_id: str) -> Notification | None:
         for n in self._notifications:
             if n.notif_id == notif_id:
                 return n
@@ -612,7 +611,7 @@ class FakeNotificationPreferenceRepository:
     def __init__(self):
         self._prefs: dict[str, NotificationPreference] = {}
 
-    def get(self, acc_no: str) -> Optional[NotificationPreference]:
+    def get(self, acc_no: str) -> NotificationPreference | None:
         return self._prefs.get(acc_no)
 
     def create_or_update(self, pref: NotificationPreference) -> NotificationPreference:
@@ -692,10 +691,10 @@ class FakeAuditLogRepository:
         self,
         actor: str,
         action: str,
-        target: Optional[str] = None,
-        details: Optional[str] = None,
-        ip_address: Optional[str] = None,
-        reason: Optional[str] = None,
+        target: str | None = None,
+        details: str | None = None,
+        ip_address: str | None = None,
+        reason: str | None = None,
     ) -> None:
         self._entries.append(
             {
