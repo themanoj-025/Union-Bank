@@ -29,7 +29,12 @@ from unionbank.utils.hashing import hash_password
 NUM_ACCOUNTS = 5000
 MIN_TXNS_PER_ACCOUNT = 8
 MAX_TXNS_PER_ACCOUNT = 20
-DEFAULT_PASSWORD = os.environ.get("UNION_BANK_SEED_PASSWORD", "Seed@123")
+DEFAULT_PASSWORD = os.environ.get("UNION_BANK_SEED_PASSWORD", "")
+if not DEFAULT_PASSWORD:
+    raise RuntimeError(
+        "UNION_BANK_SEED_PASSWORD env var is required for seed data. "
+        "Set it in your environment or .env file."
+    )
 START_DATE = datetime(2025, 8, 1)  # 10 months of history
 END_DATE = datetime(2026, 6, 2)
 
