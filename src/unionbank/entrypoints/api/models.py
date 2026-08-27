@@ -113,7 +113,7 @@ class ApiResponse(BaseModel, Generic[T]):
     success: bool = True
     data: T | None = None
     error: str | None = None
-    meta: dict[str, Any | None] = None
+    meta: dict[str, Any] | None = None
 
 
 #  Pagination meta
