@@ -157,7 +157,7 @@ class MetricsMiddleware:
 
         try:
             await self.app(scope, receive, _send_wrapper)
-        except Exception as exc:
+        except (OSError, ValueError) as exc:
             status_code = 500
             ERRORS_TOTAL.labels(type=type(exc).__name__, endpoint=endpoint).inc()
             raise
