@@ -231,7 +231,7 @@ def atomic_session() -> Generator[Session, None, None]:
     try:
         yield session
         session.commit()
-    except Exception:
+    except (OSError, ConnectionError):
         session.rollback()
         raise
     finally:
@@ -270,7 +270,7 @@ async def async_atomic_session() -> AsyncGenerator[AsyncSession, None]:
     try:
         yield session
         await session.commit()
-    except Exception:
+    except (OSError, ConnectionError):
         await session.rollback()
         raise
     finally:
