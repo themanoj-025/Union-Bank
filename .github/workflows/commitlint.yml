@@ -17,8 +17,8 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
-          cache: npm
         with:
+          cache: npm
           node-version: "20"
 
       - name: Install commitlint
