@@ -58,7 +58,7 @@ def main_menu() -> None:
             else:
                 error("Invalid choice. Please enter 1-4.")
 
-        except Exception as e:
+        except (OSError, ValueError) as e:
             logger.error(f"Error occurred: {e}")
             error("Something went wrong. Please try again.")
 
