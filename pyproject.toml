@@ -86,3 +86,8 @@ testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+skip_empty = true
