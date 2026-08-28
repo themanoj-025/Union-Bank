@@ -6,7 +6,7 @@ This file re-exports every class so existing ``from ...repositories import X``
 continues to work unchanged.
 """
 
-from unionbank.infrastructure.repositories_pkg import (  # noqa: F401
+from unionbank.infrastructure.repositories_pkg import (
     SqlAlchemyAccountRepository,
     SqlAlchemyAdminRepository,
     SqlAlchemyAuditLogRepository,
@@ -20,3 +20,18 @@ from unionbank.infrastructure.repositories_pkg import (  # noqa: F401
     SqlAlchemyTokenVersionRepository,
     SqlAlchemyTransactionRepository,
 )
+
+__all__ = [
+    "SqlAlchemyAccountRepository",
+    "SqlAlchemyAdminRepository",
+    "SqlAlchemyAuditLogRepository",
+    "SqlAlchemyIdempotencyRepository",
+    "SqlAlchemyLoanRepository",
+    "SqlAlchemyLoginAttemptRepository",
+    "SqlAlchemyNotificationPreferenceRepository",
+    "SqlAlchemyNotificationRepository",
+    "SqlAlchemyRefreshTokenRepository",
+    "SqlAlchemySavingsGoalRepository",
+    "SqlAlchemyTokenVersionRepository",
+    "SqlAlchemyTransactionRepository",
+]
