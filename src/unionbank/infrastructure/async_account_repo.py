@@ -30,7 +30,7 @@ from .persistence import AccountModel, SavingsGoalModel
 class AsyncSqlAlchemyAccountRepository:
     """Account repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, acc_no: str) -> Account | None:
@@ -298,7 +298,7 @@ class AsyncSqlAlchemyAccountRepository:
 class AsyncSqlAlchemySavingsGoalRepository:
     """Savings goal repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_by_account(self, acc_no: str) -> list[SavingsGoal]:

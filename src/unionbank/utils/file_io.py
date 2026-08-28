@@ -27,7 +27,7 @@ def _backup_path(filepath: str) -> str:
     return filepath + ".bak"
 
 
-def _get_logger():
+def _get_logger() -> Any:
     from unionbank.utils.logger import logger
 
     return logger

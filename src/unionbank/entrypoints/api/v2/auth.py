@@ -74,7 +74,7 @@ def v2_customer_login(req: LoginRequest, request: Request, response: Response) -
 
 
 @router.post("/auth/register", response_model=ApiResponse[MessageData])
-def v2_customer_register(req: RegisterRequest):
+def v2_customer_register(req: RegisterRequest) -> dict[str, str]:
     """Register a new customer account."""
     from unionbank.utils import validate_email, validate_name, validate_password, validate_phone
 

@@ -130,10 +130,10 @@ class MetricsMiddleware:
         app.add_middleware(MetricsMiddleware)
     """
 
-    def __init__(self, app):
+    def __init__(self, app) -> None:
         self.app = app
 
-    async def __call__(self, scope, receive, send):
+    async def __call__(self, scope, receive, send) -> Any:
         if scope["type"] != "http":
             await self.app(scope, receive, send)
             return

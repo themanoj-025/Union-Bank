@@ -51,7 +51,7 @@ class AsyncContainer:
     must ``await`` every repository call.
     """
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
     # ── Repositories ───────────────────────────────────────────────────────
@@ -94,7 +94,7 @@ class AsyncContainer:
 
     # ── Services ───────────────────────────────────────────────────────────
 
-    def transaction_service(self):
+    def transaction_service(self) -> Any:
         """Create an async TransactionService wired to async repositories."""
         from unionbank.application.async_services import AsyncTransactionService
 
@@ -104,7 +104,7 @@ class AsyncContainer:
             idempotency_repo=self.idempotency_repo(),
         )
 
-    def account_service(self):
+    def account_service(self) -> Any:
         """Create an async AccountService wired to async repositories."""
         from unionbank.application.async_services import AsyncAccountService
 
@@ -114,7 +114,7 @@ class AsyncContainer:
             token_version_repo=self.token_version_repo(),
         )
 
-    def auth_service(self):
+    def auth_service(self) -> Any:
         """Create an async AuthService wired to async repositories."""
         from unionbank.application.async_services import AsyncAuthService
 
@@ -125,7 +125,7 @@ class AsyncContainer:
             token_version_repo=self.token_version_repo(),
         )
 
-    def admin_service(self):
+    def admin_service(self) -> Any:
         """Create an async AdminService wired to async repositories."""
         from unionbank.application.async_services import AsyncAdminService
 
@@ -136,7 +136,7 @@ class AsyncContainer:
             audit_log_repo=self.audit_log_repo(),
         )
 
-    def savings_goal_service(self):
+    def savings_goal_service(self) -> Any:
         """Create an async SavingsGoalService wired to async repositories."""
         from unionbank.application.async_services import AsyncSavingsGoalService
 
@@ -146,7 +146,7 @@ class AsyncContainer:
             txn_repo=self.transaction_repo(),
         )
 
-    async def close_session(self):
+    async def close_session(self) -> Any:
         """Close the underlying async session."""
         await self._session.close()
 
@@ -166,7 +166,7 @@ async def get_async_container() -> AsyncContainer:
     return _async_container
 
 
-async def reset_async_container():
+async def reset_async_container() -> Any:
     """Reset the async container — for testing."""
     global _async_container
     if _async_container is not None:

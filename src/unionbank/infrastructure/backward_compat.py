@@ -53,7 +53,7 @@ def _utcnow() -> datetime:
 # ─
 
 
-def ensure_account_exists(acc_no: str, name: str = "", balance: float = 0.0):
+def ensure_account_exists(acc_no: str, name: str = "", balance: float = 0.0) -> Any:
     """Ensure an AccountModel row exists in the DB."""
     session = _get_session()
     account = session.query(AccountModel).filter_by(account_number=acc_no).first()

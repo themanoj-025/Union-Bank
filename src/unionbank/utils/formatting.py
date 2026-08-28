@@ -107,7 +107,7 @@ def calculate_emi(principal: float, annual_rate: float, tenure_months: int) -> f
 #  CLI input helpers
 
 
-def get_float(prompt: str):
+def get_float(prompt: str) -> Any:
     """Prompt for a positive float; return None on invalid input."""
     try:
         val = float(input(prompt))

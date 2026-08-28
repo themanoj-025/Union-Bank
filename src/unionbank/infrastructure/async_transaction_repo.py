@@ -29,7 +29,7 @@ from .persistence import AuditLogModel, IdempotencyModel, TransactionModel
 class AsyncSqlAlchemyTransactionRepository:
     """Transaction repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_by_account(self, acc_no: str) -> list[Transaction]:
@@ -195,7 +195,7 @@ class AsyncSqlAlchemyTransactionRepository:
 class AsyncSqlAlchemyIdempotencyRepository:
     """Idempotency key repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, idempotency_key: str) -> IdempotencyRecord | None:
@@ -238,7 +238,7 @@ class AsyncSqlAlchemyIdempotencyRepository:
 class AsyncSqlAlchemyAuditLogRepository:
     """Audit log repository — append-only, never deleted or updated. (async)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def log(

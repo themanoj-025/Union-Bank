@@ -129,7 +129,7 @@ _async_engine_instance = None
 _async_session_maker = None
 
 
-def get_async_engine():
+def get_async_engine() -> Any:
     """
     Get or create the async SQLAlchemy engine (for asyncpg Postgres).
 

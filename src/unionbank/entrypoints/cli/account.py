@@ -46,7 +46,7 @@ init_db()
 
 
 class Account:
-    def __init__(self, data: dict):
+    def __init__(self, data: dict) -> None:
         self.account_number = data["account_number"]
         self.name = data["name"]
         self.age = data["age"]
@@ -59,7 +59,7 @@ class Account:
         self.is_frozen = data.get("is_frozen", False)
         self.created_at = data.get("created_at", now_str())
 
-    def to_dict(self):
+    def to_dict(self) -> Any:
         return {
             "account_number": self.account_number,
             "name": self.name,
@@ -74,7 +74,7 @@ class Account:
             "created_at": self.created_at,
         }
 
-    def save(self):
+    def save(self) -> Any:
         """Save the account — writes to SQLite only (no JSON)."""
         from decimal import Decimal
 
@@ -118,7 +118,7 @@ class Account:
 
         logger.debug(f"Account {self.account_number} saved to database.")
 
-    def log_transaction(self, txn_type, amount, description, target_acc=None, category=None):
+    def log_transaction(self, txn_type, amount, description, target_acc=None, category=None) -> Any:
         """Log a transaction — writes to SQLite only (no JSON)."""
         from decimal import Decimal
 
@@ -175,7 +175,7 @@ class Account:
         )
         return txn_id
 
-    def check_balance(self):
+    def check_balance(self) -> Any:
         header("ACCOUNT BALANCE")
         print(f"  {GREEN}Account No : {BOLD}{self.account_number}{RESET}")
         print(f"  {GREEN}Name       : {BOLD}{self.name}{RESET}")
@@ -185,7 +185,7 @@ class Account:
             f"Balance checked -> Acc:{self.account_number}  Bal:{fmt_currency(self.balance)}"
         )
 
-    def mini_statement(self):
+    def mini_statement(self) -> Any:
         header("MINI STATEMENT  (Last 5 transactions)")
         from unionbank.infrastructure.container import get_container
 
@@ -212,7 +212,7 @@ class Account:
         divider()
         logger.info(f"Mini statement viewed -> Acc:{self.account_number}")
 
-    def full_statement(self):
+    def full_statement(self) -> Any:
         header("FULL TRANSACTION HISTORY")
         from unionbank.infrastructure.container import get_container
 
@@ -245,7 +245,7 @@ class Account:
         divider()
         logger.info(f"Full statement viewed -> Acc:{self.account_number}")
 
-    def view_profile(self):
+    def view_profile(self) -> Any:
         status = "FROZEN" if self.is_frozen else ("ACTIVE" if self.is_active else "CLOSED")
         status_color = RED if self.is_frozen else (GREEN if self.is_active else YELLOW)
         header("PROFILE DETAILS")
@@ -260,7 +260,7 @@ class Account:
         print(f"  {CYAN}Member Since   :{WHITE} {self.created_at}{RESET}")
         divider()
 
-    def deposit(self):
+    def deposit(self) -> Any:
         header("DEPOSIT MONEY")
         amount = get_float("  Enter amount to deposit : Rs.")
         if amount is None:
@@ -283,7 +283,7 @@ class Account:
             error(result.message)
         divider()
 
-    def withdraw(self):
+    def withdraw(self) -> Any:
         header("WITHDRAW MONEY")
         amount = get_float("  Enter amount to withdraw : Rs.")
         if amount is None:
@@ -306,7 +306,7 @@ class Account:
             error(result.message)
         divider()
 
-    def transfer_funds(self):
+    def transfer_funds(self) -> Any:
         """Transfer funds using an atomic SQLite transaction (via service layer)."""
         header("TRANSFER FUNDS")
         target_acc_no = input("  Enter recipient account number : ").strip()
@@ -365,7 +365,7 @@ class Account:
             error(result.error_message)
         divider()
 
-    def update_profile(self):
+    def update_profile(self) -> Any:
         header("UPDATE PROFILE")
         print(f"  {WHITE}(Press Enter to keep current value)\n{RESET}")
         name = input(f"  Name   [{CYAN}{self.name}{RESET}]   : ").strip()
@@ -403,7 +403,7 @@ class Account:
         success("Profile updated successfully!")
         divider()
 
-    def change_password(self):
+    def change_password(self) -> Any:
         header("CHANGE PASSWORD")
         old_pwd = prompt_password("  Enter current password : ")
         if not verify_password(old_pwd, self.password):
@@ -428,7 +428,7 @@ class Account:
         success("Password changed successfully!")
         divider()
 
-    def close_account(self):
+    def close_account(self) -> Any:
         header("CLOSE ACCOUNT")
         print(f"  {RED}{BOLD}WARNING: This action is irreversible!{RESET}")
         confirm = input(f"  {YELLOW}Type 'CLOSE' to confirm :{RESET} ").strip()
@@ -448,7 +448,7 @@ class Account:
             error(result.message)
         divider()
 
-    def export_csv(self):
+    def export_csv(self) -> Any:
         """Export full transaction history to CSV."""
         header("EXPORT TO CSV")
         from unionbank.infrastructure.container import get_container
@@ -479,7 +479,7 @@ class Account:
         logger.info(f"CSV exported -> Acc:{self.account_number}  File:{filename}")
         divider()
 
-    def _show_goal(self, goal: dict, index: int):
+    def _show_goal(self, goal: dict, index: int) -> Any:
         """Display a single savings goal."""
         pct = (
             (goal["current_amount"] / goal["target_amount"] * 100)
@@ -514,7 +514,7 @@ class Account:
             for g in domain_goals
         ]
 
-    def savings_goals_menu(self):
+    def savings_goals_menu(self) -> Any:
         """Manage savings goals through an interactive menu."""
         from unionbank.infrastructure.container import get_container
 
@@ -560,7 +560,7 @@ class Account:
             else:
                 error("Invalid choice.")
 
-    def _create_goal(self):
+    def _create_goal(self) -> Any:
         from decimal import Decimal
 
         header("🎯 CREATE SAVINGS GOAL")
@@ -589,7 +589,7 @@ class Account:
             error(result.message)
         divider()
 
-    def _contribute_to_goal(self):
+    def _contribute_to_goal(self) -> Any:
         from decimal import Decimal
 
         from unionbank.infrastructure.container import get_container
@@ -637,7 +637,7 @@ class Account:
         print(f"  {GREEN}New Balance: {BOLD}{fmt_currency(self.balance)}{RESET}")
         divider()
 
-    def _edit_goal(self):
+    def _edit_goal(self) -> Any:
         from decimal import Decimal
 
         from unionbank.infrastructure.container import get_container
@@ -680,7 +680,7 @@ class Account:
         success("Goal updated!")
         divider()
 
-    def _delete_goal(self):
+    def _delete_goal(self) -> Any:
         from unionbank.infrastructure.container import get_container
 
         c = get_container()
@@ -717,7 +717,7 @@ class Account:
             error(result.message)
         divider()
 
-    def apply_interest(self):
+    def apply_interest(self) -> Any:
         """Apply monthly interest using an atomic SQLite transaction."""
         header("INTEREST CALCULATION")
         from unionbank.infrastructure.container import get_container

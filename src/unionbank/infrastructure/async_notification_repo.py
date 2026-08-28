@@ -27,7 +27,7 @@ from .persistence import NotificationModel, NotificationPreferenceModel
 class AsyncSqlAlchemyNotificationRepository:
     """Notification repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, notif_id: str) -> Notification | None:
@@ -132,7 +132,7 @@ class AsyncSqlAlchemyNotificationRepository:
 class AsyncSqlAlchemyNotificationPreferenceRepository:
     """Notification preferences repository backed by async SQLAlchemy."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, acc_no: str) -> NotificationPreference | None:

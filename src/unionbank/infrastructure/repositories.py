@@ -59,7 +59,7 @@ from .persistence import (
 class SqlAlchemyAccountRepository:
     """Account repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, acc_no: str) -> Account | None:
@@ -323,7 +323,7 @@ class SqlAlchemyAccountRepository:
 class SqlAlchemyTransactionRepository:
     """Transaction repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get_by_account(self, acc_no: str) -> list[Transaction]:
@@ -474,7 +474,7 @@ class SqlAlchemyTransactionRepository:
 class SqlAlchemyAdminRepository:
     """Admin repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get_by_username(self, username: str) -> AdminUser | None:
@@ -529,7 +529,7 @@ class SqlAlchemyAdminRepository:
 class SqlAlchemySavingsGoalRepository:
     """Savings goal repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get_by_account(self, acc_no: str) -> list[SavingsGoal]:
@@ -595,7 +595,7 @@ class SqlAlchemySavingsGoalRepository:
 class SqlAlchemyLoanRepository:
     """Loan repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, loan_id: str) -> Loan | None:
@@ -703,7 +703,7 @@ class SqlAlchemyLoanRepository:
 class SqlAlchemyLoginAttemptRepository:
     """Login attempt repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, key: str) -> LoginAttempt | None:
@@ -778,7 +778,7 @@ class SqlAlchemyLoginAttemptRepository:
 class SqlAlchemyTokenVersionRepository:
     """Token version repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get_version(self, account_number: str) -> int:
@@ -814,7 +814,7 @@ class SqlAlchemyTokenVersionRepository:
 class SqlAlchemyNotificationRepository:
     """In-app notification repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, notif_id: str) -> Notification | None:
@@ -901,7 +901,7 @@ class SqlAlchemyNotificationRepository:
 class SqlAlchemyNotificationPreferenceRepository:
     """Notification preferences repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, acc_no: str) -> NotificationPreference | None:
@@ -969,7 +969,7 @@ class SqlAlchemyNotificationPreferenceRepository:
 class SqlAlchemyRefreshTokenRepository:
     """Refresh token repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, token_id: str) -> RefreshToken | None:
@@ -1042,7 +1042,7 @@ class SqlAlchemyRefreshTokenRepository:
 class SqlAlchemyIdempotencyRepository:
     """Idempotency key repository backed by SQLAlchemy + SQLite."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def get(self, idempotency_key: str) -> IdempotencyRecord | None:
@@ -1086,7 +1086,7 @@ class SqlAlchemyIdempotencyRepository:
 class SqlAlchemyAuditLogRepository:
     """Audit log repository — append-only, never deleted or updated."""
 
-    def __init__(self, session: Session):
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def log(

@@ -29,7 +29,7 @@ class AccountRateLimiter:
     Limits are configured via settings.MONEY_MOVEMENT_RATE_LIMIT (default: "5/hour").
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         # {account_number: [timestamp, timestamp, ...]}
         self._operations: dict[str, list[float]] = defaultdict(list)
         self._max_ops, self._window_seconds = self._parse_limit(settings.MONEY_MOVEMENT_RATE_LIMIT)

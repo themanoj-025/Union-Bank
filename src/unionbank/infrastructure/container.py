@@ -39,7 +39,7 @@ from unionbank.infrastructure.repositories import (
 class Container:
     """Dependency injection container for Union Bank."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._session: Session | None = None
 
     # ── Session management ─────────────────────────────────────────────────
@@ -48,7 +48,7 @@ class Container:
         """Get the current thread's DB session."""
         return get_session()
 
-    def close_session(self):
+    def close_session(self) -> Any:
         close_session()
 
     # ── Repositories ───────────────────────────────────────────────────────

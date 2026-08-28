@@ -19,7 +19,7 @@ from unionbank.entrypoints.api.v2.helpers import _err, _get_container, _ok
 router = __import__("fastapi").APIRouter()
 
 @router.get("/categories", response_model=ApiResponse[list[str]])
-def v2_list_categories():
+def v2_list_categories() -> dict[str, object]:
     """List all available transaction categories."""
     from unionbank.application.services import TRANSACTION_CATEGORIES
 
