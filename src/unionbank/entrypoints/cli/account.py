@@ -5,7 +5,7 @@ account.py  –  Account model + all account-level operations (with logging).
 import contextlib
 from datetime import datetime
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.entrypoints.cli.ui import (
     BOLD,
     CYAN,
@@ -22,6 +22,8 @@ from unionbank.entrypoints.cli.ui import (
     success,
     warning,
 )
+
+_ = _utcnow  # used as default in CLI account operations
 from unionbank.infrastructure.database import init_db
 from unionbank.utils import (
     export_transactions_to_csv,

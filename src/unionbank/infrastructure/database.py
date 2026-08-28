@@ -287,7 +287,7 @@ def init_db() -> None:
     Uses absolute imports to avoid relative-import issues when called
     from contexts where __package__ is not set (e.g., E2E test imports).
     """
-    from unionbank.infrastructure.persistence import (  # noqa: F401
+    from unionbank.infrastructure.persistence import (
         AccountModel,
         AdminModel,
         AuditLogModel,
@@ -300,6 +300,13 @@ def init_db() -> None:
         TokenVersionModel,
         TransactionModel,
     )
+
+    # Ensure all ORM models are registered with SQLAlchemy metadata
+    _ = [
+        AccountModel, AdminModel, AuditLogModel, LoanModel,
+        LoginAttemptModel, NotificationModel, NotificationPreferenceModel,
+        RefreshTokenModel, SavingsGoalModel, TokenVersionModel, TransactionModel,
+    ]
 
     engine = get_engine()
     ModelBase.metadata.create_all(bind=engine)

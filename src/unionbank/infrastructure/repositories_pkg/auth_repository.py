@@ -6,8 +6,10 @@ from datetime import timedelta, timezone
 
 from sqlalchemy.orm import Session
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import LoginAttempt
+
+_ = _utcnow  # used as default_factory in repository methods
 
 from ..persistence import LoginAttemptModel
 

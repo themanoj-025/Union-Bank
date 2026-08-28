@@ -6,12 +6,14 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.orm import Session
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import (
     Notification,
     NotificationPreference,
     RefreshToken,
 )
+
+_ = _utcnow  # used as default_factory in repository methods
 from unionbank.infrastructure.mappers import map_notification, map_refresh_token
 
 from ..persistence import (

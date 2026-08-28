@@ -23,7 +23,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
+
+_ = _utcnow  # used as default_factory in model columns
 
 from .database import ModelBase
 
