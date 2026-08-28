@@ -37,7 +37,7 @@ class MessageResponse(BaseModel):
 
 
 @router.get("/api/admin/2fa/status", response_model=TOTPStatusResponse)
-def admin_totp_status(request: Request, admin: dict = Depends(get_current_admin)):
+def admin_totp_status(request: Request, admin: dict = Depends(get_current_admin)) -> Response:
     """Check if 2FA is enabled for the current admin."""
     username = admin.get("username")
     from unionbank.infrastructure.container import get_container

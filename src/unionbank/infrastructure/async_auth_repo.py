@@ -32,7 +32,7 @@ from .persistence import (
 class AsyncSqlAlchemyAdminRepository:
     """Admin repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_by_username(self, username: str) -> AdminUser | None:
@@ -97,7 +97,7 @@ class AsyncSqlAlchemyAdminRepository:
 class AsyncSqlAlchemyLoginAttemptRepository:
     """Login attempt repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, key: str) -> LoginAttempt | None:
@@ -186,7 +186,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
 class AsyncSqlAlchemyTokenVersionRepository:
     """Token version repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_version(self, account_number: str) -> int:
@@ -221,7 +221,7 @@ class AsyncSqlAlchemyTokenVersionRepository:
 class AsyncSqlAlchemyRefreshTokenRepository:
     """Refresh token repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, token_id: str) -> RefreshToken | None:

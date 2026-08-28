@@ -25,7 +25,7 @@ from .persistence import LoanModel
 class AsyncSqlAlchemyLoanRepository:
     """Loan repository backed by async SQLAlchemy (asyncpg + PostgreSQL)."""
 
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get(self, loan_id: str) -> Loan | None:

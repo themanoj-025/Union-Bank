@@ -9,7 +9,7 @@ Usage:
     from unionbank.infrastructure.cache import cache
 
     @cache.cached(ttl=60)
-    def expensive_query():
+    def expensive_query() -> Any:
         ...
 """
 
@@ -75,7 +75,7 @@ class Cache:
         """
         return False
 
-    def cached(self, ttl: int = 60, key_prefix: str = ""):
+    def cached(self, ttl: int = 60, key_prefix: str = "") -> Any:
         """
         Cache the return value of a function.
 

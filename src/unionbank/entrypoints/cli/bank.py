@@ -38,7 +38,7 @@ from unionbank.utils.logger import logger
 
 
 class Bank:
-    def register(self):
+    def register(self) -> Any:
         header("NEW ACCOUNT REGISTRATION")
 
         name = input("  Full Name      : ").strip()
@@ -112,7 +112,7 @@ class Bank:
         divider()
         print("  Please keep your account number safe.\n")
 
-    def login(self):
+    def login(self) -> Any:
         header("ACCOUNT LOGIN")
         acc_no = input("  Account Number : ").strip()
         pwd = prompt_password("  Password       : ")
@@ -172,7 +172,7 @@ class Bank:
         account.last_activity = _time.time()
         self._dashboard(account)
 
-    def _dashboard(self, acc):
+    def _dashboard(self, acc) -> Any:
         acc.last_activity = _time.time()
 
         while True:
@@ -234,7 +234,7 @@ class Bank:
             else:
                 error("Invalid choice. Please try again.")
 
-    def _account_services(self, acc):
+    def _account_services(self, acc) -> Any:
         while True:
             print(f"""
   {CYAN}{"─" * 42}{RESET}
@@ -268,7 +268,7 @@ class Bank:
             else:
                 error("Invalid choice.")
 
-    def _transactions_menu(self, acc):
+    def _transactions_menu(self, acc) -> Any:
         while True:
             print(f"""
   {CYAN}{"─" * 42}{RESET}
@@ -291,7 +291,7 @@ class Bank:
             else:
                 error("Invalid choice.")
 
-    def _profile_settings(self, acc):
+    def _profile_settings(self, acc) -> Any:
         while True:
             print(f"""
   {CYAN}{"─" * 42}{RESET}

@@ -136,7 +136,7 @@ def v2_contribute_to_goal(
 
 
 @router.delete("/savings/{goal_id}", response_model=ApiResponse[MessageData])
-def v2_delete_savings_goal(goal_id: str, customer: dict = Depends(get_current_customer)):
+def v2_delete_savings_goal(goal_id: str, customer: dict = Depends(get_current_customer)) -> dict[str, str]:
     """Delete a savings goal and refund the amount to your balance."""
     acc_no = customer["account_number"]
     c = _get_container()

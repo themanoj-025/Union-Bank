@@ -71,7 +71,7 @@ def v2_admin_list_pending_loans(admin: dict = Depends(get_current_admin)) -> Api
 
 
 @router.post("/admin/loans/{loan_id}/approve", response_model=ApiResponse[MessageData])
-def v2_admin_approve_loan(loan_id: str, admin: dict = Depends(get_current_admin)):
+def v2_admin_approve_loan(loan_id: str, admin: dict = Depends(get_current_admin)) -> dict[str, str]:
     """Approve a pending loan application and disburse funds (admin only)."""
     c = _get_container()
     result = c.loan_service().approve_loan(
@@ -255,7 +255,7 @@ def v2_admin_search_accounts(
 
 
 @router.post("/admin/accounts/{acc_no}/freeze", response_model=ApiResponse[MessageData])
-def v2_admin_freeze_account(acc_no: str, admin: dict = Depends(get_current_admin)):
+def v2_admin_freeze_account(acc_no: str, admin: dict = Depends(get_current_admin)) -> dict[str, str]:
     """Freeze a customer account (admin only)."""
     c = _get_container()
     result = c.admin_service().freeze_account(acc_no=acc_no, actor="admin")
@@ -268,7 +268,7 @@ def v2_admin_freeze_account(acc_no: str, admin: dict = Depends(get_current_admin
 
 
 @router.post("/admin/accounts/{acc_no}/unfreeze", response_model=ApiResponse[MessageData])
-def v2_admin_unfreeze_account(acc_no: str, admin: dict = Depends(get_current_admin)):
+def v2_admin_unfreeze_account(acc_no: str, admin: dict = Depends(get_current_admin)) -> dict[str, str]:
     """Unfreeze a customer account (admin only)."""
     c = _get_container()
     result = c.admin_service().unfreeze_account(acc_no=acc_no, actor="admin")
@@ -281,7 +281,7 @@ def v2_admin_unfreeze_account(acc_no: str, admin: dict = Depends(get_current_adm
 
 
 @router.delete("/admin/accounts/{acc_no}", response_model=ApiResponse[MessageData])
-def v2_admin_delete_account(acc_no: str, admin: dict = Depends(get_current_admin)):
+def v2_admin_delete_account(acc_no: str, admin: dict = Depends(get_current_admin)) -> dict[str, str]:
     """Permanently delete a customer account and all its transactions (admin only)."""
     c = _get_container()
     result = c.admin_service().delete_account(acc_no=acc_no, actor="admin")

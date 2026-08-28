@@ -24,7 +24,7 @@ class HealthResponse(BaseModel):
 
 
 @router.get("/api/categories", response_model=list[str])
-def list_categories(request: Request):
+def list_categories(request: Request) -> dict[str, object]:
     """List all available transaction categories."""
     return TRANSACTION_CATEGORIES
 
@@ -36,7 +36,7 @@ def health_check(request: Request) -> dict:
 
 
 @router.get("/api/healthz")
-def liveness_probe():
+def liveness_probe() -> dict[str, object]:
     """Kubernetes liveness probe — returns 200 if the process is alive."""
     return {"status": "alive"}
 
@@ -70,7 +70,7 @@ def metrics_endpoint() -> dict:
     return Response(content=content, media_type=content_type)
 
 
-def metrics_response():
+def metrics_response() -> dict[str, object]:
     """Lazy import wrapper to avoid circular import at module load time."""
     from unionbank.infrastructure.metrics import metrics_response as _metrics_response
 

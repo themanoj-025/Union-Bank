@@ -68,13 +68,13 @@ class RefreshRequest(BaseModel):
 # ── Auth Endpoints ────────────────────────────────────────────────────────
 
 
-def _get_limiter():
+def _get_limiter() -> RateLimiter:
     from unionbank.entrypoints.api.main import limiter
     return limiter
 
 
 @router.post("/api/auth/login", response_model=TokenResponse, deprecated=True)
-def customer_login(request: Request, req: LoginRequest):
+def customer_login(request: Request, req: LoginRequest) -> Response:
     """Authenticate a customer and return a JWT access + refresh token pair."""
     from unionbank.infrastructure.container import get_container
     from unionbank.utils.cookie_auth import set_auth_cookies
@@ -113,7 +113,7 @@ def customer_login(request: Request, req: LoginRequest):
 
 
 @router.post("/api/auth/register", response_model=MessageResponse)
-def customer_register(request: Request, req: RegisterRequest):
+def customer_register(request: Request, req: RegisterRequest) -> Response:
     """Register a new customer account."""
     if not validate_name(req.name):
         raise HTTPException(
@@ -157,7 +157,7 @@ def customer_register(request: Request, req: RegisterRequest):
 
 
 @router.post("/api/auth/admin-login", response_model=TokenResponse)
-def admin_login(request: Request, req: AdminLoginRequest):
+def admin_login(request: Request, req: AdminLoginRequest) -> Response:
     """Authenticate as admin and return a JWT access + refresh token pair."""
     from unionbank.infrastructure.container import get_container
     from unionbank.utils.cookie_auth import set_auth_cookies
@@ -289,7 +289,7 @@ class TOTPStatusResponse(BaseModel):
 
 
 @router.get("/api/admin/2fa/status", response_model=TOTPStatusResponse)
-def admin_totp_status(request: Request, admin: dict = Depends(get_current_admin)):
+def admin_totp_status(request: Request, admin: dict = Depends(get_current_admin)) -> Response:
     """Check if 2FA is enabled for the current admin."""
     username = admin.get("username")
     from unionbank.infrastructure.container import get_container

@@ -39,7 +39,7 @@ from unionbank.utils.logger import JsonFormatter, clear_context, logger, set_req
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """
     Initialize the database on startup and clean up on shutdown.
 
@@ -107,7 +107,7 @@ app = FastAPI(
 
 
 @app.middleware("http")
-async def add_request_id_middleware(request: Request, call_next):
+async def add_request_id_middleware(request: Request, call_next) -> None:
     """Assign a unique request ID and set up logging context for each request."""
     request_id = request.headers.get("X-Request-ID") or secrets.token_hex(16)
     set_request_id(request_id)
@@ -134,7 +134,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
     """Add security headers to every response."""
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> Response:
         response = await call_next(request)
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-Content-Type-Options"] = "nosniff"
@@ -184,7 +184,7 @@ class CSRFProtectMiddleware(BaseHTTPMiddleware):
         "/api/v2/auth/register",
     }
 
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: Request, call_next) -> Response:
         if request.method in self.SAFE_METHODS:
             return await call_next(request)
 
@@ -264,7 +264,7 @@ _uvicorn_error_logger.propagate = False
 
 
 @app.exception_handler(Exception)
-async def _v2_aware_http_exception_handler(request: Request, exc):
+async def _v2_aware_http_exception_handler(request: Request, exc) -> JSONResponse:
     """For V2 routes, return the ApiResponse dict directly (not wrapped in detail)."""
     from fastapi import HTTPException
     from fastapi.responses import JSONResponse

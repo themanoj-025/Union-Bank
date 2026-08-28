@@ -118,7 +118,7 @@ def v2_apply_loan(req: LoanApplyRequest, customer: dict = Depends(get_current_cu
 
 
 @router.get("/loans/{loan_id}", response_model=ApiResponse[LoanOut])
-def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)):
+def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)) -> dict[str, object]:
     """Get details of a specific loan."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -181,7 +181,7 @@ def v2_pay_emi(
 
 
 @router.post("/loans/calculate-emi", response_model=ApiResponse[EMIPreviewData])
-def v2_calculate_emi(req: EMICalculateRequest):
+def v2_calculate_emi(req: EMICalculateRequest) -> dict[str, object]:
     """Calculate EMI preview without applying for a loan."""
     c = _get_container()
     result = c.loan_service().calculate_emi_preview(

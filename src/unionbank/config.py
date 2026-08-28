@@ -128,7 +128,7 @@ class Config:
     # ── Testing mode ──────────────────────────────────────────────────────────
     TESTING: bool = _TESTING
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate configuration after initialization."""
         # Fail-fast: production requires DATABASE_URL
         if self.ENV == "production" and not self.DATABASE_URL:

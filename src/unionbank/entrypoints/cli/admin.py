@@ -32,7 +32,7 @@ from unionbank.utils.logger import logger
 
 
 class Admin:
-    def login(self):
+    def login(self) -> Any:
         header("ADMIN LOGIN")
         username = input("  Username : ").strip()
         password = prompt_password("  Password : ")
@@ -61,7 +61,7 @@ class Admin:
 
     # ── dashboard ─────────────────────────────────────────────────────────────
 
-    def _admin_dashboard(self):
+    def _admin_dashboard(self) -> Any:
         while True:
             print("""
   ╔══════════════════════════════════════════╗
@@ -126,7 +126,7 @@ class Admin:
 
     # ── 1. view all accounts ──────────────────────────────────────────────────
 
-    def _view_all_accounts(self):
+    def _view_all_accounts(self) -> Any:
         header("ALL ACCOUNTS")
         from unionbank.infrastructure.container import get_container
 
@@ -160,7 +160,7 @@ class Admin:
 
     # ── 2. search account ────────────────────────────────────────────────────
 
-    def _search_account(self):
+    def _search_account(self) -> Any:
         header("SEARCH ACCOUNT")
         query = input("  Enter Account Number or Name : ").strip().lower()
         from unionbank.infrastructure.container import get_container
@@ -196,7 +196,7 @@ class Admin:
 
     # ── 3. freeze / unfreeze ─────────────────────────────────────────────────
 
-    def _freeze_account(self):
+    def _freeze_account(self) -> Any:
         header("FREEZE / UNFREEZE ACCOUNT")
         acc_no = input("  Enter Account Number : ").strip()
 
@@ -240,7 +240,7 @@ class Admin:
 
     # ── 4. delete account ────────────────────────────────────────────────────
 
-    def _delete_account(self):
+    def _delete_account(self) -> Any:
         header("DELETE ACCOUNT")
         acc_no = input("  Enter Account Number to delete : ").strip()
 
@@ -274,7 +274,7 @@ class Admin:
 
     # ── 5. bank statistics ────────────────────────────────────────────────────
 
-    def _bank_statistics(self):
+    def _bank_statistics(self) -> Any:
         header("BANK STATISTICS")
         from unionbank.infrastructure.container import get_container
 
@@ -303,7 +303,7 @@ class Admin:
 
     # ── 7. Loan Management ──────────────────────────────────────────────────────
 
-    def _loan_management(self):
+    def _loan_management(self) -> Any:
         header("LOAN MANAGEMENT")
         from unionbank.infrastructure.container import get_container
 
@@ -437,7 +437,7 @@ class Admin:
 
     # ── 6. view all transactions ─────────────────────────────────────────────
 
-    def _view_all_transactions(self):
+    def _view_all_transactions(self) -> Any:
         header("ALL TRANSACTIONS")
         from unionbank.infrastructure.container import get_container
 
@@ -492,7 +492,7 @@ class Admin:
 
     # ── 7. change admin password ─────────────────────────────────────────────
 
-    def _change_admin_password(self):
+    def _change_admin_password(self) -> Any:
         header("CHANGE ADMIN PASSWORD")
         old = prompt_password("  Current Password : ")
 

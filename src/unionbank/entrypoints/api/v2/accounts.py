@@ -45,7 +45,7 @@ def v2_get_profile(customer: dict = Depends(get_current_customer)) -> ApiRespons
 
 
 @router.put("/account/profile", response_model=ApiResponse[ProfileData])
-def v2_update_profile(req: UpdateProfileRequest, customer: dict = Depends(get_current_customer)):
+def v2_update_profile(req: UpdateProfileRequest, customer: dict = Depends(get_current_customer)) -> dict[str, str]:
     """Update the authenticated customer's profile details."""
     from unionbank.entrypoints.api.common import get_account_status
     from unionbank.utils import validate_email, validate_name, validate_phone
@@ -98,7 +98,7 @@ def v2_update_profile(req: UpdateProfileRequest, customer: dict = Depends(get_cu
 
 
 @router.post("/account/change-password", response_model=ApiResponse[MessageData])
-def v2_change_password(req: ChangePasswordRequest, customer: dict = Depends(get_current_customer)):
+def v2_change_password(req: ChangePasswordRequest, customer: dict = Depends(get_current_customer)) -> dict[str, str]:
     """Change the authenticated customer's password."""
     acc_no = customer["account_number"]
     c = _get_container()
@@ -140,7 +140,7 @@ def v2_close_account(req: CloseAccountRequest, customer: dict = Depends(get_curr
 
 
 @router.get("/account/balance", response_model=ApiResponse[BalanceData])
-def v2_get_balance(customer: dict = Depends(get_current_customer)):
+def v2_get_balance(customer: dict = Depends(get_current_customer)) -> dict[str, object]:
     """Get the current account balance."""
     c = _get_container()
     domain_account = c.account_repo().get(customer["account_number"])
@@ -175,7 +175,7 @@ def v2_deposit_money(req: TransactionRequest, customer: dict = Depends(get_curre
 
 
 @router.post("/account/withdraw", response_model=ApiResponse[MessageData])
-def v2_withdraw_money(req: TransactionRequest, customer: dict = Depends(get_current_customer)):
+def v2_withdraw_money(req: TransactionRequest, customer: dict = Depends(get_current_customer)) -> dict[str, str]:
     """Withdraw money from the authenticated customer's account."""
     acc_no = customer["account_number"]
     c = _get_container()

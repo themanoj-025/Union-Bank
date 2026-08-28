@@ -29,7 +29,7 @@ def _ok(data, meta: dict | None = None) -> ApiResponse:
     return ApiResponse(success=True, data=data, **({"meta": meta} if meta is not None else {}))
 
 
-def _err(message: str, status_code: int = 400, error_code: str | None = None):
+def _err(message: str, status_code: int = 400, error_code: str | None = None) -> Any:
     """
     Build an error response (raises HTTPException with envelope body).
 
@@ -62,7 +62,7 @@ async def v2_http_exception_handler(request: Request, exc: HTTPException) -> Api
     )
 
 
-async def v2_generic_exception_handler(request: Request, exc: Exception):
+async def v2_generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     """Catch unhandled exceptions and return a 500 envelope response."""
     from fastapi.responses import JSONResponse
 
