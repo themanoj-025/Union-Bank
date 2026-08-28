@@ -12,14 +12,27 @@ sub-modules:
 """
 
 # Re-export all service classes so existing imports keep working
-from .auth_service import AuthService  # noqa: F401
-from .account_service import AccountService, AdminService  # noqa: F401
-from .transfer_service import TransactionService  # noqa: F401
-from .loan_service import LoanService, SavingsGoalService  # noqa: F401
+from .auth_service import AuthService
+from .account_service import AccountService, AdminService
+from .transfer_service import TransactionService
+from .loan_service import LoanService, SavingsGoalService
 
 # Re-export shared utilities used by other modules
-from .services_shared import (  # noqa: F401
+from .services_shared import (
     NOTIFICATION_BREAKER,
     TRANSACTION_CATEGORIES,
     _account_lock,
 )
+
+__all__ = [
+    "AuthService",
+    "AccountService",
+    "AdminService",
+    "TransactionService",
+    "LoanService",
+    "SavingsGoalService",
+    "NOTIFICATION_BREAKER",
+    "TRANSACTION_CATEGORIES",
+    "_account_lock",
+]
+
