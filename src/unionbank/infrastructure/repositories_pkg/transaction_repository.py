@@ -9,8 +9,10 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from unionbank.application.interfaces import KeysetPage
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import Transaction
+
+_ = _utcnow  # used as default_factory in repository methods
 from unionbank.infrastructure.mappers import map_transaction
 
 from ..persistence import TransactionModel

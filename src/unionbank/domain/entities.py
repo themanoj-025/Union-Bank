@@ -13,8 +13,11 @@ from decimal import Decimal
 from enum import Enum
 
 from unionbank.domain.clock import (
-    utcnow as _utcnow,  # noqa: F401 — used as default factory in field() decorators
+    utcnow as _utcnow,
 )
+
+# referenced as default_factory in field() decorators below
+_ = _utcnow
 
 #  Enums
 

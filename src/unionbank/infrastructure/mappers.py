@@ -8,8 +8,11 @@ read-model projection) uses the same transformation functions.
 from __future__ import annotations
 
 from unionbank.domain.clock import (
-    utcnow as _utcnow,  # noqa: F401 — used as default in _map_account_to_model
+    utcnow as _utcnow,
 )
+
+_ = _utcnow  # used as default in _map_account_to_model
+
 from unionbank.domain.entities import (
     Account,
     AdminUser,

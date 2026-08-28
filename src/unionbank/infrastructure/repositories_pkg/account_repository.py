@@ -7,8 +7,10 @@ from decimal import Decimal
 from sqlalchemy import case, func, or_
 from sqlalchemy.orm import Session
 
-from unionbank.domain.clock import utcnow as _utcnow  # noqa: F401
+from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import Account
+
+_ = _utcnow  # used as default_factory in repository methods
 from unionbank.infrastructure.mappers import map_account, map_account_to_model
 
 from ..persistence import AccountModel
