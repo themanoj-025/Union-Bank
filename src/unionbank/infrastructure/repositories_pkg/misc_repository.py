@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 from sqlalchemy.orm import Session
 
@@ -75,7 +75,7 @@ class SqlAlchemyAuditLogRepository:
             details=details[:500] if details else None,
             ip_address=ip_address,
             reason=reason[:200] if reason else None,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
         )
         self.session.add(model)
 

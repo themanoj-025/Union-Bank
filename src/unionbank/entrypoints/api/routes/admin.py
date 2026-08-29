@@ -1,4 +1,5 @@
-"""Admin routes: accounts management, statistics, transactions, password.
+"""
+Admin routes: accounts management, statistics, transactions, password.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """

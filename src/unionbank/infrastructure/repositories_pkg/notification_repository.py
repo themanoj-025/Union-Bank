@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 
 from sqlalchemy.orm import Session
 
@@ -204,7 +204,7 @@ class SqlAlchemyRefreshTokenRepository:
         model = self.session.query(RefreshTokenModel).filter_by(token_id=token_id).first()
         if model is None:
             return False
-        model.revoked_at = datetime.now(timezone.utc)
+        model.revoked_at = datetime.now(UTC)
         return True
 
     def revoke_all_for_account(self, account_number: str) -> int:
@@ -214,12 +214,12 @@ class SqlAlchemyRefreshTokenRepository:
                 account_number=account_number,
                 revoked_at=None,
             )
-            .update({"revoked_at": datetime.now(timezone.utc)})
+            .update({"revoked_at": datetime.now(UTC)})
         )
         return count
 
     def clean_expired(self) -> int:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         deleted = (
             self.session.query(RefreshTokenModel)
             .filter(RefreshTokenModel.expires_at < now)

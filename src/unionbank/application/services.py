@@ -25,14 +25,14 @@ from .services_shared import (
 )
 
 __all__ = [
-    "AuthService",
-    "AccountService",
-    "AdminService",
-    "TransactionService",
-    "LoanService",
-    "SavingsGoalService",
     "NOTIFICATION_BREAKER",
     "TRANSACTION_CATEGORIES",
+    "AccountService",
+    "AdminService",
+    "AuthService",
+    "LoanService",
+    "SavingsGoalService",
+    "TransactionService",
     "_account_lock",
 ]
 

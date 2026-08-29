@@ -43,7 +43,7 @@ def load_json(filepath: str) -> dict:
         return {}
 
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             content = f.read().strip()
             if not content:
                 return {}
@@ -57,7 +57,7 @@ def load_json(filepath: str) -> dict:
         if os.path.exists(backup):
             log.info(f"Attempting recovery from backup: {backup}")
             try:
-                with open(backup, "r", encoding="utf-8") as f:
+                with open(backup, encoding="utf-8") as f:
                     content = f.read().strip()
                     if content:
                         data = json.loads(content)

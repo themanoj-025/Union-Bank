@@ -121,7 +121,7 @@ class TestCsvExport:
             result = export_transactions_to_csv("1234567890", [], path)
             assert result == path
             assert os.path.exists(path)
-            with open(path, "r") as f:
+            with open(path) as f:
                 content = f.read()
                 assert "Transaction ID" in content  # header only
         finally:
@@ -152,7 +152,7 @@ class TestCsvExport:
             path = f.name
         try:
             export_transactions_to_csv("1234567890", records, path)
-            with open(path, "r") as f:
+            with open(path) as f:
                 lines = f.readlines()
             assert len(lines) == 3  # header + 2 records
             assert "Salary" in lines[1]

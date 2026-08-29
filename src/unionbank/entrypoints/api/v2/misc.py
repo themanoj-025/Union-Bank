@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 try:
     from sqlalchemy.exc import SQLAlchemyError
@@ -14,7 +14,7 @@ from unionbank.entrypoints.api.models import (
     ApiResponse,
     HealthData,
 )
-from unionbank.entrypoints.api.v2.helpers import _err, _get_container, _ok
+from unionbank.entrypoints.api.v2.helpers import _err, _ok
 
 router = __import__("fastapi").APIRouter()
 
@@ -64,8 +64,6 @@ def v2_health_check() -> ApiResponse:
     - Cache connectivity (via Redis ping, if configured)
     - Returns a 503 status if any dependency is down
     """
-    from datetime import datetime, timezone
-
     db_status = "connected"
     cache_status = "connected"
 
@@ -103,6 +101,6 @@ def v2_health_check() -> ApiResponse:
             status=overall,
             database=db_status,
             cache=cache_status,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
     )

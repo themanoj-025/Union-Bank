@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import timedelta, timezone
+from datetime import timedelta, UTC
 
 from sqlalchemy.orm import Session
 
@@ -65,7 +65,7 @@ class SqlAlchemyLoginAttemptRepository:
 
         # Handle timezone-naive datetimes (SQLite may strip tzinfo on roundtrip)
         if lockout_until is not None and lockout_until.tzinfo is None:
-            lockout_until = lockout_until.replace(tzinfo=timezone.utc)
+            lockout_until = lockout_until.replace(tzinfo=UTC)
 
         if lockout_until and now < lockout_until:
             remaining = int((lockout_until - now).total_seconds() // 60)

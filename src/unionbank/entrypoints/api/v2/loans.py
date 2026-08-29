@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal
 
 from fastapi import Depends, status
@@ -45,7 +45,7 @@ def v2_list_loans(customer: dict = Depends(get_current_customer)) -> ApiResponse
         )
         is_overdue = False
         if loan.next_emi_date and loan.status in ("APPROVED", "ACTIVE"):
-            is_overdue = datetime.now(timezone.utc) > loan.next_emi_date
+            is_overdue = datetime.now(UTC) > loan.next_emi_date
 
         loan_list.append(
             LoanOut(
@@ -138,7 +138,7 @@ def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)) ->
     )
     is_overdue = False
     if loan.next_emi_date and loan.status in ("APPROVED", "ACTIVE"):
-        is_overdue = datetime.now(timezone.utc) > loan.next_emi_date
+        is_overdue = datetime.now(UTC) > loan.next_emi_date
 
     return _ok(
         LoanOut(

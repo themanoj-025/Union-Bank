@@ -262,7 +262,7 @@ class TestFileIoEdgeCases:
             nested = os.path.join(tmpdir, "sub", "nested", "test.json")
             save_json(nested, {"key": "value"})
             assert os.path.exists(nested)
-            with open(nested, "r") as f:
+            with open(nested) as f:
                 data = json.load(f)
             assert data == {"key": "value"}
 
@@ -277,7 +277,7 @@ class TestFileIoEdgeCases:
             bak = path + ".bak"
             assert os.path.exists(bak)
             # Verify the backup is the original data
-            with open(bak, "r") as f:
+            with open(bak) as f:
                 data = json.load(f)
             assert data == {"version": 1}
 

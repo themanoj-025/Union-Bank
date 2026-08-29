@@ -1,4 +1,5 @@
-"""Account routes: profile, balance, deposit, withdraw, transfer, statements.
+"""
+Account routes: profile, balance, deposit, withdraw, transfer, statements.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """

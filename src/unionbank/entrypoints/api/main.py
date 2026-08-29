@@ -19,7 +19,6 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -28,10 +27,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from unionbank.config import settings
 
 # ── Shared exception handler for V2 envelope ────────────────────────────
-from fastapi.exception_handlers import http_exception_handler as _v1_http_handler
 
 from unionbank.entrypoints.api.models import ApiResponse as _V2ApiResponse
-from unionbank.infrastructure.metrics import MetricsMiddleware, metrics_response
+from unionbank.infrastructure.metrics import MetricsMiddleware
 from unionbank.utils.logger import JsonFormatter, clear_context, logger, set_request_id
 
 

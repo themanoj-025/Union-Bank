@@ -16,14 +16,14 @@ from .entities import (
 
 __all__ = [
     "Account",
-    "Transaction",
-    "Customer",
-    "AdminUser",
-    "SavingsGoal",
-    "LoginAttempt",
-    "TokenVersion",
-    "TransferResult",
-    "ServiceResult",
     "AccountStatus",
+    "AdminUser",
+    "Customer",
+    "LoginAttempt",
+    "SavingsGoal",
+    "ServiceResult",
+    "TokenVersion",
+    "Transaction",
     "TransactionType",
+    "TransferResult",
 ]

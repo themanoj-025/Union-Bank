@@ -1,4 +1,5 @@
-"""TOTP 2FA routes: setup, verify, disable, status.
+"""
+TOTP 2FA routes: setup, verify, disable, status.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """
