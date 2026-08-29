@@ -1,4 +1,5 @@
-"""Auth routes: login, register, admin login, refresh, TOTP 2FA.
+"""
+Auth routes: login, register, admin login, refresh, TOTP 2FA.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """
@@ -14,13 +15,11 @@ from unionbank.entrypoints.api.common import (
     verify_refresh_token,
 )
 from unionbank.utils import (
-    hash_password,
     validate_email,
     validate_name,
     validate_password,
     validate_phone,
 )
-from unionbank.utils.logger import logger
 
 router = APIRouter(tags=["Auth"])
 

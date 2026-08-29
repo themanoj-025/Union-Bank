@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import jwt
-from fastapi import Depends, Request, Response, status
+from fastapi import Request, Response, status
 
 from unionbank.entrypoints.api.common import (
     create_token_pair,
-    get_current_admin,
-    get_current_customer,
     revoke_refresh_token,
     verify_refresh_token,
 )

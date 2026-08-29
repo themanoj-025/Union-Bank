@@ -9,7 +9,7 @@ PostgreSQL DATABASE_URL (async via asyncpg).
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -156,7 +156,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
         lockout_until = model.lockout_until
 
         if lockout_until is not None and lockout_until.tzinfo is None:
-            lockout_until = lockout_until.replace(tzinfo=timezone.utc)
+            lockout_until = lockout_until.replace(tzinfo=UTC)
 
         if lockout_until and now < lockout_until:
             remaining = int((lockout_until - now).total_seconds() // 60)
@@ -258,7 +258,7 @@ class AsyncSqlAlchemyRefreshTokenRepository:
         model = result.scalar_one_or_none()
         if model is None:
             return False
-        model.revoked_at = datetime.now(timezone.utc)
+        model.revoked_at = datetime.now(UTC)
         return True
 
     async def revoke_all_for_account(self, account_number: str) -> int:
@@ -269,13 +269,13 @@ class AsyncSqlAlchemyRefreshTokenRepository:
             )
         )
         models = result.scalars().all()
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         for model in models:
             model.revoked_at = now
         return len(models)
 
     async def clean_expired(self) -> int:
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         result = await self.session.execute(
             select(RefreshTokenModel).where(RefreshTokenModel.expires_at < now)
         )

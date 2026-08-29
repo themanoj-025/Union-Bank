@@ -1,4 +1,5 @@
-"""Lightweight circuit breaker for external API calls.
+"""
+Lightweight circuit breaker for external API calls.
 
 Usage:
     from circuit_breaker import CircuitBreaker
@@ -22,7 +23,8 @@ import functools
 import logging
 import time
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
+from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 

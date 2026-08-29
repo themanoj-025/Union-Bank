@@ -20,7 +20,7 @@ Simulated DB Failures:
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 
 from unionbank.application.interfaces import KeysetPage
@@ -91,7 +91,7 @@ class SimulatedDatabaseTimeout(Exception):
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 #  Fake Account Repository
@@ -587,9 +587,9 @@ class FakeNotificationRepository:
         return count
 
     def delete_old(self, days: int = 30) -> int:
-        from datetime import timedelta, timezone
+        from datetime import timedelta
 
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        cutoff = datetime.now(UTC) - timedelta(days=days)
         old = [n for n in self._notifications if n.created_at < cutoff]
         for n in old:
             self._notifications.remove(n)
@@ -647,25 +647,25 @@ class FakeRefreshTokenRepository:
     def revoke(self, token_id: str) -> bool:
         if token_id not in self._tokens:
             return False
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        self._tokens[token_id].revoked_at = datetime.now(timezone.utc)
+        self._tokens[token_id].revoked_at = datetime.now(UTC)
         return True
 
     def revoke_all_for_account(self, account_number: str) -> int:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         count = 0
         for t in self._tokens.values():
             if t.account_number == account_number and t.revoked_at is None:
-                t.revoked_at = datetime.now(timezone.utc)
+                t.revoked_at = datetime.now(UTC)
                 count += 1
         return count
 
     def clean_expired(self) -> int:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired = [id for id, t in self._tokens.items() if t.expires_at < now]
         for id in expired:
             del self._tokens[id]

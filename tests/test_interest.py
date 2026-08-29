@@ -1,9 +1,9 @@
-"""Tests for UNION-BANK- interest calculation module.
+"""
+Tests for UNION-BANK- interest calculation module.
 
 Tests pure domain functions for interest computation.
 """
 
-import pytest
 
 from unionbank.domain.interest import calculate_monthly_interest
 

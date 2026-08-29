@@ -21,7 +21,7 @@ Design constraints:
 from __future__ import annotations
 
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 
 #  Intent Recognition
@@ -339,7 +339,7 @@ def extract_amount_range(
 
 def compute_time_window(intents: list[dict]) -> tuple[datetime | None, datetime | None]:
     """Compute from_date/to_date from matched time-window intents."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     from_date, to_date = None, None
 
     for intent in intents:
@@ -450,11 +450,11 @@ def execute_query(
         # Date filter
         txn_ts = txn.timestamp
         if txn_ts and from_date:
-            txn_dt = txn_ts.replace(tzinfo=timezone.utc) if txn_ts.tzinfo is None else txn_ts
+            txn_dt = txn_ts.replace(tzinfo=UTC) if txn_ts.tzinfo is None else txn_ts
             if txn_dt < from_date:
                 continue
         if txn_ts and to_date:
-            txn_dt = txn_ts.replace(tzinfo=timezone.utc) if txn_ts.tzinfo is None else txn_ts
+            txn_dt = txn_ts.replace(tzinfo=UTC) if txn_ts.tzinfo is None else txn_ts
             if txn_dt > to_date:
                 continue
 

@@ -17,7 +17,7 @@ Functions
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal
 
 from unionbank.infrastructure.container import get_container
@@ -47,7 +47,7 @@ Base = ModelBase
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 # ─

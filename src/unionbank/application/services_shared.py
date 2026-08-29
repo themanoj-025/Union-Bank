@@ -7,54 +7,15 @@ Extracted from services.py for focused maintenance.
 
 from __future__ import annotations
 
-import json
 import threading
 from collections import defaultdict
 from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime, timedelta
-from decimal import Decimal
 
 import pybreaker
 
 from unionbank.config import settings
-from unionbank.domain.clock import utcnow as _utcnow
-from unionbank.domain.entities import (
-    Account,
-    IdempotencyRecord,
-    Loan,
-    LoanStatus,
-    LoanType,
-    SavingsGoal,
-    ServiceResult,
-    Transaction,
-    TransactionType,
-    TransferResult,
-)
-from unionbank.domain.interest import calculate_monthly_interest
-from unionbank.utils.formatting import (
-    calculate_emi,
-    fmt_currency,
-    generate_account_number,
-    generate_goal_id,
-    generate_loan_id,
-    generate_transaction_id,
-)
-from unionbank.utils.hashing import hash_password, verify_password
 
-from .interfaces import (
-    AccountRepositoryProtocol,
-    AdminRepositoryProtocol,
-    AuditLogRepositoryProtocol,
-    IdempotencyRepositoryProtocol,
-    KeysetPage,
-    LoanRepositoryProtocol,
-    LoginAttemptRepositoryProtocol,
-    NotificationServiceProtocol,
-    SavingsGoalRepositoryProtocol,
-    TokenVersionRepositoryProtocol,
-    TransactionRepositoryProtocol,
-)
 
 # ── Circuit breaker for notifications ──
 NOTIFICATION_BREAKER = pybreaker.CircuitBreaker(

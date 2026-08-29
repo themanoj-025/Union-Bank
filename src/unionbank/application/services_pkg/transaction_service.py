@@ -19,9 +19,7 @@ from decimal import Decimal
 from unionbank.config import settings
 from unionbank.domain.clock import utcnow as _utcnow
 from unionbank.domain.entities import (
-    Account,
     IdempotencyRecord,
-    SavingsGoal,
     ServiceResult,
     Transaction,
     TransactionType,
@@ -30,11 +28,8 @@ from unionbank.domain.entities import (
 from unionbank.domain.interest import calculate_monthly_interest
 from unionbank.utils.formatting import (
     fmt_currency,
-    generate_account_number,
-    generate_goal_id,
     generate_transaction_id,
 )
-from unionbank.utils.hashing import hash_password, verify_password
 
 try:
     from sqlalchemy.exc import SQLAlchemyError

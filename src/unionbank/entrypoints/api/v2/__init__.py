@@ -35,6 +35,6 @@ router.include_router(misc_router)
 
 __all__ = [
     "router",
-    "v2_http_exception_handler",
     "v2_generic_exception_handler",
+    "v2_http_exception_handler",
 ]

@@ -1,20 +1,17 @@
-"""Tests for UNION-BANK- domain entities.
+"""
+Tests for UNION-BANK- domain entities.
 
 Tests entity creation, enum values, and dataclass behavior.
 """
 
-import pytest
 from datetime import datetime
 from decimal import Decimal
 
 from unionbank.domain.entities import (
     Account,
     AccountStatus,
-    AdminUser,
     LoginAttempt,
     Notification,
-    NotificationPreference,
-    RefreshToken,
     SavingsGoal,
     Transaction,
     TransactionType,

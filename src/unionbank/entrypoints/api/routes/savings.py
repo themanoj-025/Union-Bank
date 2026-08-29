@@ -1,4 +1,5 @@
-"""Savings goal routes: list, create, update, contribute, delete.
+"""
+Savings goal routes: list, create, update, contribute, delete.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """

@@ -9,7 +9,7 @@ code should import ``utcnow`` from here rather than defining their own.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 
 def utcnow() -> datetime:
@@ -27,4 +27,4 @@ def utcnow() -> datetime:
         A timezone-aware ``datetime`` set to the current UTC time.
 
     """
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
