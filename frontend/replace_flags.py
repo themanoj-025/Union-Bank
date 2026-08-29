@@ -9,7 +9,7 @@ def get_iso_from_emoji(emoji):
     return "".join(chr(ord(c) - 127397) for c in emoji).lower()
 
 
-with open("c:/UI-UX/union-bank-wise-reskin/src/pages/Home.jsx", "r", encoding="utf-8") as f:
+with open("c:/UI-UX/union-bank-wise-reskin/src/pages/Home.jsx", encoding="utf-8") as f:
     content = f.read()
 
 

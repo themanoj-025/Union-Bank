@@ -7,7 +7,7 @@ and edge case independently — without needing a database connection (uses fake
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 
 # Import pure functions from analyzr_core (no DB bootstrap needed)
@@ -259,7 +259,7 @@ class TestTimeWindow:
         from_date, to_date = compute_time_window(intents)
         assert from_date is not None
         assert to_date is None  # today has no to_date bound
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         assert from_date.day == now.day
         assert from_date.month == now.month
         assert from_date.year == now.year
@@ -271,7 +271,7 @@ class TestTimeWindow:
         from_date, to_date = compute_time_window(intents)
         assert from_date is not None
         assert to_date is not None
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         yesterday = now - timedelta(days=1)
         assert from_date.day == yesterday.day
         assert from_date.hour == 0
@@ -299,7 +299,7 @@ class TestTimeWindow:
         from_date, to_date = compute_time_window(intents)
         assert from_date is not None
         assert to_date is None
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expected = now - timedelta(days=90)
         assert abs((from_date - expected).total_seconds()) < 1  # Within 1 second
 

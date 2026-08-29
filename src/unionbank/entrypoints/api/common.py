@@ -11,7 +11,7 @@ api/common.py    → no dependency on api.py or api/v2.py
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, UTC
 
 import jwt
 from fastapi import Depends, HTTPException, status
@@ -82,7 +82,7 @@ def create_token(subject: str, role: str, token_type: str = "access") -> str:
 
     Access tokens include a token_version claim for invalidation on password change.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     if token_type == "refresh":
         expiry = now + timedelta(days=JWT_REFRESH_TOKEN_EXPIRE_DAYS)
     else:
@@ -139,7 +139,7 @@ def create_token_pair(subject: str, role: str) -> dict:
     refresh_token_id = _generate_refresh_token_id()
     refresh_token = create_token(subject + ":" + refresh_token_id, role, token_type="refresh")
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     expires_at = now + timedelta(days=JWT_REFRESH_TOKEN_EXPIRE_DAYS)
 
     # Persist refresh token in the DB — store HASHED token_id, not plaintext

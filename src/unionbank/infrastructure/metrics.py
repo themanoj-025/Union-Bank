@@ -100,7 +100,7 @@ def _normalize_endpoint(path: str) -> str:
 
     """
     # Remove query string
-    path = path.split("?")[0].rstrip("/")
+    path = path.split("?", maxsplit=1)[0].rstrip("/")
 
     # Replace UUID-like / hex segments with placeholder
     parts = path.split("/")

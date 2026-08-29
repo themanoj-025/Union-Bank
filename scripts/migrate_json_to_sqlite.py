@@ -11,7 +11,7 @@ Usage:
 import os
 import secrets
 import time
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from decimal import Decimal
 
 # Set testing env vars so Config doesn't require real secrets
@@ -46,9 +46,9 @@ def _parse_ts(ts_str: str) -> datetime:
     """Parse a timestamp string into a timezone-aware datetime."""
     try:
         dt = datetime.strptime(ts_str, "%Y-%m-%d %H:%M:%S")
-        return dt.replace(tzinfo=timezone.utc)
+        return dt.replace(tzinfo=UTC)
     except (ValueError, TypeError):
-        return datetime.now(timezone.utc)
+        return datetime.now(UTC)
 
 
 def migrate_accounts() -> int:

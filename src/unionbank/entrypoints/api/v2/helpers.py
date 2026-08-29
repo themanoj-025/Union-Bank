@@ -6,12 +6,12 @@ All route modules import from here instead of duplicating these utilities.
 
 from __future__ import annotations
 
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, Request
 
 from unionbank.entrypoints.api.models import ApiResponse
 
 
-def _get_container() -> "Container":
+def _get_container() -> Container:
     """Lazy-import the DI container."""
     from unionbank.infrastructure.container import get_container
 

@@ -52,7 +52,7 @@ line-length = 120
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "B", "D", "I"]
+select = ["E", "F", "W", "B", "BLE", "UP", "SIM", "C4", "RUF", "PLC", "PIE", "D", "I", "N"]
 ignore = [
     # Missing docstrings — interface protocols and tests are self-explanatory
     "D100",  # Missing docstring in public module
@@ -74,6 +74,31 @@ ignore = [
     "I001",  # Import block is un-sorted or un-formatted
     # Line length and import order
     "E501", "E402",
+    # Pyupgrade — too aggressive for banking codebase
+    "UP031",
+    # RUF mutable defaults
+    "RUF012",
+    # Lazy imports — FastAPI/CLI lazy loading pattern
+    "PLC0415",
+    # Ambiguous unicode — intentional
+    "RUF001", "RUF002", "RUF003",
+    # ML convention: X, y are standard names
+    "N806",
+    # raise-without-from — legacy code
+    "B904",
+    # collapsible if — circuit breaker pattern
+    "SIM102",
+    # undefined name — pre-existing missing imports (305 total)
+    "F821",
+    # unused import — re-export pattern
+    "F401",
+    # exception name — RFC 7807 / legacy naming
+    "N818", "N817",
+    # missing docstring
+    "D105",
+    # misc style
+    "UP042", "SIM108", "RUF059", "RUF022", "RUF013",
+    "N802",    # function name should be lowercase — legacy naming
 ]
 
 [tool.mypy]

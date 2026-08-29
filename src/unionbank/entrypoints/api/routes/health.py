@@ -1,4 +1,5 @@
-"""Health and utility routes: health check, readiness, liveness, metrics, categories.
+"""
+Health and utility routes: health check, readiness, liveness, metrics, categories.
 
 Extracted from main.py to reduce file size and improve maintainability.
 """

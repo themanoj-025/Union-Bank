@@ -1,12 +1,10 @@
-"""Tests for UNION-BANK- formatting and ID generation module.
+"""
+Tests for UNION-BANK- formatting and ID generation module.
 
 Tests currency formatting, timestamp helpers, and ID generators.
 """
 
-import re
-import string
 
-import pytest
 
 from unionbank.utils.formatting import (
     fmt_currency,
@@ -31,7 +29,7 @@ class TestFmtCurrency:
     def test_large_amount(self) -> None:
         result = fmt_currency(1000000.0)
         assert "₹" in result
-        assert "1,000,000.00" == result[1:]
+        assert result[1:] == "1,000,000.00"
 
     def test_negative_amount(self) -> None:
         result = fmt_currency(-500.0)
