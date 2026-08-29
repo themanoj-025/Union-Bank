@@ -11,7 +11,7 @@ from fastapi import HTTPException, Request, status
 from unionbank.entrypoints.api.models import ApiResponse
 
 
-def _get_container():  # noqa: ANN202 — lazy import avoids circular deps
+def _get_container() -> "Container":
     """Lazy-import the DI container."""
     from unionbank.infrastructure.container import get_container
 
