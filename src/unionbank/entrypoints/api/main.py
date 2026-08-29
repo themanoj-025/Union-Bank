@@ -311,14 +311,6 @@ app.include_router(totp_router)
 if __name__ == "__main__":
     import uvicorn
 
-    print("=" * 50)
-    print("  Union Bank API - FastAPI")
-    print("=" * 50)
-    print("  Docs   : http://localhost:8000/docs")
-    print("  OpenAPI: http://localhost:8000/openapi.json")
-    print("  Metrics: http://localhost:8000/metrics")
-    print("  Health : http://localhost:8000/api/health")
-    print("  Ctrl+C to stop")
-    print("=" * 50)
+    logger.info("Union Bank API starting — docs=/docs openapi=/openapi.json metrics=/metrics health=/api/health")
 
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True, access_log=True)
