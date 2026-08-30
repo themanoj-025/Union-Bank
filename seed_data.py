@@ -12,7 +12,6 @@ Usage:
 import os
 import random
 import secrets
-import string
 import sys
 import time
 from datetime import datetime, timedelta
@@ -26,490 +25,41 @@ os.environ.setdefault("FLASK_SECRET_KEY", secrets.token_hex(24))
 from unionbank.config import settings
 from unionbank.utils.hashing import hash_password
 
+from seed_helpers import (
+    ADDRESSES,
+    BRANCH_CODES,
+    FIRST_NAMES,
+    LAST_NAMES,
+    TRANSACTION_DESCRIPTIONS,
+    TRANSACTION_TYPES,
+    TXN_WEIGHTS,
+    TYPE_CATEGORY_MAP,
+    DEPOSIT_DESCRIPTIONS,
+    TRANSFER_IN_DESCRIPTIONS,
+    TRANSFER_OUT_DESCRIPTIONS,
+    WITHDRAW_DESCRIPTIONS,
+    random_date,
+    generate_email,
+    generate_phone,
+    generate_txn_id,
+)
+
 NUM_ACCOUNTS = 5000
 MIN_TXNS_PER_ACCOUNT = 8
 MAX_TXNS_PER_ACCOUNT = 20
-DEFAULT_PASSWORD = os.environ.get("UNION_BANK_SEED_PASSWORD", "")
-if not DEFAULT_PASSWORD:
-    raise RuntimeError(
-        "UNION_BANK_SEED_PASSWORD env var is required for seed data. "
-        "Set it in your environment or .env file."
-    )
-START_DATE = datetime(2025, 8, 1)  # 10 months of history
-END_DATE = datetime(2026, 6, 2)
-
-TRANSACTION_CATEGORIES = settings.TRANSACTION_CATEGORIES
-
-
-FIRST_NAMES_MALE = [
-    "Aarav",
-    "Arjun",
-    "Vivaan",
-    "Aditya",
-    "Vihaan",
-    "Arush",
-    "Ayaan",
-    "Ishaan",
-    "Shaurya",
-    "Dhruv",
-    "Reyansh",
-    "Krishna",
-    "Yash",
-    "Kabir",
-    "Rudra",
-    "Om",
-    "Ranveer",
-    "Shiv",
-    "Aryan",
-    "Rohan",
-    "Abhimanyu",
-    "Akhil",
-    "Aniket",
-    "Bhavesh",
-    "Chirag",
-    "Darshan",
-    "Devendra",
-    "Dhruv",
-    "Gaurav",
-    "Harsh",
-    "Hitesh",
-    "Ishaan",
-    "Jatin",
-    "Karan",
-    "Kunal",
-    "Lalit",
-    "Manav",
-    "Manish",
-    "Manoj",
-    "Mitesh",
-    "Naman",
-    "Nikhil",
-    "Nitin",
-    "Omkar",
-    "Pranav",
-    "Prashant",
-    "Rahul",
-    "Rajesh",
-    "Rakesh",
-    "Ravi",
-    "Rohit",
-    "Sachin",
-    "Sameer",
-    "Sandeep",
-    "Sanjay",
-    "Sarthak",
-    "Shubham",
-    "Siddharth",
-    "Soham",
-    "Sumit",
-    "Suraj",
-    "Tanmay",
-    "Uday",
-    "Varun",
-    "Vikram",
-    "Vishal",
-    "Yashwant",
-    "Akshay",
-    "Amit",
-    "Anand",
-    "Arun",
-    "Ashok",
-    "Deepak",
-    "Ganesh",
-    "Hemant",
-    "Jayesh",
-    "Kiran",
-    "Mahesh",
-    "Mohan",
-    "Naresh",
-    "Navneet",
-    "Pankaj",
-    "Prakash",
-    "Rajendra",
-    "Ramesh",
-    "Santosh",
-    "Satyam",
-    "Shekhar",
-    "Suresh",
-    "Tushar",
-    "Umesh",
-    "Vijay",
-    "Vinay",
-    "Yogesh",
-    "Akash",
-    "Aman",
-    "Anuj",
-    "Ayush",
-    "Chetan",
-    "Dinesh",
-    "Girish",
-    "Harish",
-    "Jagdish",
-    "Lokesh",
-    "Mukesh",
-    "Naveen",
-    "Parag",
-    "Pushkar",
-    "Rajeev",
-    "Ranjan",
-    "Sagar",
-    "Shankar",
-    "Shyam",
-    "Sudhir",
-    "Swapnil",
-    "Trilok",
-    "Vikas",
-    "Vinod",
-    "Wasim",
-]
-
-FIRST_NAMES_FEMALE = [
-    "Aadhya",
-    "Aanya",
-    "Aarushi",
-    "Aditi",
-    "Ananya",
-    "Anika",
-    "Anjali",
-    "Anushka",
-    "Avani",
-    "Bhavna",
-    "Charvi",
-    "Devika",
-    "Disha",
-    "Divya",
-    "Esha",
-    "Gargi",
-    "Gauri",
-    "Geeta",
-    "Isha",
-    "Ishita",
-    "Jhanvi",
-    "Kajal",
-    "Kavya",
-    "Khushi",
-    "Kiara",
-    "Kriti",
-    "Lavanya",
-    "Madhuri",
-    "Maya",
-    "Meera",
-    "Neha",
-    "Nidhi",
-    "Nisha",
-    "Pallavi",
-    "Pooja",
-    "Prachi",
-    "Pragya",
-    "Prerna",
-    "Priya",
-    "Priyanka",
-    "Radhika",
-    "Ragini",
-    "Ritika",
-    "Riya",
-    "Roshni",
-    "Rutvi",
-    "Sakshi",
-    "Sana",
-    "Sanskriti",
-    "Sara",
-    "Seema",
-    "Shikha",
-    "Shruti",
-    "Simran",
-    "Sneha",
-    "Sonia",
-    "Srishti",
-    "Suman",
-    "Sunita",
-    "Swati",
-    "Tanvi",
-    "Tanya",
-    "Trisha",
-    "Urvi",
-    "Vaishali",
-    "Vandana",
-    "Varsha",
-    "Vidya",
-    "Yashvi",
-    "Zara",
-    "Aishwarya",
-    "Ankita",
-    "Asha",
-    "Bhavika",
-    "Chitra",
-    "Deepika",
-    "Ekta",
-    "Garima",
-    "Hinal",
-    "Jasmine",
-    "Jyoti",
-    "Komal",
-    "Laxmi",
-    "Manisha",
-    "Mitali",
-    "Namrata",
-    "Neelam",
-    "Nikita",
-    "Parul",
-    "Payal",
-    "Rashmi",
-    "Reema",
-    "Reena",
-    "Reshma",
-    "Sangeeta",
-    "Sarita",
-    "Shalini",
-    "Shivani",
-    "Smita",
-    "Sonal",
-    "Suhani",
-    "Tara",
-    "Uma",
-]
-
-LAST_NAMES = [
-    "Acharya",
-    "Agarwal",
-    "Ahuja",
-    "Arora",
-    "Bajaj",
-    "Bakshi",
-    "Bansal",
-    "Bedi",
-    "Bhat",
-    "Bhatt",
-    "Bhattacharya",
-    "Bhonsle",
-    "Bose",
-    "Chakraborty",
-    "Chand",
-    "Chandra",
-    "Chatterjee",
-    "Chaudhary",
-    "Chauhan",
-    "Chopra",
-    "Datta",
-    "Dave",
-    "Desai",
-    "Deshmukh",
-    "Deshpande",
-    "Devi",
-    "Dhawan",
-    "Dixit",
-    "Dubey",
-    "Dutta",
-    "Gandhi",
-    "Ghosh",
-    "Gill",
-    "Goel",
-    "Goswami",
-    "Goyal",
-    "Grewal",
-    "Guha",
-    "Gupta",
-    "Hegde",
-    "Iyer",
-    "Jain",
-    "Jaiswal",
-    "Jha",
-    "Joshi",
-    "Kadam",
-    "Kakkar",
-    "Kale",
-    "Kamat",
-    "Kapoor",
-    "Kar",
-    "Karnik",
-    "Kashyap",
-    "Kaul",
-    "Kaur",
-    "Khanna",
-    "Khatri",
-    "Kohli",
-    "Krishnan",
-    "Kulkarni",
-    "Kumar",
-    "Lal",
-    "Malhotra",
-    "Malik",
-    "Mane",
-    "Mathur",
-    "Mehta",
-    "Menon",
-    "Mishra",
-    "Mistry",
-    "Modi",
-    "Mohanty",
-    "Mukherjee",
-    "Naidu",
-    "Nair",
-    "Nambiar",
-    "Narang",
-    "Nayak",
-    "Nehru",
-    "Oberoi",
-    "Padmanabhan",
-    "Pal",
-    "Pandey",
-    "Pandit",
-    "Parekh",
-    "Parikh",
-    "Patel",
-    "Pathak",
-    "Patil",
-    "Pillai",
-    "Pradhan",
-    "Prakash",
-    "Prasad",
-    "Purohit",
-    "Raghavan",
-    "Rajan",
-    "Rajput",
-    "Raman",
-    "Ramaswamy",
-    "Rana",
-    "Ranganathan",
-    "Rao",
-    "Rathore",
-    "Rattan",
-    "Rawat",
-    "Reddy",
-    "Roy",
-    "Sachdev",
-    "Sahai",
-    "Sahni",
-    "Sahoo",
-    "Saini",
-    "Sanghvi",
-    "Saraswat",
-    "Sarkar",
-    "Saxena",
-    "Sen",
-    "Sethi",
-    "Shah",
-    "Shankar",
-    "Sharma",
-    "Shenoy",
-    "Shetty",
-    "Shinde",
-    "Shukla",
-    "Singh",
-    "Sinha",
-    "Soni",
-    "Sood",
-    "Srinivasan",
-    "Subramanian",
-    "Suri",
-    "Swaminathan",
-    "Talwar",
-    "Tandon",
-    "Taneja",
-    "Tewari",
-    "Thakur",
-    "Thapar",
-    "Tiwari",
-    "Trivedi",
-    "Upadhyay",
-    "Varma",
-    "Venkatesh",
-    "Verma",
-    "Vyas",
-    "Wagh",
-    "Wankhede",
-    "Yadav",
-]
-
+DEFAULT_PASSWORD = "Password@123"
+START_DATE = datetime(2022, 1, 1)
+END_DATE = datetime(2024, 12, 31)
 GENDERS = ["Male", "Female"]
 
-TRANSACTION_TYPES = ["DEPOSIT", "WITHDRAW", "TRANSFER_OUT", "TRANSFER_IN"]
-TXN_WEIGHTS = [0.40, 0.30, 0.15, 0.15]
-
-TYPE_CATEGORY_MAP = {
-    "DEPOSIT": ["Salary", "Savings", "Investment", "General"],
-    "WITHDRAW": [
-        "Food & Dining",
-        "Transport",
-        "Shopping",
-        "Bills & Utilities",
-        "Entertainment",
-        "Health",
-        "Education",
-        "Rent",
-        "Other",
-    ],
-    "TRANSFER_OUT": ["General", "Investment", "Savings"],
-    "TRANSFER_IN": ["General", "Investment", "Savings"],
-}
-
-DEPOSIT_DESCRIPTIONS = [
-    "Salary credit",
-    "Cash deposit",
-    "Cheque deposit",
-    "Online transfer received",
-    "Refund credit",
-    "Bonus credited",
-    "Interest credited",
-    "Dividend payment",
-]
-WITHDRAW_DESCRIPTIONS = [
-    "ATM withdrawal",
-    "POS purchase",
-    "Online payment",
-    "UPI payment",
-    "Bill payment",
-    "Shopping payment",
-    "Restaurant payment",
-    "Fuel purchase",
-]
-TRANSFER_OUT_DESCRIPTIONS = [
-    "Fund transfer",
-    "Money sent to friend",
-    "Family remittance",
-    "Investment transfer",
-]
-TRANSFER_IN_DESCRIPTIONS = [
-    "Funds received",
-    "Money from friend",
-    "Family remittance",
-    "Transfer received",
-]
-
-
-def random_date(start: datetime, end: datetime) -> datetime:
-    delta = end - start
-    random_seconds = random.randint(0, int(delta.total_seconds()))
-    return start + timedelta(seconds=random_seconds)
-
-
-def generate_phone() -> str:
-    return str(random.randint(6, 9)) + "".join([str(random.randint(0, 9)) for _ in range(9)])
-
-
-def generate_email(name: str) -> str:
-    name_clean = name.lower().replace(" ", ".")
-    domains = [
-        "gmail.com",
-        "yahoo.com",
-        "outlook.com",
-        "rediffmail.com",
-        "hotmail.com",
-        "email.com",
-    ]
-    domain = random.choice(domains)
-    suffixes = ["", str(random.randint(1, 999)), str(random.randint(1990, 2005))]
-    suffix = random.choice(suffixes)
-    if suffix:
-        return f"{name_clean}{suffix}@{domain}"
-    return f"{name_clean}@{domain}"
-
-
-_TXN_CHARS = string.ascii_uppercase + string.digits
-
-
-def generate_txn_id() -> str:
-    return "TXN-" + "".join(random.choices(_TXN_CHARS, k=8))
+# Split names by gender for realistic generation
+FIRST_NAMES_MALE = [n for n in FIRST_NAMES if n not in (
+    "Ananya", "Diya", "Isha", "Priya", "Neha", "Anjali", "Pooja",
+    "Kavya", "Meera", "Riya", "Myra", "Saanvi", "Aadhya", "Aisha",
+    "Nisha", "Sunita", "Geeta", "Suman", "Rekha", "Usha", "Kamla",
+    "Savita", "Aarti", "Kiran", "Leela", "Lata",
+)]
+FIRST_NAMES_FEMALE = [n for n in FIRST_NAMES if n not in FIRST_NAMES_MALE]
 
 
 def seed_data(fast_mode: bool = True) -> None:
@@ -561,11 +111,9 @@ def seed_data(fast_mode: bool = True) -> None:
         hashed_password = None
 
     session = get_session()
-    # Use repos for transaction creation (cleaner), use raw session for accounts
-    # to avoid the autoflush=False identity-map issue with repo.update()
     txn_repo = SqlAlchemyTransactionRepository(session)
 
-    used_account_numbers = set()
+    used_account_numbers: set[str] = set()
     start_time = time.time()
 
     for i in range(NUM_ACCOUNTS):
@@ -602,8 +150,6 @@ def seed_data(fast_mode: bool = True) -> None:
             updated_at=created_date,
         )
 
-        # Map to ORM model and add to session directly (not via repo)
-        # This gives us a reference to the model to update balance later
         data = map_account_to_model(account)
         account_model = AccountModel(**data)
         session.add(account_model)
@@ -651,8 +197,6 @@ def seed_data(fast_mode: bool = True) -> None:
             )
             txn_repo.create(txn)
 
-        # Update the account model's balance directly (avoids repo.update()
-        # which would create a duplicate INSERT with autoflush=False)
         account_model.balance = running_balance
 
         if (i + 1) % 500 == 0 or i == 0:

@@ -1,119 +1,35 @@
-"""
-tests/fakes.py  –  In-memory repository fakes for unit testing.
-
-Each fake implements the corresponding Protocol from application/interfaces.py
-using plain dicts/lists instead of SQLite. This makes unit tests:
-- Blazingly fast (no I/O, no DB setup)
-- Deterministic (no shared state between tests when fresh instance created)
-- Easy to debug (inspectable in-memory state)
-
-Simulated DB Failures:
-    Fakes can optionally simulate database errors to test error handling:
-        fake.simulate_duplicate_key = True   # raises on duplicate create()
-        fake.simulate_fk_violation = True    # raises on FK constraint
-        fake.simulate_race_condition = True  # fails atomic operations randomly
-        fake.simulate_timeout = True         # hangs the commit() call
-
-    Use these in tests that verify graceful handling of database errors.
-    Fakes default to realistic behavior (no errors).
-"""
+"""In-memory repository fakes for unit testing — repository implementations."""
 
 from __future__ import annotations
 
+import random
+import time
 from datetime import datetime, timedelta, UTC
 from decimal import Decimal
+from typing import Any
 
 from unionbank.application.interfaces import KeysetPage
 from unionbank.domain.entities import (
     Account,
     AdminUser,
+    AuditLog,
     LoginAttempt,
     Notification,
     NotificationPreference,
     RefreshToken,
     SavingsGoal,
+    TokenVersion,
     Transaction,
 )
 
-# ─
-
-
-class SimulatedDuplicateKeyError(Exception):
-    """
-    Raised when a fake repository simulates a unique constraint violation.
-
-    The real DB raises IntegrityError on duplicate account_number or email.
-    This fake mirrors that behavior when simulate_duplicate_key is True.
-
-    Usage:
-        fake.simulate_duplicate_key = True
-        with pytest.raises(SimulatedDuplicateKeyError):
-            repo.create(account)
-    """
-
-
-class SimulatedForeignKeyViolation(Exception):
-    """
-    Raised when a fake repository simulates a foreign key violation.
-
-    The real DB raises IntegrityError when a referenced row doesn't exist.
-    Usage:
-        fake.simulate_fk_violation = True
-        with pytest.raises(SimulatedForeignKeyViolation):
-            repo.create(txn_with_bad_account)
-    """
-
-
-class SimulatedRaceConditionError(Exception):
-    """
-    Raised when a fake repository simulates a concurrent-write race.
-
-    The real DB raises OperationalError (database is locked) in WAL mode
-    under high concurrency. This fake mirrors that behavior for testing
-    retry logic.
-
-    Usage:
-        fake.simulate_race_condition = True
-        with pytest.raises(SimulatedRaceConditionError):
-            repo.transfer_money(...)
-    """
-
-
-class SimulatedDatabaseTimeout(Exception):
-    """
-    Raised when a fake repository simulates a database timeout.
-
-    Usage:
-        fake.simulate_timeout = True
-        with pytest.raises(SimulatedDatabaseTimeout):
-            repo.commit()
-    """
-
-
-def _utcnow() -> datetime:
-    return datetime.now(UTC)
-
-
-#  Fake Account Repository
-
-
-class _FakeSession:
-    """
-    Minimal fake SQLAlchemy session stub for fake repositories.
-
-    Provides a no-op begin_nested() context manager so services that use
-    savepoints (e.g. atomic transfer) work transparently with fakes without
-    requiring a real SQLAlchemy session.
-    """
-
-    def begin_nested(self):
-        return self
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
-        return False  # Do not suppress exceptions
+from tests.fakes import (
+    SimulatedDuplicateKeyError,
+    SimulatedForeignKeyViolation,
+    SimulatedRaceConditionError,
+    SimulatedDatabaseTimeout,
+    _FakeSession,
+    _utcnow,
+)
 
 
 class FakeAccountRepository:
@@ -724,17 +640,3 @@ class FakeAuditLogRepository:
 
     def rollback(self) -> None:
         pass
-
-# Re-export repository fakes from the split module
-from tests.fakes_repositories import (  # noqa: F401
-    FakeAccountRepository,
-    FakeAdminRepository,
-    FakeAuditLogRepository,
-    FakeLoginAttemptRepository,
-    FakeNotificationPreferenceRepository,
-    FakeNotificationRepository,
-    FakeRefreshTokenRepository,
-    FakeSavingsGoalRepository,
-    FakeTokenVersionRepository,
-    FakeTransactionRepository,
-)
