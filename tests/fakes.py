@@ -724,3 +724,17 @@ class FakeAuditLogRepository:
 
     def rollback(self) -> None:
         pass
+
+# Re-export repository fakes from the split module
+from tests.fakes_repositories import (  # noqa: F401
+    FakeAccountRepository,
+    FakeAdminRepository,
+    FakeAuditLogRepository,
+    FakeLoginAttemptRepository,
+    FakeNotificationPreferenceRepository,
+    FakeNotificationRepository,
+    FakeRefreshTokenRepository,
+    FakeSavingsGoalRepository,
+    FakeTokenVersionRepository,
+    FakeTransactionRepository,
+)
