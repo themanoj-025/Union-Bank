@@ -107,10 +107,15 @@ python_version = "3.11"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+addopts = "-m 'not slow'"
 testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_mode = "auto"
 addopts = "-v --tb=short"
+
+markers = [
+    "slow: integration tests (database, HTTP, ML models) — excluded from default run; use pytest -m slow"
+]
 
 [tool.coverage.report]
 show_missing = true
