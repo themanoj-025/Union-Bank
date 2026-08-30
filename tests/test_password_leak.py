@@ -14,6 +14,8 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+
+pytestmark = pytest.mark.slow
 # Resolve the path to api/common.py (now lives in src/unionbank/entrypoints/api/)
 _COMMON_PY_PATH = (
     Path(__file__).resolve().parent.parent
@@ -137,6 +139,7 @@ class TestNoPasswordLeak:
     def test_password_not_in_profile_response(self):
         """Verify ProfileData model doesn't contain any password fields."""
         from unionbank.entrypoints.api.models import ProfileData
+
 
         fields = ProfileData.model_fields
         assert "password" not in fields, (
