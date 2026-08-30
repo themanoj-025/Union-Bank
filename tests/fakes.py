@@ -112,7 +112,7 @@ class _FakeSession:
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> bool:
         return False  # Do not suppress exceptions
 
 
@@ -637,7 +637,7 @@ class FakeRefreshTokenRepository:
     def get(self, token_id: str):
         return self._tokens.get(token_id)
 
-    def get_by_account(self, account_number: str):
+    def get_by_account(self, account_number: str) -> list[object]:
         return [t for t in self._tokens.values() if t.account_number == account_number]
 
     def create(self, token: RefreshToken):
@@ -671,10 +671,10 @@ class FakeRefreshTokenRepository:
             del self._tokens[id]
         return len(expired)
 
-    def commit(self):
+    def commit(self) -> None:
         pass
 
-    def rollback(self):
+    def rollback(self) -> None:
         pass
 
 

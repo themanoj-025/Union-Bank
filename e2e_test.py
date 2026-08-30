@@ -19,7 +19,7 @@ import anyio
 import httpx
 
 
-def _ensure_admin_exists():
+def _ensure_admin_exists() -> None:
     """Create the default admin user (simon/simon123) if it doesn't exist."""
     from unionbank.infrastructure.database import init_db
 
@@ -43,7 +43,7 @@ def _ensure_admin_exists():
         print("  [~] Admin user simon already exists")
 
 
-async def run_tests():
+async def run_tests() -> bool:
     from unionbank.entrypoints.api.main import app
 
     # Ensure default admin user exists before testing admin login

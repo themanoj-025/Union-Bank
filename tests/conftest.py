@@ -26,7 +26,7 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def _unset_env_vars_for_safety():
+def _unset_env_vars_for_safety() -> None:
     """
     Prevent accidental use of real env secrets during tests.
 
@@ -39,7 +39,7 @@ def _unset_env_vars_for_safety():
 
 
 @pytest.fixture(autouse=True)
-def _clean_postgres_db():
+def _clean_postgres_db() -> None:
     """Clean Postgres database between tests."""
     if "postgres" in os.environ.get("DATABASE_URL", ""):
         from unionbank.infrastructure.database import ModelBase, get_engine
@@ -81,7 +81,7 @@ def sample_account_data() -> dict:
 
 
 @pytest.fixture
-def c():
+def c() -> None:
     """
     Get a fresh DI container with a clean SQLite database.
 

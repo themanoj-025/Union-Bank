@@ -26,7 +26,7 @@ pytestmark = pytest.mark.slow
 
 
 @pytest.fixture(autouse=True)
-def _fresh_db():
+def _fresh_db() -> None:
     """
     Set up a fresh SQLite database for each test.
 
@@ -57,7 +57,7 @@ def c():
 
 
 @pytest.fixture
-def client():
+def client() -> None:
     """FastAPI TestClient connected to the real application."""
     # Import api after container is reset so init_db uses the test DB
     from unionbank.entrypoints.api.main import app
@@ -205,7 +205,7 @@ def admin_token(client: TestClient) -> dict:
 
 
 class TestHealthAndUtilities:
-    def test_health_check(self, client):
+    def test_health_check(self, client) -> None:
         """GET /api/health should return healthy status."""
         resp = client.get("/api/health")
         assert resp.status_code == 200
@@ -213,7 +213,7 @@ class TestHealthAndUtilities:
         assert data["status"] == "healthy"
         assert data["service"] == "Union Bank API"
 
-    def test_categories(self, client):
+    def test_categories(self, client) -> None:
         """GET /api/categories should return the list of categories."""
         resp = client.get("/api/categories")
         assert resp.status_code == 200
@@ -229,7 +229,7 @@ class TestHealthAndUtilities:
 
 
 class TestAuth:
-    def test_register_success(self, client, sample_customer_registration):
+    def test_register_success(self, client, sample_customer_registration) -> None:
         """Register a new customer should succeed."""
         resp = client.post("/api/auth/register", json=sample_customer_registration)
         assert resp.status_code == 200
@@ -237,7 +237,7 @@ class TestAuth:
         assert "Account created successfully" in data["message"]
         assert "account_number" in data["message"] or "Account number" in data["message"]
 
-    def test_register_duplicate_email(self, client, sample_customer_registration):
+    def test_register_duplicate_email(self, client, sample_customer_registration) -> None:
         """Registering with the same email should succeed (no email uniqueness enforced)."""
         resp1 = client.post("/api/auth/register", json=sample_customer_registration)
         assert resp1.status_code == 200
@@ -248,14 +248,14 @@ class TestAuth:
         resp2 = client.post("/api/auth/register", json=data2)
         assert resp2.status_code == 200
 
-    def test_register_invalid_name(self, client, sample_customer_registration):
+    def test_register_invalid_name(self, client, sample_customer_registration) -> None:
         """Register with invalid name (too short) should fail."""
         data = sample_customer_registration.copy()
         data["name"] = "A"
         resp = client.post("/api/auth/register", json=data)
         assert resp.status_code == 400
 
-    def test_register_invalid_password(self, client, sample_customer_registration):
+    def test_register_invalid_password(self, client, sample_customer_registration) -> None:
         """
         Register with weak password should fail.
 
@@ -268,14 +268,14 @@ class TestAuth:
         resp = client.post("/api/auth/register", json=data)
         assert resp.status_code == 422
 
-    def test_register_password_mismatch(self, client, sample_customer_registration):
+    def test_register_password_mismatch(self, client, sample_customer_registration) -> None:
         """Register with non-matching passwords should fail."""
         data = sample_customer_registration.copy()
         data["confirm_password"] = "DifferentP@ss1"
         resp = client.post("/api/auth/register", json=data)
         assert resp.status_code == 400
 
-    def test_login_success(self, client, registered_customer):
+    def test_login_success(self, client, registered_customer) -> None:
         """Successful login should return JWT tokens."""
         resp = client.post(
             "/api/auth/login",
@@ -290,7 +290,7 @@ class TestAuth:
         assert data["token_type"] == "bearer"
         assert data["role"] == "customer"
 
-    def test_login_wrong_password(self, client, registered_customer):
+    def test_login_wrong_password(self, client, registered_customer) -> None:
         """Login with wrong password should fail."""
         resp = client.post(
             "/api/auth/login",
@@ -301,7 +301,7 @@ class TestAuth:
         )
         assert resp.status_code == 401
 
-    def test_login_nonexistent_account(self, client):
+    def test_login_nonexistent_account(self, client) -> None:
         """Login with an account that doesn't exist should fail."""
         resp = client.post(
             "/api/auth/login",
@@ -312,11 +312,11 @@ class TestAuth:
         )
         assert resp.status_code == 404
 
-    def test_admin_login_success(self, client, admin_token):
+    def test_admin_login_success(self, client, admin_token) -> None:
         """Admin login should succeed."""
         # admin_token fixture already verified the login
 
-    def test_admin_login_wrong_password(self, client):
+    def test_admin_login_wrong_password(self, client) -> None:
         """Admin login with wrong password should fail."""
         resp = client.post(
             "/api/auth/admin-login",
@@ -332,7 +332,7 @@ class TestAuth:
 
 
 class TestAccountProfile:
-    def test_get_profile(self, client, registered_customer):
+    def test_get_profile(self, client, registered_customer) -> None:
         """GET /api/account/profile should return the customer's profile."""
         resp = client.get("/api/account/profile", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -342,7 +342,7 @@ class TestAccountProfile:
         assert "balance" in data
         assert "status" in data
 
-    def test_get_profile_unauthorized(self, client):
+    def test_get_profile_unauthorized(self, client) -> None:
         """
         GET /api/account/profile without token should fail.
 
@@ -352,7 +352,7 @@ class TestAccountProfile:
         resp = client.get("/api/account/profile")
         assert resp.status_code == 401
 
-    def test_update_profile(self, client, registered_customer):
+    def test_update_profile(self, client, registered_customer) -> None:
         """PUT /api/account/profile should update customer details."""
         resp = client.put(
             "/api/account/profile",
@@ -367,7 +367,7 @@ class TestAccountProfile:
         assert data["name"] == "Alice Johnson Jr."
         assert data["age"] == 29
 
-    def test_change_password(self, client, registered_customer):
+    def test_change_password(self, client, registered_customer) -> None:
         """POST /api/account/change-password should update the password."""
         resp = client.post(
             "/api/account/change-password",
@@ -395,7 +395,7 @@ class TestAccountProfile:
 
 
 class TestTransactions:
-    def test_get_balance(self, client, registered_customer):
+    def test_get_balance(self, client, registered_customer) -> None:
         """GET /api/account/balance should return the current balance."""
         resp = client.get("/api/account/balance", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -403,7 +403,7 @@ class TestTransactions:
         assert data["account_number"] == registered_customer["account_number"]
         assert data["balance"] >= 1000.0  # deposited in fixture
 
-    def test_deposit(self, client, registered_customer):
+    def test_deposit(self, client, registered_customer) -> None:
         """POST /api/account/deposit should add funds."""
         resp = client.post(
             "/api/account/deposit",
@@ -421,7 +421,7 @@ class TestTransactions:
         bal_resp = client.get("/api/account/balance", headers=registered_customer["headers"])
         assert bal_resp.json()["balance"] >= 1500.0
 
-    def test_deposit_invalid_amount(self, client, registered_customer):
+    def test_deposit_invalid_amount(self, client, registered_customer) -> None:
         """
         Deposit with zero/negative amount should fail.
 
@@ -437,7 +437,7 @@ class TestTransactions:
         )
         assert resp.status_code == 422
 
-    def test_withdraw(self, client, registered_customer):
+    def test_withdraw(self, client, registered_customer) -> None:
         """POST /api/account/withdraw should deduct funds."""
         resp = client.post(
             "/api/account/withdraw",
@@ -451,7 +451,7 @@ class TestTransactions:
         data = resp.json()
         assert "withdrawn successfully" in data["message"]
 
-    def test_withdraw_insufficient(self, client, registered_customer):
+    def test_withdraw_insufficient(self, client, registered_customer) -> None:
         """Withdraw more than balance should fail."""
         resp = client.post(
             "/api/account/withdraw",
@@ -462,7 +462,7 @@ class TestTransactions:
         )
         assert resp.status_code == 400
 
-    def test_transfer(self, client, registered_customer, second_registered_customer):
+    def test_transfer(self, client, registered_customer, second_registered_customer) -> None:
         """POST /api/account/transfer should move funds between accounts."""
         resp = client.post(
             "/api/account/transfer",
@@ -489,7 +489,7 @@ class TestTransactions:
         ).json()
         assert receiver_bal["balance"] >= 300.0
 
-    def test_transfer_to_self(self, client, registered_customer):
+    def test_transfer_to_self(self, client, registered_customer) -> None:
         """Transfer to own account should fail."""
         resp = client.post(
             "/api/account/transfer",
@@ -501,7 +501,7 @@ class TestTransactions:
         )
         assert resp.status_code == 400
 
-    def test_transfer_to_nonexistent(self, client, registered_customer):
+    def test_transfer_to_nonexistent(self, client, registered_customer) -> None:
         """Transfer to nonexistent account should fail."""
         resp = client.post(
             "/api/account/transfer",
@@ -513,7 +513,7 @@ class TestTransactions:
         )
         assert resp.status_code == 404
 
-    def test_transfer_insufficient(self, client, registered_customer, second_registered_customer):
+    def test_transfer_insufficient(self, client, registered_customer, second_registered_customer) -> None:
         """Transfer more than balance should fail."""
         resp = client.post(
             "/api/account/transfer",
@@ -525,7 +525,7 @@ class TestTransactions:
         )
         assert resp.status_code == 400
 
-    def test_full_statement(self, client, registered_customer):
+    def test_full_statement(self, client, registered_customer) -> None:
         """GET /api/account/statements should return transaction history."""
         # Do some transactions first
         client.post(
@@ -543,7 +543,7 @@ class TestTransactions:
         # Newest first
         assert txns[0]["txn_id"] is not None
 
-    def test_mini_statement(self, client, registered_customer):
+    def test_mini_statement(self, client, registered_customer) -> None:
         """GET /api/account/statements/mini should return last 5."""
         resp = client.get("/api/account/statements/mini", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -551,7 +551,7 @@ class TestTransactions:
         # The fixture deposits 1000, so at minimum we have 1 transaction
         assert len(txns) <= 5
 
-    def test_export_csv(self, client, registered_customer):
+    def test_export_csv(self, client, registered_customer) -> None:
         """GET /api/account/export-csv should return CSV content."""
         resp = client.get("/api/account/export-csv", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -565,7 +565,7 @@ class TestTransactions:
 
 
 class TestSavingsGoals:
-    def test_create_goal(self, client, registered_customer):
+    def test_create_goal(self, client, registered_customer) -> None:
         """POST /api/savings should create a new savings goal."""
         resp = client.post(
             "/api/savings",
@@ -582,7 +582,7 @@ class TestSavingsGoals:
         assert data["current_amount"] == 0.0
         assert data["progress_pct"] == 0.0
 
-    def test_list_goals(self, client, registered_customer):
+    def test_list_goals(self, client, registered_customer) -> None:
         """GET /api/savings should list all goals."""
         # Create two goals
         client.post(
@@ -608,7 +608,7 @@ class TestSavingsGoals:
         assert data["total_goals"] >= 2
         assert len(data["goals"]) >= 2
 
-    def test_contribute_to_goal(self, client, registered_customer):
+    def test_contribute_to_goal(self, client, registered_customer) -> None:
         """POST /api/savings/{goal_id}/contribute should move funds to goal."""
         # Create a goal
         create_resp = client.post(
@@ -634,7 +634,7 @@ class TestSavingsGoals:
         assert data["current_amount"] == 500.0
         assert data["progress_pct"] == 5.0
 
-    def test_contribute_insufficient(self, client, registered_customer):
+    def test_contribute_insufficient(self, client, registered_customer) -> None:
         """Contribute more than balance should fail."""
         create_resp = client.post(
             "/api/savings",
@@ -655,7 +655,7 @@ class TestSavingsGoals:
         )
         assert resp.status_code == 400
 
-    def test_delete_goal(self, client, registered_customer):
+    def test_delete_goal(self, client, registered_customer) -> None:
         """DELETE /api/savings/{goal_id} should delete a goal."""
         create_resp = client.post(
             "/api/savings",
@@ -676,7 +676,7 @@ class TestSavingsGoals:
 
 
 class TestAdminOperations:
-    def test_admin_view_accounts(self, client, admin_token, registered_customer):
+    def test_admin_view_accounts(self, client, admin_token, registered_customer) -> None:
         """GET /api/admin/accounts should return all accounts."""
         resp = client.get("/api/admin/accounts", headers=admin_token["headers"])
         assert resp.status_code == 200
@@ -685,7 +685,7 @@ class TestAdminOperations:
         assert len(accounts) >= 1
         assert any(a["account_number"] == registered_customer["account_number"] for a in accounts)
 
-    def test_admin_search_accounts(self, client, admin_token, registered_customer):
+    def test_admin_search_accounts(self, client, admin_token, registered_customer) -> None:
         """GET /api/admin/accounts/search should find accounts."""
         resp = client.get(
             f"/api/admin/accounts/search?q={registered_customer['account_number']}",
@@ -696,14 +696,14 @@ class TestAdminOperations:
         assert len(results) >= 1
         assert results[0]["account_number"] == registered_customer["account_number"]
 
-    def test_admin_freeze_account(self, client, admin_token, registered_customer):
+    def test_admin_freeze_account(self, client, admin_token, registered_customer) -> None:
         """POST /api/admin/accounts/{acc_no}/freeze should freeze an account."""
         acc_no = registered_customer["account_number"]
         resp = client.post(f"/api/admin/accounts/{acc_no}/freeze", headers=admin_token["headers"])
         assert resp.status_code == 200
         assert "frozen" in resp.json()["message"].lower()
 
-    def test_admin_unfreeze_account(self, client, admin_token, registered_customer):
+    def test_admin_unfreeze_account(self, client, admin_token, registered_customer) -> None:
         """POST /api/admin/accounts/{acc_no}/unfreeze should unfreeze an account."""
         acc_no = registered_customer["account_number"]
         # Freeze first
@@ -713,7 +713,7 @@ class TestAdminOperations:
         assert resp.status_code == 200
         assert "unfrozen" in resp.json()["message"].lower()
 
-    def test_admin_delete_account(self, client, admin_token, registered_customer):
+    def test_admin_delete_account(self, client, admin_token, registered_customer) -> None:
         """DELETE /api/admin/accounts/{acc_no} should delete an account."""
         acc_no = registered_customer["account_number"]
         resp = client.delete(f"/api/admin/accounts/{acc_no}", headers=admin_token["headers"])
@@ -724,7 +724,7 @@ class TestAdminOperations:
         accounts_resp = client.get("/api/admin/accounts", headers=admin_token["headers"])
         assert all(a["account_number"] != acc_no for a in accounts_resp.json())
 
-    def test_admin_statistics(self, client, admin_token, registered_customer):
+    def test_admin_statistics(self, client, admin_token, registered_customer) -> None:
         """GET /api/admin/statistics should return bank statistics."""
         resp = client.get("/api/admin/statistics", headers=admin_token["headers"])
         assert resp.status_code == 200
@@ -734,7 +734,7 @@ class TestAdminOperations:
         assert "total_balance" in stats
         assert "total_balance_formatted" in stats
 
-    def test_admin_view_transactions(self, client, admin_token, registered_customer):
+    def test_admin_view_transactions(self, client, admin_token, registered_customer) -> None:
         """
         GET /api/admin/transactions should return all transactions.
 
@@ -747,12 +747,12 @@ class TestAdminOperations:
         assert isinstance(txns, list)
         assert len(txns) >= 1
 
-    def test_admin_unauthorized_customer(self, client, registered_customer):
+    def test_admin_unauthorized_customer(self, client, registered_customer) -> None:
         """Admin endpoints should reject customer tokens."""
         resp = client.get("/api/admin/accounts", headers=registered_customer["headers"])
         assert resp.status_code == 403
 
-    def test_admin_unauthorized_no_token(self, client):
+    def test_admin_unauthorized_no_token(self, client) -> None:
         """
         Admin endpoints should reject unauthenticated requests.
 
@@ -766,7 +766,7 @@ class TestAdminOperations:
 
     def test_frozen_account_cannot_transact(
         self, client, admin_token, registered_customer, second_registered_customer
-    ):
+    ) -> None:
         """A frozen account should not be able to withdraw or transfer."""
         acc_no = registered_customer["account_number"]
 
@@ -800,17 +800,17 @@ class TestAdminOperations:
 
 
 class TestErrorHandling:
-    def test_invalid_json_body(self, client):
+    def test_invalid_json_body(self, client) -> None:
         """Send invalid JSON should return 422 (Pydantic validation)."""
         resp = client.post("/api/auth/login", json={"not_correct_field": "x"})
         assert resp.status_code == 422
 
-    def test_nonexistent_route(self, client):
+    def test_nonexistent_route(self, client) -> None:
         """GET a nonexistent route should return 404."""
         resp = client.get("/api/nonexistent")
         assert resp.status_code == 404
 
-    def test_invalid_account_number_format(self, client):
+    def test_invalid_account_number_format(self, client) -> None:
         """Login with empty password should fail validation."""
         resp = client.post(
             "/api/auth/login",
@@ -826,7 +826,7 @@ class TestErrorHandling:
 
 
 class TestV2API:
-    def test_v2_health_check(self, client):
+    def test_v2_health_check(self, client) -> None:
         """V2 health check should use ApiResponse envelope."""
         resp = client.get("/api/v2/health")
         assert resp.status_code == 200
@@ -835,7 +835,7 @@ class TestV2API:
         assert data["data"]["status"] == "healthy"
         assert data["error"] is None
 
-    def test_v2_register(self, client):
+    def test_v2_register(self, client) -> None:
         """
         V2 register should return ApiResponse envelope.
 
@@ -859,7 +859,7 @@ class TestV2API:
         assert data["success"] is True
         assert data["data"]["message"] is not None
 
-    def test_v2_login_envelope(self, client, registered_customer):
+    def test_v2_login_envelope(self, client, registered_customer) -> None:
         """V2 login should return success=true + data.access_token."""
         resp = client.post(
             "/api/v2/auth/login",
@@ -874,7 +874,7 @@ class TestV2API:
         assert data["data"]["access_token"] is not None
         assert data["data"]["role"] == "customer"
 
-    def test_v2_error_envelope(self, client):
+    def test_v2_error_envelope(self, client) -> None:
         """
         V2 endpoint errors should use ApiResponse envelope.
 
@@ -894,7 +894,7 @@ class TestV2API:
         assert data["error"] is not None
         assert data["data"] is None
 
-    def test_v2_validate_error(self, client):
+    def test_v2_validate_error(self, client) -> None:
         """
         V2 validation errors should return error envelope.
 
@@ -919,7 +919,7 @@ class TestV2API:
         assert data["success"] is False
         assert data["error"] is not None
 
-    def test_v2_get_balance(self, client, registered_customer):
+    def test_v2_get_balance(self, client, registered_customer) -> None:
         """V2 balance endpoint should use ApiResponse."""
         resp = client.get("/api/v2/account/balance", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -927,7 +927,7 @@ class TestV2API:
         assert data["success"] is True
         assert data["data"]["balance"] >= 1000.0
 
-    def test_v2_deposit(self, client, registered_customer):
+    def test_v2_deposit(self, client, registered_customer) -> None:
         """V2 deposit should work with ApiResponse."""
         resp = client.post(
             "/api/v2/account/deposit",
@@ -942,7 +942,7 @@ class TestV2API:
         assert data["success"] is True
         assert "deposited" in data["data"]["message"]
 
-    def test_v2_transfer(self, client, registered_customer, second_registered_customer):
+    def test_v2_transfer(self, client, registered_customer, second_registered_customer) -> None:
         """V2 transfer should work with ApiResponse."""
         resp = client.post(
             "/api/v2/account/transfer",
@@ -957,7 +957,7 @@ class TestV2API:
         assert data["success"] is True
         assert "transferred" in data["data"]["message"].lower()
 
-    def test_v2_admin_statistics(self, client, admin_token):
+    def test_v2_admin_statistics(self, client, admin_token) -> None:
         """V2 admin statistics should use ApiResponse."""
         resp = client.get("/api/v2/admin/statistics", headers=admin_token["headers"])
         assert resp.status_code == 200

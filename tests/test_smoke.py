@@ -16,21 +16,21 @@ from unionbank.utils.logger import logger
 class TestSmoke:
     """Verify that all project modules can be imported without errors."""
 
-    def test_import_utils(self):
+    def test_import_utils(self) -> None:
         assert hasattr(validate_email, "__call__")
         assert hasattr(hash_password, "__call__")
 
-    def test_import_logger(self):
+    def test_import_logger(self) -> None:
         assert logger is not None
 
-    def test_import_account(self):
+    def test_import_account(self) -> None:
         assert Account is not None
 
-    def test_import_bank(self):
+    def test_import_bank(self) -> None:
         assert Bank is not None
 
-    def test_import_admin(self):
+    def test_import_admin(self) -> None:
         assert Admin is not None
 
-    def test_import_main(self):
+    def test_import_main(self) -> None:
         assert main_menu is not None
