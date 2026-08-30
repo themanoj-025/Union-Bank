@@ -149,7 +149,7 @@ class MetricsMiddleware:
         status_code = 500  # Default if app crashes
 
         # Wrap send to capture status code
-        async def _send_wrapper(message):
+        async def _send_wrapper(message) -> None:
             nonlocal status_code
             if message["type"] == "http.response.start":
                 status_code = message.get("status", 500)

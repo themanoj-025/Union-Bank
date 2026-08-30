@@ -25,7 +25,7 @@ from unionbank.infrastructure.container import get_container, reset_container
 
 
 @pytest.fixture(autouse=True)
-def _fresh_db():
+def _fresh_db() -> None:
     """
     Set up a fresh SQLite database for each test.
 
@@ -78,7 +78,7 @@ def sample_account() -> dict:
 
 
 class TestAccountCRUD:
-    def test_create_and_get_account(self, c):
+    def test_create_and_get_account(self, c) -> None:
         """Create an account via the container and verify it persists."""
         account = Account(
             account_number="1000000001",
@@ -96,7 +96,7 @@ class TestAccountCRUD:
         assert fetched.name == "Test User"
         assert fetched.balance == Decimal("500.00")
 
-    def test_create_and_list_accounts(self, c):
+    def test_create_and_list_accounts(self, c) -> None:
         """List all accounts after creating multiple."""
         repo = c.account_repo()
         repo.create(Account(account_number="1000000001", name="User 1", password="pw"))
@@ -106,7 +106,7 @@ class TestAccountCRUD:
         accounts = repo.get_all()
         assert len(accounts) == 2
 
-    def test_idempotency_repo_create_and_get(self, c):
+    def test_idempotency_repo_create_and_get(self, c) -> None:
         """Verify the idempotency repository can create and retrieve records."""
         from unionbank.domain.entities import IdempotencyRecord
 
@@ -127,7 +127,7 @@ class TestAccountCRUD:
         assert fetched.idempotency_key == "test-key-001"
         assert fetched.operation == "deposit"
 
-    def test_idempotency_deposit_prevents_double_spend(self, c):
+    def test_idempotency_deposit_prevents_double_spend(self, c) -> None:
         """
         ⭐ IDEMPOTENCY: Depositing twice with the same idempotency_key
         should only move the money once. The second call returns the
@@ -167,7 +167,7 @@ class TestAccountCRUD:
             f"Double-spend detected! Balance is {account.balance}, expected 600.00"
         )
 
-    def test_idempotency_withdraw_prevents_double_spend(self, c):
+    def test_idempotency_withdraw_prevents_double_spend(self, c) -> None:
         """
         Withdrawing twice with the same idempotency_key should only
         debit the account once.
@@ -205,7 +205,7 @@ class TestAccountCRUD:
             f"Double-spend detected! Balance is {account.balance}, expected 400.00"
         )
 
-    def test_idempotency_different_keys_both_succeed(self, c):
+    def test_idempotency_different_keys_both_succeed(self, c) -> None:
         """Different idempotency keys should each execute independently."""
         account = Account(
             account_number="1000000001",
@@ -225,7 +225,7 @@ class TestAccountCRUD:
         account = c.account_repo().get("1000000001")
         assert account.balance == Decimal("625.00"), f"Expected 625, got {account.balance}"
 
-    def test_idempotency_without_key_still_works(self, c):
+    def test_idempotency_without_key_still_works(self, c) -> None:
         """
         Backward compatibility: not sending an idempotency_key should
         behave exactly as before (no dedup, no errors).
@@ -251,7 +251,7 @@ class TestAccountCRUD:
         assert r2.success
         assert r2.data["balance"] == 200.0
 
-    def test_soft_delete_preserves_transactions(self, c):
+    def test_soft_delete_preserves_transactions(self, c) -> None:
         """
         ⭐ COMPLIANCE: Soft-deleting an account must preserve transaction history.
 
@@ -315,7 +315,7 @@ class TestAccountCRUD:
 
 
 class TestTransactionFlow:
-    def test_deposit_creates_transaction_record(self, c):
+    def test_deposit_creates_transaction_record(self, c) -> None:
         """Deposit updates account balance AND creates a transaction record."""
         repo = c.account_repo()
         account = Account(
@@ -342,7 +342,7 @@ class TestTransactionFlow:
         assert txns[0].amount == Decimal("250.00")
         assert txns[0].balance == Decimal("250.00")
 
-    def test_full_deposit_withdraw_transfer_flow(self, c):
+    def test_full_deposit_withdraw_transfer_flow(self, c) -> None:
         """Complete banking flow: deposit → withdraw → transfer → verify all persisted."""
         repo = c.account_repo()
         svc = c.transaction_service()
@@ -381,7 +381,7 @@ class TestTransactionFlow:
         txns = c.transaction_repo().get_all()
         assert len(txns) == 4  # 1 deposit + 1 withdraw + 2 transfer
 
-    def test_transfer_rollback_on_failure(self, c):
+    def test_transfer_rollback_on_failure(self, c) -> None:
         """
         If a transfer fails mid-way, NO changes persist.
 
@@ -420,7 +420,7 @@ class TestTransactionFlow:
 
 
 class TestAdminOperations:
-    def test_freeze_account_via_service(self, c):
+    def test_freeze_account_via_service(self, c) -> None:
         """
         Freezing an account via AdminService should persist in SQLite.
 
@@ -448,7 +448,7 @@ class TestAdminOperations:
         # AdminService.freeze_account() explicitly deactivates when freezing
         assert updated.is_active is False
 
-    def test_audit_log_persisted(self, c):
+    def test_audit_log_persisted(self, c) -> None:
         """Admin audit log entries should be persisted in SQLite."""
         repo = c.account_repo()
         account = Account(
@@ -475,7 +475,7 @@ class TestAdminOperations:
 
 
 class TestSavingsGoalPersistence:
-    def test_create_and_contribute_to_goal(self, c):
+    def test_create_and_contribute_to_goal(self, c) -> None:
         """Create a savings goal, contribute to it, verify everything persisted."""
         repo = c.account_repo()
         goal_repo = c.savings_goal_repo()
@@ -520,7 +520,7 @@ class TestSavingsGoalPersistence:
         txns = c.transaction_repo().get_by_account("1000000001")
         assert any("Savings goal" in t.description for t in txns)
 
-    def test_unfreeze_does_not_reactivate_closed_account(self, c):
+    def test_unfreeze_does_not_reactivate_closed_account(self, c) -> None:
         """
         ⭐ REGRESSION TEST: Unfreezing must NOT reactivate a closed account.
 
@@ -566,7 +566,7 @@ class TestSavingsGoalPersistence:
         # Step 3: Account should STILL be unable to transact until explicitly reactivated
         assert after_unfreeze.can_transact is False  # is_active=False prevents transactions
 
-    def test_freeze_closed_account_fails(self, c):
+    def test_freeze_closed_account_fails(self, c) -> None:
         """Freezing a permanently closed account should fail gracefully."""
         repo = c.account_repo()
         account = Account(
@@ -590,7 +590,7 @@ class TestSavingsGoalPersistence:
 
 
 class TestAuthFlow:
-    def test_register_and_login_flow(self, c):
+    def test_register_and_login_flow(self, c) -> None:
         """Full auth flow: register → login → verify session data."""
         # Register via auth service
         auth = c.auth_service()
@@ -610,7 +610,7 @@ class TestAuthFlow:
         assert login_result.success is True
         assert login_result.data["role"] == "customer"
 
-    def test_admin_login(self, c):
+    def test_admin_login(self, c) -> None:
         """Admin login via container should work."""
         from unionbank.utils.hashing import hash_password
 
@@ -789,7 +789,7 @@ class TestConcurrentTransfers:
 
 
 class TestPagination:
-    def test_paginated_transactions(self, c):
+    def test_paginated_transactions(self, c) -> None:
         """Verify offset-based pagination works correctly via the real SQLite DB."""
         repo = c.account_repo()
         svc = c.transaction_service()
@@ -816,7 +816,7 @@ class TestPagination:
         page2, _ = svc.get_paginated_transactions(acc_no="1000000001", page=2, per_page=20)
         assert len(page2) == 5
 
-    def test_keyset_pagination_roundtrip(self, c):
+    def test_keyset_pagination_roundtrip(self, c) -> None:
         """
         Verify keyset cursor-based pagination works end-to-end.
 

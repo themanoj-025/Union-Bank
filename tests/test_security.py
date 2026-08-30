@@ -23,7 +23,7 @@ pytestmark = pytest.mark.slow
 
 
 @pytest.fixture(autouse=True)
-def _fresh_db():
+def _fresh_db() -> None:
     """Fresh SQLite database per test."""
     data_dir = tempfile.mkdtemp(prefix="union_bank_security_test_")
     old_data_dir = os.environ.get("UNION_BANK_DATA_DIR")
@@ -39,7 +39,7 @@ def _fresh_db():
 
 
 @pytest.fixture
-def client():
+def client() -> None:
     from unionbank.entrypoints.api.main import app
 
     with TestClient(app) as tc:
@@ -154,7 +154,7 @@ class TestSQLInjection:
     ]
 
     @pytest.mark.parametrize("payload", SQLI_PAYLOADS)
-    def test_sqli_in_register_name(self, client, payload):
+    def test_sqli_in_register_name(self, client, payload) -> None:
         """SQLi in registration name field should be rejected by validation."""
         resp = client.post(
             "/api/auth/register",
@@ -172,7 +172,7 @@ class TestSQLInjection:
         assert resp.status_code in (400, 422)
 
     @pytest.mark.parametrize("payload", SQLI_PAYLOADS)
-    def test_sqli_in_admin_search(self, client, admin_token, payload):
+    def test_sqli_in_admin_search(self, client, admin_token, payload) -> None:
         """SQLi in admin search should not cause errors or data leaks."""
         resp = client.get(
             f"/api/admin/accounts/search?q={payload}",
@@ -183,7 +183,7 @@ class TestSQLInjection:
         assert isinstance(resp.json(), list)
 
     @pytest.mark.parametrize("payload", SQLI_PAYLOADS)
-    def test_sqli_in_v2_analyzr(self, client, registered_customer, payload):
+    def test_sqli_in_v2_analyzr(self, client, registered_customer, payload) -> None:
         """SQLi in analyzr query should be handled safely."""
         resp = client.post(
             "/api/v2/analyzr/query",
@@ -213,7 +213,7 @@ class TestXSS:
     ]
 
     @pytest.mark.parametrize("payload", XSS_PAYLOADS)
-    def test_xss_in_register_name(self, client, payload):
+    def test_xss_in_register_name(self, client, payload) -> None:
         """XSS in registration name should be rejected by validation."""
         resp = client.post(
             "/api/auth/register",
@@ -231,7 +231,7 @@ class TestXSS:
         assert resp.status_code in (400, 422)
 
     @pytest.mark.parametrize("payload", XSS_PAYLOADS)
-    def test_xss_in_update_profile_name(self, client, registered_customer, payload):
+    def test_xss_in_update_profile_name(self, client, registered_customer, payload) -> None:
         """XSS in profile update name should be rejected."""
         resp = client.put(
             "/api/account/profile",
@@ -241,7 +241,7 @@ class TestXSS:
         # Should fail validation (name must be letters/spaces only)
         assert resp.status_code in (400, 422)
 
-    def test_security_headers_present(self, client):
+    def test_security_headers_present(self, client) -> None:
         """Response should include security headers that mitigate XSS."""
         resp = client.get("/api/health")
         assert resp.status_code == 200
@@ -256,7 +256,7 @@ class TestXSS:
 class TestCSRF:
     """Verify CSRF protection with double-submit cookie pattern."""
 
-    def test_csrf_token_set_on_login(self, client):
+    def test_csrf_token_set_on_login(self, client) -> None:
         """Login should set ub_csrf_token cookie."""
         import os
         import random
@@ -291,7 +291,7 @@ class TestCSRF:
         assert "ub_refresh_token" in cookie_names
         assert "ub_csrf_token" in cookie_names
 
-    def test_stateful_request_without_csrf_cookie_allowed(self, client, registered_customer):
+    def test_stateful_request_without_csrf_cookie_allowed(self, client, registered_customer) -> None:
         """Stateful request without CSRF cookie (Bearer token only) should work."""
         # registered_customer fixture clears cookies, so no CSRF cookie present
         resp = client.post(
@@ -301,7 +301,7 @@ class TestCSRF:
         )
         assert resp.status_code == 200
 
-    def test_stateful_request_with_csrf_cookie_wrong_header(self, client):
+    def test_stateful_request_with_csrf_cookie_wrong_header(self, client) -> None:
         """Stateful request with CSRF cookie but wrong header should fail."""
         # Set a CSRF cookie but send wrong header
         client.cookies.set("ub_csrf_token", "real_token_value")
@@ -315,7 +315,7 @@ class TestCSRF:
         # CSRF middleware should reject (403) since tokens don't match
         assert resp.status_code == 403
 
-    def test_csrf_token_validated_on_transfer(self, client):
+    def test_csrf_token_validated_on_transfer(self, client) -> None:
         """Transfer with CSRF cookie must include matching header."""
         client.cookies.set("ub_csrf_token", "test_csrf_token_123")
         resp = client.post(
@@ -326,7 +326,7 @@ class TestCSRF:
         # Should fail CSRF validation (403) since tokens don't match
         assert resp.status_code == 403
 
-    def test_auth_endpoints_exempt_from_csrf(self, client):
+    def test_auth_endpoints_exempt_from_csrf(self, client) -> None:
         """Login/register/refresh should not require CSRF token."""
         # These endpoints set cookies, so they must be exempt
         resp = client.post(
@@ -339,7 +339,7 @@ class TestCSRF:
         # Should fail auth (401/404), not CSRF (403)
         assert resp.status_code in (401, 404)
 
-    def test_safe_methods_exempt_from_csrf(self, client):
+    def test_safe_methods_exempt_from_csrf(self, client) -> None:
         """GET requests should not require CSRF token."""
         resp = client.get("/api/health")
         assert resp.status_code == 200
@@ -351,7 +351,7 @@ class TestCSRF:
 class TestCookieSecurity:
     """Verify cookie security attributes."""
 
-    def test_access_token_cookie_is_http_only(self, client):
+    def test_access_token_cookie_is_http_only(self, client) -> None:
         """Access token cookie should be httpOnly (not accessible to JS)."""
         import os
         import random
@@ -387,7 +387,7 @@ class TestCookieSecurity:
         else:
             pytest.fail("ub_access_token cookie not found in response")
 
-    def test_csrf_token_cookie_is_not_http_only(self, client):
+    def test_csrf_token_cookie_is_not_http_only(self, client) -> None:
         """CSRF token cookie should NOT be httpOnly (JS needs to read it)."""
         import os
         import random

@@ -37,7 +37,7 @@ class BankUser(HttpUser):
     token: str = ""
     refresh_token: str = ""
 
-    def on_start(self):
+    def on_start(self) -> None:
         """Log in as a test customer."""
         acc_no = random.choice(TEST_ACCOUNTS)
         with self.client.post(
@@ -56,7 +56,7 @@ class BankUser(HttpUser):
 
     @tag("balance")
     @task(5)
-    def check_balance(self):
+    def check_balance(self) -> None:
         """Check account balance (high-frequency read)."""
         if not self.token:
             return
@@ -73,7 +73,7 @@ class BankUser(HttpUser):
 
     @tag("profile")
     @task(3)
-    def view_profile(self):
+    def view_profile(self) -> None:
         """View account profile."""
         if not self.token:
             return
@@ -90,7 +90,7 @@ class BankUser(HttpUser):
 
     @tag("mini_statement")
     @task(4)
-    def view_mini_statement(self):
+    def view_mini_statement(self) -> None:
         """View mini statement (last 5 transactions)."""
         if not self.token:
             return
@@ -107,7 +107,7 @@ class BankUser(HttpUser):
 
     @tag("full_statement")
     @task(2)
-    def view_full_statement(self):
+    def view_full_statement(self) -> None:
         """View full transaction statement."""
         if not self.token:
             return
@@ -124,7 +124,7 @@ class BankUser(HttpUser):
 
     @tag("deposit")
     @task(2)
-    def deposit(self):
+    def deposit(self) -> None:
         """Deposit a small amount."""
         if not self.token:
             return
@@ -143,7 +143,7 @@ class BankUser(HttpUser):
 
     @tag("savings")
     @task(1)
-    def list_savings_goals(self):
+    def list_savings_goals(self) -> None:
         """List savings goals."""
         if not self.token:
             return
@@ -160,7 +160,7 @@ class BankUser(HttpUser):
 
     @tag("health")
     @task(1)
-    def health_check(self):
+    def health_check(self) -> None:
         """Health check (unauthenticated)."""
         with self.client.get(
             "/api/health",
@@ -179,7 +179,7 @@ class AdminUser(HttpUser):
     wait_time = between(3, 10)  # Admin ops are less frequent
     token: str = ""
 
-    def on_start(self):
+    def on_start(self) -> None:
         """Log in as admin."""
         with self.client.post(
             "/api/auth/admin-login",
@@ -199,7 +199,7 @@ class AdminUser(HttpUser):
 
     @tag("admin_accounts")
     @task(3)
-    def view_accounts(self):
+    def view_accounts(self) -> None:
         """View all accounts (paginated)."""
         if not self.token:
             return
@@ -216,7 +216,7 @@ class AdminUser(HttpUser):
 
     @tag("admin_statistics")
     @task(2)
-    def view_statistics(self):
+    def view_statistics(self) -> None:
         """View bank statistics."""
         if not self.token:
             return
@@ -233,7 +233,7 @@ class AdminUser(HttpUser):
 
     @tag("admin_transactions")
     @task(2)
-    def view_transactions(self):
+    def view_transactions(self) -> None:
         """View all transactions (paginated)."""
         if not self.token:
             return
