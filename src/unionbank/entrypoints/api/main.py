@@ -62,17 +62,6 @@ app = FastAPI(
         "REST API for the Union Bank Management System.\n\n"
         "**API Versions**\n"
         "- `/api/v1/` — Legacy endpoints (bare response models, backward compatible)\n"
-
-# --- OpenTelemetry distributed tracing (OTEL_ENABLED=true) ---
-try:
-    from unionbank.tracing import setup_tracing
-    _otel_ok = setup_tracing("unionbank-api")
-    if _otel_ok:
-        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-        FastAPIInstrumentor.instrument_app(app)
-except ImportError:
-    pass
-
         "- `/api/v2/` — Current endpoints with standardised `ApiResponse[T]` envelope\n\n"
         "All endpoints return JSON. Authentication uses Bearer JWT tokens.\n"
         "Use `/docs` for interactive API documentation."
@@ -110,6 +99,16 @@ except ImportError:
         },
     ],
 )
+
+# --- OpenTelemetry distributed tracing (OTEL_ENABLED=true) ---
+try:
+    from unionbank.tracing import setup_tracing
+    _otel_ok = setup_tracing("unionbank-api")
+    if _otel_ok:
+        from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+        FastAPIInstrumentor.instrument_app(app)
+except ImportError:
+    pass
 
 
 # ── Middleware ────────────────────────────────────────────────────────────
