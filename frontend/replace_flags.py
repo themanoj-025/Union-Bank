@@ -2,7 +2,7 @@ import re
 
 
 # ISO country code map from emoji to 2-letter ISO code
-def get_iso_from_emoji(emoji):
+def get_iso_from_emoji(emoji) -> str:
     if len(emoji) != 2:
         return ""
     # Emojis are composed of regional indicator symbols
@@ -13,7 +13,7 @@ with open("c:/UI-UX/union-bank-wise-reskin/src/pages/Home.jsx", encoding="utf-8"
     content = f.read()
 
 
-def replace_flag(match):
+def replace_flag(match) -> str:
     emoji = match.group(1)
     iso_code = get_iso_from_emoji(emoji)
     if iso_code:

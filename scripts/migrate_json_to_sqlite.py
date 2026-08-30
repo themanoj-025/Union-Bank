@@ -261,7 +261,7 @@ def migrate_savings_goals() -> int:
         close_session()
 
 
-def main():
+def main() -> None:
     """Run all migrations."""
     print()
     print("  " + "=" * 42)

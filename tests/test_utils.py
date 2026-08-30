@@ -26,28 +26,28 @@ from unionbank.utils.file_io import (
 
 
 class TestPasswordHashing:
-    def test_hash_and_verify(self):
+    def test_hash_and_verify(self) -> None:
         hashed = hash_password("SecurePass1")
         assert isinstance(hashed, str)
         assert hashed.startswith("$2")
         assert verify_password("SecurePass1", hashed) is True
 
-    def test_wrong_password_fails(self):
+    def test_wrong_password_fails(self) -> None:
         hashed = hash_password("SecurePass1")
         assert verify_password("WrongPass1", hashed) is False
 
-    def test_empty_password(self):
+    def test_empty_password(self) -> None:
         hashed = hash_password("")
         # Empty password still hashes
         assert isinstance(hashed, str)
         assert hashed.startswith("$2")
         assert verify_password("", hashed) is True
 
-    def test_verify_with_invalid_hash(self):
+    def test_verify_with_invalid_hash(self) -> None:
         assert verify_password("test", "not-a-valid-hash") is False
         assert verify_password("test", "") is False
 
-    def test_two_hashes_are_different(self):
+    def test_two_hashes_are_different(self) -> None:
         h1 = hash_password("SecurePass1")
         h2 = hash_password("SecurePass1")
         # Each bcrypt hash uses a different salt
@@ -58,14 +58,14 @@ class TestPasswordHashing:
 
 
 class TestEmailValidation:
-    def test_valid_emails(self):
+    def test_valid_emails(self) -> None:
         assert validate_email("user@example.com") is True
         assert validate_email("first.last@domain.co.in") is True
         assert validate_email("user+tag@example.org") is True
         assert validate_email("123@abc.xyz") is True
         assert validate_email("  user@example.com  ") is True  # whitespace trimmed
 
-    def test_invalid_emails(self):
+    def test_invalid_emails(self) -> None:
         assert validate_email("") is False
         assert validate_email("not-an-email") is False
         assert validate_email("@domain.com") is False
@@ -79,12 +79,12 @@ class TestEmailValidation:
 
 
 class TestPhoneValidation:
-    def test_valid_phones(self):
+    def test_valid_phones(self) -> None:
         assert validate_phone("9876543210") is True
         assert validate_phone("6123456789") is True
         assert validate_phone(" 9876543210 ") is True  # whitespace trimmed
 
-    def test_invalid_phones(self):
+    def test_invalid_phones(self) -> None:
         assert validate_phone("") is False
         assert validate_phone("1234567890") is False  # starts with 1
         assert validate_phone("987654321") is False  # 9 digits
@@ -97,7 +97,7 @@ class TestPhoneValidation:
 
 
 class TestPasswordValidation:
-    def test_valid_passwords(self):
+    def test_valid_passwords(self) -> None:
         valid, msg = validate_password("Strong1!@")
         assert valid is True
         assert msg == ""
@@ -108,27 +108,27 @@ class TestPasswordValidation:
         valid, msg = validate_password("P@ssw0rdLong")
         assert valid is True
 
-    def test_too_short(self):
+    def test_too_short(self) -> None:
         valid, msg = validate_password("Ab1")
         assert valid is False
         assert "8 characters" in msg
 
-    def test_no_uppercase(self):
+    def test_no_uppercase(self) -> None:
         valid, msg = validate_password("abcdefgh1")
         assert valid is False
         assert "uppercase" in msg
 
-    def test_no_lowercase(self):
+    def test_no_lowercase(self) -> None:
         valid, msg = validate_password("ABCDEFGH1")
         assert valid is False
         assert "lowercase" in msg
 
-    def test_no_digit(self):
+    def test_no_digit(self) -> None:
         valid, msg = validate_password("Abcdefgh!")
         assert valid is False
         assert "digit" in msg
 
-    def test_empty_password(self):
+    def test_empty_password(self) -> None:
         valid, _msg = validate_password("")
         assert valid is False
 
@@ -137,13 +137,13 @@ class TestPasswordValidation:
 
 
 class TestNameValidation:
-    def test_valid_names(self):
+    def test_valid_names(self) -> None:
         assert validate_name("John") is True
         assert validate_name("John Doe") is True
         assert validate_name("Mary Jane Smith") is True
         assert validate_name("  John  ") is True
 
-    def test_invalid_names(self):
+    def test_invalid_names(self) -> None:
         assert validate_name("") is False
         assert validate_name("  ") is False
         assert validate_name("A") is False  # too short
@@ -155,19 +155,19 @@ class TestNameValidation:
 
 
 class TestGenerators:
-    def test_generate_account_number_structure(self):
+    def test_generate_account_number_structure(self) -> None:
         num = generate_account_number()
         assert isinstance(num, str)
         assert len(num) == 10
         assert num.isdigit()
 
-    def test_generate_transaction_id_structure(self):
+    def test_generate_transaction_id_structure(self) -> None:
         txn_id = generate_transaction_id()
         assert isinstance(txn_id, str)
         assert txn_id.startswith("TXN-")
         assert len(txn_id) == 12  # "TXN-" + 8 chars
 
-    def test_transaction_id_is_unique(self):
+    def test_transaction_id_is_unique(self) -> None:
         ids = {generate_transaction_id() for _ in range(100)}
         assert len(ids) == 100
 
@@ -176,13 +176,13 @@ class TestGenerators:
 
 
 class TestCurrencyFormatting:
-    def test_basic_format(self):
+    def test_basic_format(self) -> None:
         assert fmt_currency(0) == "₹0.00"
         assert fmt_currency(100) == "₹100.00"
         assert fmt_currency(1000) == "₹1,000.00"
         assert fmt_currency(1000000.50) == "₹1,000,000.50"
 
-    def test_negative_amount(self):
+    def test_negative_amount(self) -> None:
         assert fmt_currency(-100) == "₹-100.00"
 
 
@@ -190,7 +190,7 @@ class TestCurrencyFormatting:
 
 
 class TestJsonHelpers:
-    def test_save_and_load_json(self):
+    def test_save_and_load_json(self) -> None:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             tmp_path = f.name
 
@@ -203,11 +203,11 @@ class TestJsonHelpers:
         finally:
             os.unlink(tmp_path)
 
-    def test_load_missing_file(self):
+    def test_load_missing_file(self) -> None:
         result = load_json("/tmp/nonexistent_file_xyz.json")
         assert result == {}
 
-    def test_load_empty_file(self):
+    def test_load_empty_file(self) -> None:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             tmp_path = f.name
 
@@ -222,22 +222,22 @@ class TestJsonHelpers:
 
 
 class TestGetFloat:
-    def test_valid_amount(self, monkeypatch):
+    def test_valid_amount(self, monkeypatch) -> None:
         monkeypatch.setattr("builtins.input", lambda _: "100.50")
         result = get_float("Enter amount: ")
         assert result == 100.50
 
-    def test_zero_fails(self, monkeypatch):
+    def test_zero_fails(self, monkeypatch) -> None:
         monkeypatch.setattr("builtins.input", lambda _: "0")
         result = get_float("Enter amount: ")
         assert result is None
 
-    def test_negative_fails(self, monkeypatch):
+    def test_negative_fails(self, monkeypatch) -> None:
         monkeypatch.setattr("builtins.input", lambda _: "-50")
         result = get_float("Enter amount: ")
         assert result is None
 
-    def test_non_numeric_fails(self, monkeypatch):
+    def test_non_numeric_fails(self, monkeypatch) -> None:
         monkeypatch.setattr("builtins.input", lambda _: "abc")
         result = get_float("Enter amount: ")
         assert result is None

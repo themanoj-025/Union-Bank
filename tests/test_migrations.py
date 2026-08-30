@@ -40,7 +40,7 @@ def alembic_config() -> Config:
 
 
 class TestAlembicMigrations:
-    def test_upgrade_to_head(self, alembic_config):
+    def test_upgrade_to_head(self, alembic_config) -> None:
         """
         Upgrade from empty DB to latest migration should succeed.
 
@@ -50,7 +50,7 @@ class TestAlembicMigrations:
         upgrade(alembic_config, "head")
         # Success means upgrade completed without exception
 
-    def test_downgrade_to_base(self, alembic_config):
+    def test_downgrade_to_base(self, alembic_config) -> None:
         """
         Upgrade to head, then downgrade to base should succeed.
 
@@ -62,7 +62,7 @@ class TestAlembicMigrations:
         # Then downgrade all the way back
         downgrade(alembic_config, "base")
 
-    def test_upgrade_downgrade_roundtrip(self, alembic_config):
+    def test_upgrade_downgrade_roundtrip(self, alembic_config) -> None:
         """
         Full upgrade + downgrade round-trip should be clean.
 
@@ -78,7 +78,7 @@ class TestAlembicMigrations:
         # Re-upgrade (simulates production roll-forward after rollback)
         upgrade(alembic_config, "head")
 
-    def test_upgrade_creates_all_tables(self, alembic_config):
+    def test_upgrade_creates_all_tables(self, alembic_config) -> None:
         """After upgrade, all expected tables should exist in the database."""
         import sqlite3
 
@@ -119,18 +119,18 @@ class TestAlembicMigrations:
         # Alembic's own table
         assert "alembic_version" in tables
 
-    def test_idempotent_upgrade(self, alembic_config):
+    def test_idempotent_upgrade(self, alembic_config) -> None:
         """Running upgrade head twice should be idempotent (no errors)."""
         upgrade(alembic_config, "head")
         # Running again should be a no-op
         upgrade(alembic_config, "head")
 
-    def test_upgrade_downgrade_cycle_does_not_crash(self, alembic_config):
+    def test_upgrade_downgrade_cycle_does_not_crash(self, alembic_config) -> None:
         """Running upgrade then downgrade should not crash (verifies migration chain exists)."""
         upgrade(alembic_config, "head")
         downgrade(alembic_config, "base")
 
-    def test_version_table_exists_after_upgrade(self, alembic_config):
+    def test_version_table_exists_after_upgrade(self, alembic_config) -> None:
         """The alembic_version table should exist after upgrade."""
         import sqlite3
 

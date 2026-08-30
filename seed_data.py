@@ -512,7 +512,7 @@ def generate_txn_id() -> str:
     return "TXN-" + "".join(random.choices(_TXN_CHARS, k=8))
 
 
-def seed_data(fast_mode: bool = True):
+def seed_data(fast_mode: bool = True) -> None:
     """
     Generate sample data and write directly to SQLite via the repository layer.
 

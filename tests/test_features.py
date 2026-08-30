@@ -33,31 +33,31 @@ from unionbank.utils.file_io import (
 
 
 class TestRateLimiting:
-    def setup_method(self):
+    def setup_method(self) -> None:
         """Reset login attempts before each test."""
         # Clear the file
         data_dir = os.path.dirname(LOGIN_ATTEMPTS_FILE)
         os.makedirs(data_dir, exist_ok=True)
         save_json(LOGIN_ATTEMPTS_FILE, {})
 
-    def test_fresh_account_not_locked(self):
+    def test_fresh_account_not_locked(self) -> None:
         is_locked, _ = check_login_locked("9999999999")
         assert is_locked is False
 
-    def test_after_few_attempts_not_locked(self):
+    def test_after_few_attempts_not_locked(self) -> None:
         for _ in range(3):
             record_failed_login("1111111111")
         is_locked, _ = check_login_locked("1111111111")
         assert is_locked is False
 
-    def test_after_max_attempts_is_locked(self):
+    def test_after_max_attempts_is_locked(self) -> None:
         for _ in range(MAX_LOGIN_ATTEMPTS):
             record_failed_login("2222222222")
         is_locked, remaining = check_login_locked("2222222222")
         assert is_locked is True
         assert remaining > 0
 
-    def test_remaining_attempts_count(self):
+    def test_remaining_attempts_count(self) -> None:
         for _ in range(2):
             record_failed_login("3333333333")
         remaining = record_failed_login("3333333333")
@@ -65,21 +65,21 @@ class TestRateLimiting:
         expected = MAX_LOGIN_ATTEMPTS - 3
         assert remaining == max(0, expected)
 
-    def test_reset_after_lockout(self):
+    def test_reset_after_lockout(self) -> None:
         for _ in range(MAX_LOGIN_ATTEMPTS - 1):
             record_failed_login("4444444444")
         # should not be locked yet
         is_locked, _ = check_login_locked("4444444444")
         assert is_locked is False
 
-    def test_reset_after_successful_login(self):
+    def test_reset_after_successful_login(self) -> None:
         for _ in range(3):
             record_failed_login("5555555555")
         reset_login_attempts("5555555555")
         is_locked, _ = check_login_locked("5555555555")
         assert is_locked is False
 
-    def test_different_accounts_independent(self):
+    def test_different_accounts_independent(self) -> None:
         for _ in range(MAX_LOGIN_ATTEMPTS):
             record_failed_login("6666666666")
         is_locked_a, _ = check_login_locked("6666666666")
@@ -92,14 +92,14 @@ class TestRateLimiting:
 
 
 class TestSessionManagement:
-    def test_session_active_recently(self):
+    def test_session_active_recently(self) -> None:
         assert check_session_timeout(time.time()) is True
 
-    def test_session_expired(self):
+    def test_session_expired(self) -> None:
         past_time = time.time() - SESSION_TIMEOUT_SECONDS - 10
         assert check_session_timeout(past_time) is False
 
-    def test_session_timeout_constant(self):
+    def test_session_timeout_constant(self) -> None:
         assert get_session_timeout_seconds() == SESSION_TIMEOUT_SECONDS
         assert isinstance(SESSION_TIMEOUT_SECONDS, int)
         assert SESSION_TIMEOUT_SECONDS > 0
@@ -109,12 +109,12 @@ class TestSessionManagement:
 
 
 class TestCsvExport:
-    def test_generate_csv_filename(self):
+    def test_generate_csv_filename(self) -> None:
         filename = generate_csv_filename("1234567890")
         assert filename.endswith(".csv")
         assert "1234567890" in filename
 
-    def test_export_empty_records(self):
+    def test_export_empty_records(self) -> None:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".csv", delete=False) as f:
             path = f.name
         try:
@@ -127,7 +127,7 @@ class TestCsvExport:
         finally:
             os.unlink(path)
 
-    def test_export_with_records(self):
+    def test_export_with_records(self) -> None:
         records = [
             {
                 "txn_id": "TXN-ABC123",
@@ -167,22 +167,22 @@ class TestCsvExport:
 
 
 class TestInterestCalculation:
-    def test_interest_on_positive_balance(self):
+    def test_interest_on_positive_balance(self) -> None:
         interest = calculate_monthly_interest(100000)
         expected = round(100000 * SAVINGS_INTEREST_RATE / 12 / 100, 2)
         assert interest == expected
         assert interest > 0
 
-    def test_interest_on_zero_balance(self):
+    def test_interest_on_zero_balance(self) -> None:
         interest = calculate_monthly_interest(0)
         assert interest == 0.0
 
-    def test_interest_on_small_balance(self):
+    def test_interest_on_small_balance(self) -> None:
         interest = calculate_monthly_interest(100)
         assert isinstance(interest, float)
         assert interest >= 0
 
-    def test_interest_rate_constant(self):
+    def test_interest_rate_constant(self) -> None:
         assert isinstance(SAVINGS_INTEREST_RATE, float)
         assert SAVINGS_INTEREST_RATE > 0
 
@@ -191,16 +191,16 @@ class TestInterestCalculation:
 
 
 class TestTransactionCategories:
-    def test_categories_defined(self):
+    def test_categories_defined(self) -> None:
         assert len(TRANSACTION_CATEGORIES) >= 5
         assert "General" in TRANSACTION_CATEGORIES
         assert "Food & Dining" in TRANSACTION_CATEGORIES
         assert "Salary" in TRANSACTION_CATEGORIES
 
-    def test_categories_unique(self):
+    def test_categories_unique(self) -> None:
         assert len(TRANSACTION_CATEGORIES) == len(set(TRANSACTION_CATEGORIES))
 
-    def test_log_transaction_stores_category(self, monkeypatch, tmp_data_dir):
+    def test_log_transaction_stores_category(self, monkeypatch, tmp_data_dir) -> None:
         """Test that log_transaction stores the category field (via SQLite)."""
         # Create a temp account and call log_transaction directly
         # Note: log_transaction now writes to SQLite only (no JSON)
@@ -241,15 +241,15 @@ class TestTransactionCategories:
 class TestAccountEnhanced:
     """Test new methods on Account model with mocked data."""
 
-    def test_account_has_export_method(self):
+    def test_account_has_export_method(self) -> None:
         """Account class should have the export_csv method."""
         assert hasattr(Account, "export_csv")
 
-    def test_account_has_interest_method(self):
+    def test_account_has_interest_method(self) -> None:
         """Account class should have the apply_interest method."""
         assert hasattr(Account, "apply_interest")
 
-    def test_account_to_dict_includes_all_fields(self, monkeypatch):
+    def test_account_to_dict_includes_all_fields(self, monkeypatch) -> None:
         """Verify to_dict includes category-relevant fields."""
         data = {
             "account_number": "9999999999",
@@ -282,7 +282,7 @@ class TestAtomicTransfer:
     SENDER = "1111111111"
     RECEIVER = "2222222222"
 
-    def _setup_accounts(self, tmp_data_dir):
+    def _setup_accounts(self, tmp_data_dir) -> tuple[object, ...]:
         """Create two test accounts with known balances."""
         sender_data = {
             "account_number": self.SENDER,
@@ -336,7 +336,7 @@ class TestAtomicTransfer:
 
         return json_total, sqlite_total
 
-    def test_atomic_transfer_success(self, tmp_data_dir):
+    def test_atomic_transfer_success(self, tmp_data_dir) -> None:
         """A normal transfer should work correctly."""
         self._setup_accounts(tmp_data_dir)
 
@@ -353,7 +353,7 @@ class TestAtomicTransfer:
         assert result.sender_balance == 700.0  # 1000 - 300
         assert result.receiver_balance == 800.0  # 500 + 300
 
-    def test_atomic_transfer_insufficient_balance(self, tmp_data_dir):
+    def test_atomic_transfer_insufficient_balance(self, tmp_data_dir) -> None:
         """Transfer should fail gracefully when sender has insufficient funds."""
         self._setup_accounts(tmp_data_dir)
 
@@ -369,7 +369,7 @@ class TestAtomicTransfer:
         assert result.success is False
         assert "Insufficient" in result.error_message
 
-    def test_atomic_transfer_preserves_total_balance_on_crash(self, tmp_data_dir):
+    def test_atomic_transfer_preserves_total_balance_on_crash(self, tmp_data_dir) -> None:
         """
         ⭐ CRASH TEST: If the transfer is interrupted after debiting the sender
         but before crediting the receiver, total system balance must remain unchanged.
@@ -407,7 +407,7 @@ class TestAtomicTransfer:
             "after failed transfer! Money would have been lost!"
         )
 
-    def test_atomic_transfer_rolls_back_on_exception(self, tmp_data_dir):
+    def test_atomic_transfer_rolls_back_on_exception(self, tmp_data_dir) -> None:
         """
         ⭐ CRASH TEST: Prove that if an exception occurs DURING a transaction,
         the SQLite atomic_session context manager rolls back all changes,
@@ -443,7 +443,7 @@ class TestAtomicTransfer:
             "The atomic transaction did not prevent data loss!"
         )
 
-    def test_atomic_apply_interest_rolls_back_on_failure(self, tmp_data_dir):
+    def test_atomic_apply_interest_rolls_back_on_failure(self, tmp_data_dir) -> None:
         """Verify that apply_interest is also atomic."""
         self._setup_accounts(tmp_data_dir)
 
@@ -454,7 +454,7 @@ class TestAtomicTransfer:
         assert result is True
         assert get_db_balance(self.SENDER) == 1050.0  # 1000 + 50
 
-    def test_atomic_close_account(self, tmp_data_dir):
+    def test_atomic_close_account(self, tmp_data_dir) -> None:
         """Verify close_account is atomic."""
         self._setup_accounts(tmp_data_dir)
 

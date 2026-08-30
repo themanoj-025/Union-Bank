@@ -18,7 +18,7 @@ from unionbank.domain.entities import Account
 class TestLoanRejectionErrorPaths:
     """Test edge cases in loan rejection that are currently uncovered."""
 
-    def test_reject_nonexistent_loan(self, c):
+    def test_reject_nonexistent_loan(self, c) -> None:
         """Rejecting a loan that doesn't exist should fail gracefully."""
         result = c.loan_service().reject_loan(
             loan_id="nonexistent-id",
@@ -28,7 +28,7 @@ class TestLoanRejectionErrorPaths:
         assert not result.success
         assert "not found" in result.message.lower()
 
-    def test_reject_already_approved_loan(self, c, sample_account):
+    def test_reject_already_approved_loan(self, c, sample_account) -> None:
         """Rejecting an already approved loan should fail."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -65,7 +65,7 @@ class TestLoanRejectionErrorPaths:
             or "reject" in result.message.lower()
         )
 
-    def test_reject_without_reason(self, c, sample_account):
+    def test_reject_without_reason(self, c, sample_account) -> None:
         """Rejecting a loan without providing a reason should still work."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -97,7 +97,7 @@ class TestLoanRejectionErrorPaths:
 class TestAdminFreezeUnfreeze:
     """Test edge cases in admin freeze/unfreeze operations."""
 
-    def test_freeze_nonexistent_account(self, c):
+    def test_freeze_nonexistent_account(self, c) -> None:
         """Freezing a non-existent account should fail."""
         result = c.admin_service().freeze_account(
             acc_no="9999999999",
@@ -106,7 +106,7 @@ class TestAdminFreezeUnfreeze:
         assert not result.success
         assert "not found" in result.message.lower()
 
-    def test_unfreeze_nonexistent_account(self, c):
+    def test_unfreeze_nonexistent_account(self, c) -> None:
         """Unfreezing a non-existent account should fail."""
         result = c.admin_service().unfreeze_account(
             acc_no="9999999999",
@@ -115,7 +115,7 @@ class TestAdminFreezeUnfreeze:
         assert not result.success
         assert "not found" in result.message.lower()
 
-    def test_double_freeze(self, c, sample_account):
+    def test_double_freeze(self, c, sample_account) -> None:
         """Freezing an already frozen account should be handled."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -136,7 +136,7 @@ class TestAdminFreezeUnfreeze:
         # Second freeze may succeed (idempotent) or fail with a message
         # Both are acceptable as long as it doesn't crash
 
-    def test_double_unfreeze(self, c, sample_account):
+    def test_double_unfreeze(self, c, sample_account) -> None:
         """Unfreezing an already active account should be handled."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -149,7 +149,7 @@ class TestAdminFreezeUnfreeze:
         # Should either succeed (idempotent) or say the account is not frozen
         # Just verify it doesn't crash
 
-    def test_freeze_transaction_checks(self, c, sample_account):
+    def test_freeze_transaction_checks(self, c, sample_account) -> None:
         """A frozen account should be rejected by transaction service."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -177,7 +177,7 @@ class TestAdminFreezeUnfreeze:
 class TestNotificationFailures:
     """Test that notification failures do not crash the system."""
 
-    def test_register_without_notification_service(self, c):
+    def test_register_without_notification_service(self, c) -> None:
         """Registration should succeed even without a notification service."""
         result = c.auth_service().customer_register(
             name="Notify Test",
@@ -189,7 +189,7 @@ class TestNotificationFailures:
         )
         assert result.success
 
-    def test_send_transaction_notification_fails_gracefully(self, c, sample_account):
+    def test_send_transaction_notification_fails_gracefully(self, c, sample_account) -> None:
         """Transaction notification failure should not block the deposit."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -211,7 +211,7 @@ class TestNotificationFailures:
 class TestServiceValidation:
     """Test edge cases in service-level validation."""
 
-    def test_empty_account_number(self, c):
+    def test_empty_account_number(self, c) -> None:
         """Empty account numbers should fail validation."""
         result = c.auth_service().customer_login(
             "",
@@ -219,7 +219,7 @@ class TestServiceValidation:
         )
         assert not result.success
 
-    def test_negative_deposit(self, c, sample_account):
+    def test_negative_deposit(self, c, sample_account) -> None:
         """Negative deposit amounts should be rejected."""
         # Persist the account in the DB first
         c.account_repo().create(sample_account)
@@ -232,7 +232,7 @@ class TestServiceValidation:
         )
         assert not result.success
 
-    def test_zero_amount_transfer(self, c, sample_account):
+    def test_zero_amount_transfer(self, c, sample_account) -> None:
         """Zero-amount transfers should be rejected."""
         # Persist both accounts in the DB first
         c.account_repo().create(sample_account)

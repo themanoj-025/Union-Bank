@@ -97,7 +97,7 @@ def get_engine() -> Any:
         _engine_instance = create_engine(db_url, **engine_kwargs)
 
         @event.listens_for(_engine_instance, "connect")
-        def _set_pragmas(dbapi_connection, connection_record):
+        def _set_pragmas(dbapi_connection, connection_record) -> None:
             """
             Enable WAL mode and foreign keys for better performance and integrity.
 

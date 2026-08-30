@@ -108,7 +108,7 @@ def _get_current_customer_return_dict() -> list[str]:
 class TestNoPasswordLeak:
     """Assert that no API response schema or internal dict ever exposes a password."""
 
-    def test_no_response_model_has_password_field(self):
+    def test_no_response_model_has_password_field(self) -> None:
         """Verify that every Pydantic response model lacks a 'password' field."""
         leaks = _get_all_response_model_fields()
         assert not leaks, (
@@ -116,7 +116,7 @@ class TestNoPasswordLeak:
             f"which should never be serialized: {leaks}"
         )
 
-    def test_get_current_customer_does_not_return_password(self):
+    def test_get_current_customer_does_not_return_password(self) -> None:
         """
         Verify that get_current_customer() in api/common.py does not include password.
 
@@ -136,7 +136,7 @@ class TestNoPasswordLeak:
             f"Current keys: {return_keys}"
         )
 
-    def test_password_not_in_profile_response(self):
+    def test_password_not_in_profile_response(self) -> None:
         """Verify ProfileData model doesn't contain any password fields."""
         from unionbank.entrypoints.api.models import ProfileData
 

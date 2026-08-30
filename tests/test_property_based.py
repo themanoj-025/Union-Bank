@@ -94,7 +94,7 @@ def _make_account(acc_no: str, balance: Decimal) -> Account:
     initial_balance=positive_decimals,
     deposit_amount=amounts,
 )
-def test_deposit_preserves_invariant(acc_no, initial_balance, deposit_amount):
+def test_deposit_preserves_invariant(acc_no, initial_balance, deposit_amount) -> None:
     """
     Deposit increases balance by exactly the amount deposited.
 
@@ -125,7 +125,7 @@ def test_deposit_preserves_invariant(acc_no, initial_balance, deposit_amount):
     initial_balance=positive_decimals,
     withdraw_amount=amounts,
 )
-def test_no_overdraft(acc_no, initial_balance, withdraw_amount):
+def test_no_overdraft(acc_no, initial_balance, withdraw_amount) -> None:
     """
     Withdrawal fails if amount > balance.
 
@@ -163,7 +163,7 @@ def test_no_overdraft(acc_no, initial_balance, withdraw_amount):
 )
 def test_transfer_preserves_total_balance(
     sender_acc, receiver_acc, sender_balance, receiver_balance, transfer_amount
-):
+) -> None:
     """
     Total system balance is conserved during transfers.
 
@@ -216,7 +216,7 @@ def test_transfer_preserves_total_balance(
         places=2,
     ),
 )
-def test_interest_monotonicity(acc_no, balance):
+def test_interest_monotonicity(acc_no, balance) -> None:
     """
     Interest is always >= 0 and strictly positive for sufficiently large balances.
 
@@ -282,38 +282,38 @@ class MoneyInvariantMachine(RuleBasedStateMachine):
         self.account_repo.create(_make_account(self.acc_b, Decimal("500.00")))
 
     @rule(amount=amounts)
-    def deposit(self, amount: Decimal):
+    def deposit(self, amount: Decimal) -> None:
         """Deposit money into account A."""
         result = self.service.deposit(self.acc_a, amount)
         if result.success:
             self.total_deposits += amount
 
     @rule(amount=amounts)
-    def withdraw(self, amount: Decimal):
+    def withdraw(self, amount: Decimal) -> None:
         """Withdraw money from account A."""
         result = self.service.withdraw(self.acc_a, amount)
         if result.success:
             self.total_withdrawals += amount
 
     @rule(amount=amounts)
-    def transfer_a_to_b(self, amount: Decimal):
+    def transfer_a_to_b(self, amount: Decimal) -> None:
         """Transfer money from A to B."""
         self.service.transfer(self.acc_a, self.acc_b, amount)
 
     @rule(amount=amounts)
-    def transfer_b_to_a(self, amount: Decimal):
+    def transfer_b_to_a(self, amount: Decimal) -> None:
         """Transfer money from B to A."""
         self.service.transfer(self.acc_b, self.acc_a, amount)
 
     @invariant()
-    def total_balance_conserved(self):
+    def total_balance_conserved(self) -> None:
         """Total balance equals initial balance + deposits - withdrawals."""
         total = sum(a.balance for a in self.account_repo.get_all())
         expected = Decimal("1500.00") + self.total_deposits - self.total_withdrawals
         assert total == expected, f"Balance invariant broken! Total: {total}, Expected: {expected}"
 
     @invariant()
-    def no_negative_balances(self):
+    def no_negative_balances(self) -> None:
         """No account balance can ever be negative."""
         for account in self.account_repo.get_all():
             assert account.balance >= Decimal("0.00"), (
@@ -321,7 +321,7 @@ class MoneyInvariantMachine(RuleBasedStateMachine):
             )
 
     @invariant()
-    def transaction_count_matches_txns(self):
+    def transaction_count_matches_txns(self) -> None:
         """Total transaction count should be >= 0 (sanity check)."""
         assert self.txn_repo.count() >= 0
 
