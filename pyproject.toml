@@ -99,6 +99,8 @@ ignore = [
     # misc style
     "UP042", "SIM108", "RUF059", "RUF022", "RUF013",
     "N802",    # function name should be lowercase — legacy naming
+    # print in CLI presentation layer — intentional user-facing output
+    "T201",
 ]
 
 [tool.mypy]
