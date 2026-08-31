@@ -1,4 +1,5 @@
-"""Seed data constants and helper functions.
+"""
+Seed data constants and helper functions.
 
 Extracted from seed_data.py for maintainability. Contains all the name
 lists, address data, transaction types, and generation helpers.
