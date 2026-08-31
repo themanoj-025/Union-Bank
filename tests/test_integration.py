@@ -51,7 +51,7 @@ def _fresh_db() -> None:
 
 
 @pytest.fixture
-def c():
+def c() -> None:
     """Get a fresh DI container with a clean SQLite database."""
     return get_container()
 
@@ -645,7 +645,7 @@ class TestConcurrentTransfers:
     preventing race conditions on account balances.
     """
 
-    def test_simultaneous_transfers_no_lost_updates(self, c):
+    def test_simultaneous_transfers_no_lost_updates(self, c) -> None:
         """
         Fire 10 concurrent transfers from one account and verify:
         1. Money is ALWAYS conserved (sender + receiver = initial total)
@@ -729,7 +729,7 @@ class TestConcurrentTransfers:
             f"Sample: {next((r.message for r in results if not r.success), 'unknown')}"
         )
 
-    def test_concurrent_deposits_no_lost_updates(self, c):
+    def test_concurrent_deposits_no_lost_updates(self, c) -> None:
         """
         Fire 20 concurrent deposits into the same account.
         Under SQLite's WAL mode, some may fail due to locking.

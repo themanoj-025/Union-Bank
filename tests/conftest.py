@@ -106,7 +106,7 @@ def c() -> None:
 
 
 @pytest.fixture
-def sample_account():
+def sample_account() -> None:
     """
     Return an Account domain object for tests.
 

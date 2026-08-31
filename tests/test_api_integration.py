@@ -51,7 +51,7 @@ def _fresh_db() -> None:
 
 
 @pytest.fixture
-def c():
+def c() -> None:
     """Get a fresh DI container with a clean SQLite database."""
     return get_container()
 
