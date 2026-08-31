@@ -119,13 +119,13 @@ class FakeRefreshTokenRepository:
     def __init__(self):
         self._tokens: dict[str, RefreshToken] = {}
 
-    def get(self, token_id: str):
+    def get(self, token_id: str) -> None:
         return self._tokens.get(token_id)
 
     def get_by_account(self, account_number: str) -> list[object]:
         return [t for t in self._tokens.values() if t.account_number == account_number]
 
-    def create(self, token: RefreshToken):
+    def create(self, token: RefreshToken) -> None:
         self._tokens[token.token_id] = token
         return token
 
