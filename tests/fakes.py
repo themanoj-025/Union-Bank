@@ -41,7 +41,7 @@ from unionbank.domain.entities import (
 )
 
 # Re-export helpers
-from tests.fakes_helpers import (  # noqa: F401
+from tests.fakes_helpers import (
     SimulatedDatabaseTimeout,
     SimulatedDuplicateKeyError,
     SimulatedForeignKeyViolation,
@@ -70,14 +70,14 @@ class _FakeSession:
 
 
 # Re-export all repository fakes from split modules
-from tests.fakes_repositories import (  # noqa: F401
+from tests.fakes_repositories import (
     FakeAccountRepository,
     FakeAdminRepository,
     FakeLoginAttemptRepository,
     FakeSavingsGoalRepository,
     FakeTransactionRepository,
 )
-from tests.fakes_repositories_ext import (  # noqa: F401
+from tests.fakes_repositories_ext import (
     FakeAuditLogRepository,
     FakeNotificationPreferenceRepository,
     FakeNotificationRepository,

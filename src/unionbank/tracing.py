@@ -1,4 +1,5 @@
-"""OpenTelemetry distributed tracing setup.
+"""
+OpenTelemetry distributed tracing setup.
 
 Enabled via OTEL_ENABLED=true environment variable.
 When disabled, all tracing calls are no-ops (zero overhead).
@@ -45,7 +46,7 @@ def setup_tracing(service_name: str) -> bool:
     except ImportError:
         logger.warning("opentelemetry packages not installed — tracing disabled")
         return False
-    except Exception as exc:
+    except (ValueError, RuntimeError, OSError) as exc:
         logger.warning("Failed to setup tracing: %s", exc)
         return False
 
