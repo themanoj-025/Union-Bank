@@ -34,37 +34,37 @@ from unionbank.utils.hashing import hash_password
 
 
 @pytest.fixture
-def account_repo():
+def account_repo() -> None:
     return FakeAccountRepository()
 
 
 @pytest.fixture
-def txn_repo():
+def txn_repo() -> None:
     return FakeTransactionRepository()
 
 
 @pytest.fixture
-def admin_repo():
+def admin_repo() -> None:
     return FakeAdminRepository()
 
 
 @pytest.fixture
-def login_attempt_repo():
+def login_attempt_repo() -> None:
     return FakeLoginAttemptRepository()
 
 
 @pytest.fixture
-def token_version_repo():
+def token_version_repo() -> None:
     return FakeTokenVersionRepository()
 
 
 @pytest.fixture
-def audit_log_repo():
+def audit_log_repo() -> None:
     return FakeAuditLogRepository()
 
 
 @pytest.fixture
-def savings_goal_repo():
+def savings_goal_repo() -> None:
     return FakeSavingsGoalRepository()
 
 
@@ -94,7 +94,7 @@ def sample_admin() -> AdminUser:
 
 
 @pytest.fixture
-def auth_service(account_repo, admin_repo, login_attempt_repo, token_version_repo):
+def auth_service(account_repo, admin_repo, login_attempt_repo, token_version_repo) -> None:
     return AuthService(
         account_repo=account_repo,
         admin_repo=admin_repo,
@@ -104,7 +104,7 @@ def auth_service(account_repo, admin_repo, login_attempt_repo, token_version_rep
 
 
 @pytest.fixture
-def account_service(account_repo, txn_repo, token_version_repo):
+def account_service(account_repo, txn_repo, token_version_repo) -> None:
     return AccountService(
         account_repo=account_repo,
         txn_repo=txn_repo,
@@ -113,7 +113,7 @@ def account_service(account_repo, txn_repo, token_version_repo):
 
 
 @pytest.fixture
-def transaction_service(account_repo, txn_repo):
+def transaction_service(account_repo, txn_repo) -> None:
     return TransactionService(
         account_repo=account_repo,
         txn_repo=txn_repo,
@@ -121,7 +121,7 @@ def transaction_service(account_repo, txn_repo):
 
 
 @pytest.fixture
-def admin_service(account_repo, txn_repo, admin_repo, audit_log_repo):
+def admin_service(account_repo, txn_repo, admin_repo, audit_log_repo) -> None:
     return AdminService(
         account_repo=account_repo,
         txn_repo=txn_repo,
@@ -131,7 +131,7 @@ def admin_service(account_repo, txn_repo, admin_repo, audit_log_repo):
 
 
 @pytest.fixture
-def savings_goal_service(account_repo, txn_repo, savings_goal_repo):
+def savings_goal_service(account_repo, txn_repo, savings_goal_repo) -> None:
     return SavingsGoalService(
         goal_repo=savings_goal_repo,
         account_repo=account_repo,
