@@ -12,7 +12,7 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # ── Stage 0: Base Python image ──────────────────────────────────────────────
-FROM python:3.11-slim AS base
+FROM python:3.14-slim AS base
 
 LABEL org.opencontainers.image.title="Union Bank Management System"
 LABEL org.opencontainers.image.description="FastAPI REST API for banking operations"
