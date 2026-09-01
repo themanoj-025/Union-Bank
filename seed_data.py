@@ -47,7 +47,7 @@ from seed_helpers import (
 NUM_ACCOUNTS = 5000
 MIN_TXNS_PER_ACCOUNT = 8
 MAX_TXNS_PER_ACCOUNT = 20
-DEFAULT_PASSWORD = "Password@123"
+DEFAULT_PASSWORD = os.environ.get("SEED_PASSWORD", "Password@123")
 START_DATE = datetime(2022, 1, 1)
 END_DATE = datetime(2024, 12, 31)
 GENDERS = ["Male", "Female"]
