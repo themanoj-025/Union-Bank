@@ -15,6 +15,8 @@ import ast
 from pathlib import Path
 
 
+import pytest
+
 pytestmark = pytest.mark.slow
 # Resolve the path to api/common.py (now lives in src/unionbank/entrypoints/api/)
 _COMMON_PY_PATH = (

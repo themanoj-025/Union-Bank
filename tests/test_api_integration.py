@@ -20,6 +20,9 @@ from fastapi.testclient import TestClient
 
 from unionbank.infrastructure.container import get_container, reset_container
 
+pytestmark = pytest.mark.integration
+
+
 
 pytestmark = pytest.mark.slow
 #  Fixtures
