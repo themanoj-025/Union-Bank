@@ -6,6 +6,9 @@ import pytest
 
 from unionbank.config import Config, _require_env, _optional_env
 
+pytestmark = pytest.mark.unit
+
+
 
 class TestRequireEnv:
     """Tests for _require_env helper."""

@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """
 tests/test_analyzr.py  –  Unit tests for the analyzr natural-language search engine.
 

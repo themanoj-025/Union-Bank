@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """
 Tests for new features: rate limiting, CSV export, interest, categories, session mgmt.
 """
