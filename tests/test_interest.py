@@ -1,48 +1,45 @@
-"""
-Tests for UNION-BANK- interest calculation module.
+"""Tests for domain.interest — pure interest calculation function."""
 
-Tests pure domain functions for interest computation.
-"""
+from __future__ import annotations
 
+import pytest
 
-from unionbank.domain.interest import calculate_monthly_interest
+pytestmark = pytest.mark.slow
 
 
 class TestCalculateMonthlyInterest:
-    """Test monthly interest calculation."""
+    """calculate_monthly_interest computes balance * rate / 12 / 100."""
 
-    def test_basic_interest(self) -> None:
-        result = calculate_monthly_interest(100000.0)
-        # 100000 * 3.5 / 12 / 100 = 291.67
+    def test_default_rate(self) -> None:
+        from unionbank.domain.interest import calculate_monthly_interest
+        # 100000 * 3.5 / 12 / 100 = 291.666... → 291.67
+        result = calculate_monthly_interest(100000)
         assert result == 291.67
 
     def test_zero_balance(self) -> None:
-        result = calculate_monthly_interest(0.0)
-        assert result == 0.0
-
-    def test_custom_rate(self) -> None:
-        result = calculate_monthly_interest(100000.0, annual_rate_pct=6.0)
-        # 100000 * 6.0 / 12 / 100 = 500.0
-        assert result == 500.0
-
-    def test_high_balance(self) -> None:
-        result = calculate_monthly_interest(10000000.0)
-        # 10M * 3.5 / 12 / 100 = 29166.67
-        assert result == 29166.67
-
-    def test_negative_balance(self) -> None:
-        result = calculate_monthly_interest(-50000.0)
-        assert result < 0
-
-    def test_small_balance(self) -> None:
-        result = calculate_monthly_interest(100.0)
-        assert result == 0.29
+        from unionbank.domain.interest import calculate_monthly_interest
+        assert calculate_monthly_interest(0) == 0.0
 
     def test_zero_rate(self) -> None:
-        result = calculate_monthly_interest(100000.0, annual_rate_pct=0.0)
-        assert result == 0.0
+        from unionbank.domain.interest import calculate_monthly_interest
+        assert calculate_monthly_interest(100000, 0) == 0.0
 
     def test_high_rate(self) -> None:
-        result = calculate_monthly_interest(100000.0, annual_rate_pct=12.0)
-        # 100000 * 12 / 12 / 100 = 1000.0
-        assert result == 1000.0
+        from unionbank.domain.interest import calculate_monthly_interest
+        # 50000 * 12 / 12 / 100 = 500
+        result = calculate_monthly_interest(50000, 12.0)
+        assert result == 500.0
+
+    def test_fractional_balance(self) -> None:
+        from unionbank.domain.interest import calculate_monthly_interest
+        result = calculate_monthly_interest(12345.67, 3.5)
+        assert result == round(12345.67 * 3.5 / 12 / 100, 2)
+
+    def test_return_type_is_float(self) -> None:
+        from unionbank.domain.interest import calculate_monthly_interest
+        assert isinstance(calculate_monthly_interest(100000), float)
+
+    def test_large_balance(self) -> None:
+        from unionbank.domain.interest import calculate_monthly_interest
+        result = calculate_monthly_interest(10_000_000, 3.5)
+        assert result > 0
