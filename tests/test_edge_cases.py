@@ -18,6 +18,9 @@ from decimal import Decimal
 
 import pytest
 
+pytestmark = pytest.mark.unit
+
+
 #  categories.py  –  get_category_choice() edge cases
 
 

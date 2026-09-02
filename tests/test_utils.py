@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """
 Tests for utils.py – validation helpers, password hashing, generators, etc.
 """
