@@ -1,11 +1,13 @@
-"""Extended in-memory repository fakes — token, notification, refresh, audit."""
+"""Extended in-memory repository fakes — token, notification, refresh, audit, loan."""
 
 from __future__ import annotations
 
 from datetime import datetime, timedelta, UTC
+from decimal import Decimal
 
 from unionbank.domain.entities import (
     AuditLog,
+    Loan,
     Notification,
     NotificationPreference,
     RefreshToken,
@@ -194,6 +196,57 @@ class FakeAuditLogRepository:
     def get_by_action(self, action: str, limit: int = 50) -> list:
         entries = [e for e in self._entries if e["action"] == action]
         return list(reversed(entries))[:limit]
+
+    def commit(self) -> None:
+        pass
+
+    def rollback(self) -> None:
+        pass
+
+
+class FakeLoanRepository:
+    """In-memory loan repository."""
+
+    def __init__(self):
+        self._loans: dict[str, Loan] = {}
+
+    def get(self, loan_id: str) -> Loan | None:
+        return self._loans.get(loan_id)
+
+    def get_by_account(self, acc_no: str) -> list[Loan]:
+        return [ln for ln in self._loans.values() if ln.account_number == acc_no]
+
+    def get_all_pending(self) -> list[Loan]:
+        return [ln for ln in self._loans.values() if ln.status == "PENDING"]
+
+    def get_all_active(self) -> list[Loan]:
+        return [ln for ln in self._loans.values() if ln.status == "ACTIVE"]
+
+    def get_all(self) -> list[Loan]:
+        return list(self._loans.values())
+
+    def create(self, loan: Loan) -> Loan:
+        self._loans[loan.loan_id] = loan
+        return loan
+
+    def update(self, loan: Loan) -> Loan:
+        self._loans[loan.loan_id] = loan
+        return loan
+
+    def count_by_status(self, status: str) -> int:
+        return sum(1 for ln in self._loans.values() if ln.status == status)
+
+    def total_disbursed(self) -> Decimal:
+        return sum(
+            ln.principal_amount for ln in self._loans.values()
+            if ln.status in ("ACTIVE", "CLOSED")
+        )
+
+    def total_outstanding(self) -> Decimal:
+        return sum(
+            ln.remaining_amount for ln in self._loans.values()
+            if ln.status == "ACTIVE"
+        )
 
     def commit(self) -> None:
         pass
