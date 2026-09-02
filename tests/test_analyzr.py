@@ -1,3 +1,5 @@
+
+from __future__ import annotations
 import pytest
 
 pytestmark = pytest.mark.unit
@@ -9,7 +11,6 @@ Tests every intent pattern, amount extraction format, time window calculation,
 and edge case independently — without needing a database connection (uses fakes).
 """
 
-from __future__ import annotations
 
 from datetime import datetime, timedelta, UTC
 from decimal import Decimal
