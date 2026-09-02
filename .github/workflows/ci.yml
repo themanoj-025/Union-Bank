@@ -303,10 +303,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build Docker image
-        run: |
-          touch .env
-          docker compose build api
+      - name: Build Docker image (cached)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: unionbank:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Start services
         run: |
