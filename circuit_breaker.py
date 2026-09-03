@@ -1,5 +1,9 @@
-"""
-Lightweight circuit breaker for external API calls.
+"""Lightweight circuit breaker for external API calls.
+
+CANONICAL COPY — this file is the single source of truth. It is synced
+verbatim into every portfolio repo by ``tools/sync_circuit_breaker.py``
+(see ``shared/README.md``). Make changes HERE, then re-run the sync;
+do not edit the per-repo copies directly.
 
 Usage:
     from circuit_breaker import CircuitBreaker
@@ -22,9 +26,9 @@ from __future__ import annotations
 import functools
 import logging
 import time
+from collections.abc import Callable
 from enum import Enum
 from typing import Any
-from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
