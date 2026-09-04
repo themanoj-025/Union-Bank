@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import jwt
-from fastapi import Request, Response, status
+from fastapi import APIRouter, Request, Response, status
 
 from unionbank.entrypoints.api.common import (
     create_token_pair,
@@ -22,7 +22,7 @@ from unionbank.entrypoints.api.models import (
 )
 from unionbank.entrypoints.api.v2.helpers import _err, _get_container, _ok
 
-router = __import__("fastapi").APIRouter()
+router = APIRouter()
 
 
 @router.post("/auth/login", response_model=ApiResponse[TokenData])

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from fastapi import Depends, Query, Response
+from fastapi import APIRouter, Depends, Query, Response
 
 from unionbank.entrypoints.api.common import get_current_customer
 from unionbank.entrypoints.api.models import (
@@ -14,7 +14,7 @@ from unionbank.entrypoints.api.models import (
 )
 from unionbank.entrypoints.api.v2.helpers import _err, _get_container, _ok
 
-router = __import__("fastapi").APIRouter()
+router = APIRouter()
 
 
 @router.get("/account/statements", response_model=ApiResponse[list[TransactionOut]])
