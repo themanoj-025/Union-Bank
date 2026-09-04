@@ -13,8 +13,8 @@ pytestmark = pytest.mark.unit
 class TestRequireEnv:
     """Tests for _require_env helper."""
 
-    def test_returns_value(self, monkeypatch: object) -> None:
-        monkeypatch.setenv("TEST_ENV_VAR", "hello")  # type: ignore
+    def test_returns_value(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("TEST_ENV_VAR", "hello")
         assert _require_env("TEST_ENV_VAR") == "hello"
 
     def test_returns_default(self) -> None:
@@ -28,8 +28,8 @@ class TestRequireEnv:
 class TestOptionalEnv:
     """Tests for _optional_env helper."""
 
-    def test_returns_value(self, monkeypatch: object) -> None:
-        monkeypatch.setenv("TEST_OPT_VAR", "world")  # type: ignore
+    def test_returns_value(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("TEST_OPT_VAR", "world")
         assert _optional_env("TEST_OPT_VAR") == "world"
 
     def test_returns_default(self) -> None:
@@ -45,7 +45,7 @@ class TestConfig:
     def test_config_is_frozen(self) -> None:
         config = Config()
         with pytest.raises(AttributeError):
-            config.JWT_SECRET = "new-secret"  # type: ignore
+            config.JWT_SECRET = "new-secret"
 
     def test_has_required_fields(self) -> None:
         config = Config()
