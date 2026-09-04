@@ -38,7 +38,7 @@ This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). By particip
 
 ```bash
 # 1. Clone and enter the repository
-git clone https://github.com/themanoj-025/UNION-BANK-.git
+git clone https://github.com/themanoj-025/Union-Bank.git
 cd UNION-BANK-
 
 # 2. Set up Python virtual environment
@@ -201,7 +201,7 @@ chore(deps): pin fastapi to >=0.115.0 in requirements.txt
 
 ### 1. Pick an Issue
 
-Check the [Issues](https://github.com/themanoj-025/UNION-BANK-/issues) tab for open tasks. Comment to claim one.
+Check the [Issues](https://github.com/themanoj-025/Union-Bank/issues) tab for open tasks. Comment to claim one.
 
 ### 2. Create a Branch
 
@@ -386,4 +386,4 @@ npm run test:watch    # Watch mode
 
 ## Questions?
 
-Open a [Discussion](https://github.com/themanoj-025/UNION-BANK-/discussions) or ask in an Issue. We're happy to help!
+Open a [Discussion](https://github.com/themanoj-025/Union-Bank/discussions) or ask in an Issue. We're happy to help!

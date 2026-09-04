@@ -7,7 +7,7 @@
 ## 🎯 Senior Software Engineer / Backend Engineer
 
 **Union Bank Management System** — *Concurrent-safe banking API with atomic transactions, defense-in-depth security, async PostgreSQL, and full observability.*
-[github.com/themanoj-025/UNION-BANK-](https://github.com/themanoj-025/UNION-BANK-)
+[github.com/themanoj-025/Union-Bank](https://github.com/themanoj-025/Union-Bank)
 
 ---
 
