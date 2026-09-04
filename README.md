@@ -227,7 +227,7 @@ flowchart TB
 | **Exception safety** | Bare `except: pass` banned by CI grep-check — all errors logged with context | ✅ |
 | **Account lockout** | 5 failed attempts → 15-minute freeze (per-account) | ✅ |
 
-[Full Threat Model →](docs/reference/THREAT_MODEL.md) • [Security ADR →](docs/decisions/ADR-0002-security-hardening.md)
+[Full Threat Model →](docs/reference/THREAT_MODEL.md) • [Security ADR →](docs/decisions/ADR-0003-security-hardening.md)
 
 ---
 
@@ -322,12 +322,13 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
 
 | Document | Purpose |
 |----------|---------|
-| [ADR-0001](docs/decisions/ADR-0001-consolidate-service-layer.md) | Service layer consolidation — one canonical tree |
-| [ADR-0002](docs/decisions/ADR-0002-security-hardening.md) | Token strategy, 2FA, CSRF |
-| [ADR-0003](docs/decisions/ADR-0003-totp-2fa.md) | TOTP 2FA completion |
-| [ADR-0004](docs/decisions/ADR-0004-data-retention.md) | Data retention + idempotency |
-| [ADR-0005](docs/decisions/ADR-0005-database-migration.md) | PostgreSQL migration path |
-| [ADR-0006](docs/decisions/ADR-0006-git-strategy.md) | Git strategy, commits, releases |
+| [ADR-0001](docs/decisions/ADR-0001-consolidate-codebase.md) | Consolidate codebase to single canonical tree |
+| [ADR-0002](docs/decisions/ADR-0002-consolidate-service-layer.md) | Service layer consolidation — one canonical tree |
+| [ADR-0003](docs/decisions/ADR-0003-security-hardening.md) | Token strategy, 2FA, CSRF |
+| [ADR-0004](docs/decisions/ADR-0004-totp-2fa.md) | TOTP 2FA completion |
+| [ADR-0005](docs/decisions/ADR-0005-data-retention.md) | Data retention + idempotency |
+| [ADR-0006](docs/decisions/ADR-0006-database-migration.md) | PostgreSQL migration path |
+| [ADR-0007](docs/decisions/ADR-0007-git-strategy.md) | Git strategy, commits, releases |
 | [INVENTORY.md](docs/reference/INVENTORY.md) | Forensic module classification |
 | [THREAT_MODEL.md](docs/reference/THREAT_MODEL.md) | Security threat analysis |
 | [RUNBOOK.md](docs/reference/RUNBOOK.md) | Incident response |
