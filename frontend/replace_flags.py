@@ -1,5 +1,8 @@
 import re
 
+import structlog
+
+logger = structlog.get_logger("replace_flags")
 
 # ISO country code map from emoji to 2-letter ISO code
 def get_iso_from_emoji(emoji) -> str:
@@ -26,4 +29,4 @@ new_content = re.sub(r'<span className="country-flag">(.*?)</span>', replace_fla
 
 with open("c:/UI-UX/union-bank-wise-reskin/src/pages/Home.jsx", "w", encoding="utf-8") as f:
     f.write(new_content)
-print("Replaced emojis with flag-icons classes")
+logger.info("replaced_emojis")
