@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import Depends, Query, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 
 from unionbank.entrypoints.api.common import get_current_admin
 from unionbank.entrypoints.api.models import (
@@ -17,7 +17,7 @@ from unionbank.entrypoints.api.models import (
 )
 from unionbank.entrypoints.api.v2.helpers import _err, _fmt_currency, _get_container, _ok
 
-router = __import__("fastapi").APIRouter()
+router = APIRouter()
 
 @router.get("/admin/loans", response_model=ApiResponse[LoanAdminStats])
 def v2_admin_list_loans(admin: dict = Depends(get_current_admin)) -> ApiResponse:
