@@ -14,9 +14,11 @@ from unionbank.entrypoints.api.models import (
     ApiResponse,
     HealthData,
 )
+from fastapi import APIRouter
+
 from unionbank.entrypoints.api.v2.helpers import _err, _ok
 
-router = __import__("fastapi").APIRouter()
+router = APIRouter()
 
 @router.get("/categories", response_model=ApiResponse[list[str]])
 def v2_list_categories() -> dict[str, object]:

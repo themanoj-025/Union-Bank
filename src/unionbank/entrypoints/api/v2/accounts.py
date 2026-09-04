@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
-from fastapi import Depends, status
+from fastapi import APIRouter, Depends, status
 
 from unionbank.entrypoints.api.common import get_current_customer
 from unionbank.entrypoints.api.models import (
@@ -20,7 +20,7 @@ from unionbank.entrypoints.api.models import (
 )
 from unionbank.entrypoints.api.v2.helpers import _err, _fmt_currency, _get_container, _ok
 
-router = __import__("fastapi").APIRouter()
+router = APIRouter()
 
 
 @router.get("/account/profile", response_model=ApiResponse[ProfileData])
