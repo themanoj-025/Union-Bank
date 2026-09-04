@@ -373,7 +373,7 @@ UNION-BANK-/
 
 ```bash
 # Quick start
-git clone https://github.com/themanoj-025/UNION-BANK-.git
+git clone https://github.com/themanoj-025/Union-Bank.git
 cd UNION-BANK-
 python -m venv venv && source venv/bin/activate
 pip install -e . && pip install -r requirements.txt
