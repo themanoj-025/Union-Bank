@@ -1,3 +1,4 @@
+from pathlib import Path
 """Tests for UNION-BANK- CSV export module."""
 
 import csv
@@ -12,16 +13,16 @@ from unionbank.utils.csv_export import export_transactions_to_csv, generate_csv_
 class TestExportTransactionsToCsv:
     """Tests for transaction CSV export."""
 
-    def test_creates_file(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "test.csv")  # type: ignore
+    def test_creates_file(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "test.csv")
         records = [
             {"txn_id": "T001", "timestamp": "2025-01-01", "type": "DEPOSIT", "amount": 1000, "balance": 5000, "description": "Salary", "category": "Income"},
         ]
         result = export_transactions_to_csv("ACC001", records, filepath)
         assert os.path.exists(result)
 
-    def test_csv_has_header(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "test.csv")  # type: ignore
+    def test_csv_has_header(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "test.csv")
         export_transactions_to_csv("ACC001", [], filepath)
         with open(filepath) as f:
             reader = csv.reader(f)
@@ -29,8 +30,8 @@ class TestExportTransactionsToCsv:
             assert "Transaction ID" in header[0]
             assert "Amount" in header[3]
 
-    def test_deposit_positive_sign(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "test.csv")  # type: ignore
+    def test_deposit_positive_sign(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "test.csv")
         records = [
             {"txn_id": "T001", "timestamp": "2025-01-01", "type": "DEPOSIT", "amount": 500, "balance": 1000, "description": "", "category": "General"},
         ]
@@ -41,8 +42,8 @@ class TestExportTransactionsToCsv:
             row = next(reader)
             assert row[3].startswith("+")
 
-    def test_withdraw_negative_sign(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "test.csv")  # type: ignore
+    def test_withdraw_negative_sign(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "test.csv")
         records = [
             {"txn_id": "T002", "timestamp": "2025-01-02", "type": "WITHDRAW", "amount": 200, "balance": 800, "description": "ATM", "category": "General"},
         ]
@@ -53,15 +54,15 @@ class TestExportTransactionsToCsv:
             row = next(reader)
             assert row[3].startswith("-")
 
-    def test_empty_records(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "empty.csv")  # type: ignore
+    def test_empty_records(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "empty.csv")
         result = export_transactions_to_csv("ACC001", [], filepath)
         with open(result) as f:
             lines = f.readlines()
             assert len(lines) == 1  # Only header
 
-    def test_creates_directory(self, tmp_path: object) -> None:
-        filepath = str(tmp_path / "subdir" / "test.csv")  # type: ignore
+    def test_creates_directory(self, tmp_path: Path) -> None:
+        filepath = str(tmp_path / "subdir" / "test.csv")
         result = export_transactions_to_csv("ACC001", [], filepath)
         assert os.path.exists(result)
 
