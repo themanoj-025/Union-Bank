@@ -1,4 +1,5 @@
-"""Lightweight circuit breaker for external API calls.
+"""
+Lightweight circuit breaker for external API calls.
 
 CANONICAL COPY — this file is the single source of truth. It is synced
 verbatim into every portfolio repo by ``tools/sync_circuit_breaker.py``
