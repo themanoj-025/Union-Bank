@@ -251,6 +251,185 @@ class TestAccountCRUD:
         assert r2.success
         assert r2.data["balance"] == 200.0
 
+    def test_idempotency_transfer_prevents_double_spend(self, c) -> None:
+        """
+        ⭐ IDEMPOTENCY: Transferring twice with the same idempotency_key
+        must only move the money once. The second call replays the first
+        result without touching the balances again.
+        """
+        from unionbank.domain.entities import IdempotencyRecord
+
+        for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
+            c.account_repo().create(
+                Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")
+            )
+        c.account_repo().commit()
+
+        svc = c.transaction_service()
+        r1 = svc.transfer(
+            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001"
+        )
+        assert r1.success
+
+        r2 = svc.transfer(
+            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001"
+        )
+        assert r2.success
+        assert r2.sender_balance == Decimal("700.00")  # replays the first result
+
+        # Money must have moved exactly once: 1000 - 300, NOT 1000 - 600
+        assert c.account_repo().get("1000000001").balance == Decimal("700.00")
+        assert c.account_repo().get("1000000002").balance == Decimal("300.00")
+
+    def test_idempotency_transfer_corrupted_record_fails_safe(self, c) -> None:
+        """
+        A corrupted idempotency record must abort the transfer — never
+        silently re-execute it (the old `except ...: pass` fallthrough).
+        """
+        from unionbank.domain.entities import IdempotencyRecord
+
+        for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
+            c.account_repo().create(
+                Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")
+            )
+        c.account_repo().commit()
+
+        c.idempotency_repo().create(
+            IdempotencyRecord(
+                idempotency_key="corrupt-key-001",
+                account_number="1000000001",
+                operation="transfer",
+                result_json="{this is not valid json!!",
+                amount=Decimal("300.00"),
+            )
+        )
+        c.idempotency_repo().commit()
+
+        svc = c.transaction_service()
+        result = svc.transfer(
+            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="corrupt-key-001"
+        )
+        assert result.success is False
+        assert "corrupted" in result.error_message.lower()
+
+        # Money must NOT move
+        assert c.account_repo().get("1000000001").balance == Decimal("1000.00")
+        assert c.account_repo().get("1000000002").balance == Decimal("0.00")
+
+    def test_idempotency_transfer_pending_returns_in_progress(self, c) -> None:
+        """
+        A fresh pending claim (another request mid-flight) must not execute
+        a second transfer — the caller gets an explicit in-progress error.
+        """
+        from unionbank.domain.entities import IdempotencyRecord
+
+        for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
+            c.account_repo().create(
+                Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")
+            )
+        c.account_repo().commit()
+
+        c.idempotency_repo().create(
+            IdempotencyRecord(
+                idempotency_key="pending-key-001",
+                account_number="1000000001",
+                operation="transfer",
+                result_json='{"status": "pending"}',
+                amount=Decimal("300.00"),
+            )
+        )
+        c.idempotency_repo().commit()
+
+        svc = c.transaction_service()
+        result = svc.transfer(
+            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="pending-key-001"
+        )
+        assert result.success is False
+        assert "in progress" in result.error_message.lower()
+        assert c.account_repo().get("1000000001").balance == Decimal("1000.00")
+        assert c.account_repo().get("1000000002").balance == Decimal("0.00")
+
+    def test_idempotency_transfer_stale_pending_is_incomplete(self, c) -> None:
+        """
+        A stale pending claim (holder crashed mid-flight) reports the outcome
+        as unknown instead of re-executing or pretending all is well.
+        """
+        from datetime import UTC, datetime, timedelta
+
+        from unionbank.domain.entities import IdempotencyRecord
+
+        for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
+            c.account_repo().create(
+                Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")
+            )
+        c.account_repo().commit()
+
+        stale = datetime.now(UTC) - timedelta(minutes=30)
+        c.idempotency_repo().create(
+            IdempotencyRecord(
+                idempotency_key="stale-key-001",
+                account_number="1000000001",
+                operation="transfer",
+                result_json='{"status": "pending"}',
+                amount=Decimal("300.00"),
+                created_at=stale,
+            )
+        )
+        c.idempotency_repo().commit()
+
+        svc = c.transaction_service()
+        result = svc.transfer(
+            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="stale-key-001"
+        )
+        assert result.success is False
+        assert "unknown" in result.error_message.lower()
+        assert c.account_repo().get("1000000001").balance == Decimal("1000.00")
+        assert c.account_repo().get("1000000002").balance == Decimal("0.00")
+
+    def test_idempotency_transfer_concurrent_same_key_single_execution(self, c) -> None:
+        """
+        ⭐ TOCTOU REGRESSION TEST: two threads racing a transfer with the
+        SAME idempotency key must move the money exactly once. Before the
+        insert-first fix, both passed the check and both executed.
+        """
+        import threading
+
+        for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
+            c.account_repo().create(
+                Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")
+            )
+        c.account_repo().commit()
+
+        svc = c.transaction_service()
+        results: list = []
+        barrier = threading.Barrier(2)
+
+        def do_transfer() -> None:
+            barrier.wait()
+            results.append(
+                svc.transfer(
+                    "1000000001",
+                    "1000000002",
+                    Decimal("300.00"),
+                    idempotency_key="txn-race-001",
+                )
+            )
+
+        t1 = threading.Thread(target=do_transfer)
+        t2 = threading.Thread(target=do_transfer)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+        # Money must move exactly once regardless of which thread won
+        assert c.account_repo().get("1000000001").balance == Decimal("700.00"), (
+            f"Double execution detected! Balances: "
+            f"{c.account_repo().get('1000000001').balance}, "
+            f"{c.account_repo().get('1000000002').balance}"
+        )
+        assert c.account_repo().get("1000000002").balance == Decimal("300.00")
+
     def test_soft_delete_preserves_transactions(self, c) -> None:
         """
         ⭐ COMPLIANCE: Soft-deleting an account must preserve transaction history.

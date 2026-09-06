@@ -221,9 +221,21 @@ class AsyncSqlAlchemyIdempotencyRepository:
             operation=record.operation,
             result_json=record.result_json,
             amount=record.amount,
+            created_at=record.created_at,
         )
         self.session.add(model)
         return record
+
+    async def update(self, record: IdempotencyRecord) -> None:
+        """Update an existing idempotency record (claim → completed result)."""
+        model = await self.session.get(IdempotencyModel, record.idempotency_key)
+        if model is not None:
+            model.result_json = record.result_json
+            model.amount = record.amount
+
+    async def flush(self) -> None:
+        """Flush the pending INSERT/UPDATE to the DB without committing."""
+        await self.session.flush()
 
     async def commit(self) -> None:
         await self.session.commit()

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import asyncio
 import json
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 
 from unionbank.config import settings
@@ -32,9 +32,10 @@ from unionbank.utils.formatting import (
 )
 
 try:
-    from sqlalchemy.exc import SQLAlchemyError
+    from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 except ImportError:
     SQLAlchemyError = Exception  # fallback if sqlalchemy not installed
+    IntegrityError = Exception
 
 from .interfaces import (
     KeysetPage,
@@ -97,63 +98,191 @@ class AsyncTransactionService:
         if balance < Decimal("0.00"):
             raise ValueError(f"Insufficient balance for {operation}.")
 
-    async def _check_idempotency(
-        self, idempotency_key: str | None, acc_no: str, operation: str, amount: Decimal
-    ) -> ServiceResult | None:
-        """Check if a request with this idempotency_key has already been processed."""
+    # ── Idempotency: claim → execute → complete ───────────────────────
+    # The idempotency_key is the DB primary key, so the claim is atomic:
+    # exactly one concurrent request can INSERT the pending record. Anyone
+    # who finds a pending/completed record replays it instead of executing,
+    # which closes the check-then-execute TOCTOU that allowed double-spend.
+
+    _IDEMPOTENCY_PENDING_JSON = '{"status": "pending"}'
+    _IDEMPOTENCY_STALE_SECONDS = 600  # 10 minutes
+
+    @staticmethod
+    def _classify_idempotency_record(
+        existing: IdempotencyRecord,
+    ) -> tuple[str, dict | None]:
+        """Classify an existing record: replay | pending | incomplete | corrupt."""
+        try:
+            data = json.loads(existing.result_json)
+        except (json.JSONDecodeError, TypeError):
+            return "corrupt", None
+        if data.get("status") == "pending":
+            created_at = existing.created_at
+            # SQLite stores timestamps without tzinfo even though the column
+            # declares timezone=True — normalize so the staleness math holds.
+            if created_at is not None and created_at.tzinfo is None:
+                created_at = created_at.replace(tzinfo=UTC)
+            if created_at is not None and (
+                _utcnow() - created_at
+            ).total_seconds() > AsyncTransactionService._IDEMPOTENCY_STALE_SECONDS:
+                # A pending claim older than the staleness bound means the
+                # holder crashed mid-flight — the outcome is unknowable.
+                return "incomplete", data
+            return "pending", data
+        return "replay", data
+
+    async def _claim_idempotency(
+        self,
+        idempotency_key: str | None,
+        acc_no: str,
+        operation: str,
+        amount: Decimal,
+    ) -> tuple[str, IdempotencyRecord | None]:
+        """
+        Atomically reserve the idempotency slot before executing money movement.
+
+        Returns ``("claimed", None)`` when this request owns the slot — the
+        caller must execute and then call ``_complete_idempotency``. Other
+        statuses mean the caller must NOT execute and should replay/return
+        the corresponding error instead.
+        """
         if not idempotency_key or not self.idempotency_repo:
-            return None
+            return "claimed", None
+
         existing = await self.idempotency_repo.get(idempotency_key)
         if existing is not None:
+            return self._classify_idempotency_record(existing)
+
+        pending = IdempotencyRecord(
+            idempotency_key=idempotency_key,
+            account_number=acc_no,
+            operation=operation,
+            result_json=self._IDEMPOTENCY_PENDING_JSON,
+            amount=amount,
+        )
+        try:
+            await self.idempotency_repo.create(pending)
+            # Flush (not commit) so the claim commits atomically with the
+            # money movement in the caller's commit — and is discarded by a
+            # rollback if the operation fails.
+            await self.idempotency_repo.flush()
+            return "claimed", None
+        except IntegrityError:
+            # Lost a race: a concurrent same-key request inserted first.
+            await self.idempotency_repo.rollback()
+            existing = await self.idempotency_repo.get(idempotency_key)
+            if existing is None:
+                return "incomplete", None
+            return self._classify_idempotency_record(existing)
+        except (SQLAlchemyError, OSError):
+            # Cannot guarantee dedup — fail closed rather than risk double-spend.
+            await self.idempotency_repo.rollback()
+            return "storage_error", None
+
+    async def _complete_idempotency(
+        self,
+        idempotency_key: str | None,
+        acc_no: str,
+        operation: str,
+        amount: Decimal,
+        result: ServiceResult | TransferResult,
+    ) -> None:
+        """Store the final result of an idempotent operation (updates the claim)."""
+        if not idempotency_key or not self.idempotency_repo:
+            return
+        if isinstance(result, TransferResult):
+            result_json = json.dumps(
+                {
+                    "success": result.success,
+                    "sender_balance": float(result.sender_balance or 0),
+                    "receiver_balance": float(result.receiver_balance or 0),
+                    "error_message": result.error_message,
+                }
+            )
+        else:
+            result_json = json.dumps(
+                {
+                    "success": result.success,
+                    "message": result.message,
+                    "data": result.data,
+                }
+            )
+        record = IdempotencyRecord(
+            idempotency_key=idempotency_key,
+            account_number=acc_no,
+            operation=operation,
+            result_json=result_json,
+            amount=amount,
+        )
+        try:
+            await self.idempotency_repo.update(record)
+            await self.idempotency_repo.commit()
+        except (SQLAlchemyError, OSError):
+            from unionbank.utils.logger import logger
+
+            logger.warning("Failed to persist idempotency result", exc_info=True)
+            await self.idempotency_repo.rollback()
+
+    def _idempotency_service_result(
+        self, status: str, existing: IdempotencyRecord | None, operation: str
+    ) -> ServiceResult | None:
+        """Map a claim status to a ServiceResult (deposit/withdraw). None → claimed."""
+        if status == "replay" and existing is not None:
             try:
-                data = json.loads(existing.result_json)
+                data = (
+                    existing
+                    if isinstance(existing, dict)
+                    else json.loads(existing.result_json)
+                )
                 return ServiceResult(
                     success=data.get("success", True),
                     message=data.get("message", "Operation already completed."),
                     data=data.get("data"),
                 )
             except (json.JSONDecodeError, KeyError):
-                from unionbank.utils.logger import logger
-
-                logger.warning("Failed to parse cached idempotency result", exc_info=True)
-                return ServiceResult(
-                    success=True,
-                    message="Operation already completed.",
-                )
-        return None
-
-    async def _store_idempotency(
-        self,
-        idempotency_key: str | None,
-        acc_no: str,
-        operation: str,
-        amount: Decimal,
-        result: ServiceResult,
-    ) -> None:
-        """Store the result of an idempotent operation for future dedup."""
-        if not idempotency_key or not self.idempotency_repo:
-            return
-        record = IdempotencyRecord(
-            idempotency_key=idempotency_key,
-            account_number=acc_no,
-            operation=operation,
-            result_json=json.dumps(
-                {
-                    "success": result.success,
-                    "message": result.message,
-                    "data": result.data,
-                }
+                status = "corrupt"
+        messages = {
+            "corrupt": "Idempotency record corrupted; operation aborted. Contact support.",
+            "pending": (
+                f"{operation.capitalize()} already in progress for this idempotency key."
             ),
-            amount=amount,
-        )
-        try:
-            await self.idempotency_repo.create(record)
-            await self.idempotency_repo.commit()
-        except (SQLAlchemyError, OSError):
-            from unionbank.utils.logger import logger
+            "incomplete": "Previous attempt outcome unknown. Contact support before retrying.",
+            "storage_error": "Idempotency storage unavailable; operation aborted. Please retry.",
+        }
+        message = messages.get(status)
+        if message is None:
+            return None
+        return ServiceResult(success=False, message=message)
 
-            logger.warning("Failed to persist idempotency record", exc_info=True)
-            await self.idempotency_repo.rollback()
+    def _idempotency_transfer_result(
+        self, status: str, existing: IdempotencyRecord | None
+    ) -> TransferResult | None:
+        """Map a claim status to a TransferResult. None → claimed."""
+        if status == "replay" and existing is not None:
+            try:
+                data = (
+                    existing
+                    if isinstance(existing, dict)
+                    else json.loads(existing.result_json)
+                )
+                return TransferResult(
+                    success=data.get("success", True),
+                    sender_balance=Decimal(str(data.get("sender_balance", 0))),
+                    receiver_balance=Decimal(str(data.get("receiver_balance", 0))),
+                    error_message=data.get("error_message", ""),
+                )
+            except (json.JSONDecodeError, KeyError):
+                status = "corrupt"
+        messages = {
+            "corrupt": "Idempotency record corrupted; transfer aborted. Contact support.",
+            "pending": "Transfer already in progress for this idempotency key.",
+            "incomplete": "Previous attempt outcome unknown. Contact support before retrying.",
+            "storage_error": "Idempotency storage unavailable; transfer aborted. Please retry.",
+        }
+        message = messages.get(status)
+        if message is None:
+            return None
+        return TransferResult(success=False, error_message=message)
 
     async def deposit(
         self,
@@ -165,20 +294,30 @@ class AsyncTransactionService:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
 
-        # Check idempotency first (outside lock â€” read-only)
-        cached = await self._check_idempotency(idempotency_key, acc_no, "deposit", amount)
-        if cached is not None:
-            return cached
-
         # Serialize writes to this account
         lock = _get_account_lock(acc_no)
         async with lock:
+            status, existing = await self._claim_idempotency(
+                idempotency_key, acc_no, "deposit", amount
+            )
+            cached = self._idempotency_service_result(status, existing, "deposit")
+            if cached is not None:
+                return cached
+
             account = await self.account_repo.get(acc_no)
             if account is None:
-                return ServiceResult(success=False, message="Account not found.")
+                failure = ServiceResult(success=False, message="Account not found.")
+                await self._complete_idempotency(
+                    idempotency_key, acc_no, "deposit", amount, failure
+                )
+                return failure
             if not account.can_transact:
-                status = "frozen" if account.is_frozen else "closed"
-                return ServiceResult(success=False, message=f"Account is {status}.")
+                acc_status = "frozen" if account.is_frozen else "closed"
+                failure = ServiceResult(success=False, message=f"Account is {acc_status}.")
+                await self._complete_idempotency(
+                    idempotency_key, acc_no, "deposit", amount, failure
+                )
+                return failure
 
             account.balance += amount
             await self.account_repo.update(account)
@@ -195,15 +334,15 @@ class AsyncTransactionService:
             await self.txn_repo.create(txn)
             await self.account_repo.commit()
 
-        result = ServiceResult(
-            success=True,
-            message=f"{fmt_currency(float(amount))} deposited successfully. "
-            f"New balance: {fmt_currency(float(account.balance))}",
-            data={"balance": float(account.balance)},
-        )
-
-        # Store idempotency result (non-fatal if fails)
-        await self._store_idempotency(idempotency_key, acc_no, "deposit", amount, result)
+            result = ServiceResult(
+                success=True,
+                message=f"{fmt_currency(float(amount))} deposited successfully. "
+                f"New balance: {fmt_currency(float(account.balance))}",
+                data={"balance": float(account.balance)},
+            )
+            await self._complete_idempotency(
+                idempotency_key, acc_no, "deposit", amount, result
+            )
 
         # Send notification (non-fatal if fails)
         if self.notif_service and account:
@@ -226,26 +365,40 @@ class AsyncTransactionService:
         if amount <= 0:
             return ServiceResult(success=False, message="Amount must be positive.")
 
-        # Check idempotency first (outside lock â€” read-only)
-        cached = await self._check_idempotency(idempotency_key, acc_no, "withdraw", amount)
-        if cached is not None:
-            return cached
-
         # Serialize writes to this account
         lock = _get_account_lock(acc_no)
         async with lock:
+            status, existing = await self._claim_idempotency(
+                idempotency_key, acc_no, "withdraw", amount
+            )
+            cached = self._idempotency_service_result(status, existing, "withdraw")
+            if cached is not None:
+                return cached
+
             account = await self.account_repo.get(acc_no)
             if account is None:
-                return ServiceResult(success=False, message="Account not found.")
+                failure = ServiceResult(success=False, message="Account not found.")
+                await self._complete_idempotency(
+                    idempotency_key, acc_no, "withdraw", amount, failure
+                )
+                return failure
             if not account.can_transact:
-                status = "frozen" if account.is_frozen else "closed"
-                return ServiceResult(success=False, message=f"Account is {status}.")
+                acc_status = "frozen" if account.is_frozen else "closed"
+                failure = ServiceResult(success=False, message=f"Account is {acc_status}.")
+                await self._complete_idempotency(
+                    idempotency_key, acc_no, "withdraw", amount, failure
+                )
+                return failure
 
             if amount > account.balance:
-                return ServiceResult(
+                failure = ServiceResult(
                     success=False,
                     message=f"Insufficient balance. Available: {fmt_currency(float(account.balance))}",
                 )
+                await self._complete_idempotency(
+                    idempotency_key, acc_no, "withdraw", amount, failure
+                )
+                return failure
 
             account.balance -= amount
             self._ensure_non_negative_balance(account.balance, "withdraw")
@@ -263,15 +416,15 @@ class AsyncTransactionService:
             await self.txn_repo.create(txn)
             await self.account_repo.commit()
 
-        result = ServiceResult(
-            success=True,
-            message=f"{fmt_currency(float(amount))} withdrawn successfully. "
-            f"New balance: {fmt_currency(float(account.balance))}",
-            data={"balance": float(account.balance)},
-        )
-
-        # Store idempotency result (non-fatal if fails)
-        await self._store_idempotency(idempotency_key, acc_no, "withdraw", amount, result)
+            result = ServiceResult(
+                success=True,
+                message=f"{fmt_currency(float(amount))} withdrawn successfully. "
+                f"New balance: {fmt_currency(float(account.balance))}",
+                data={"balance": float(account.balance)},
+            )
+            await self._complete_idempotency(
+                idempotency_key, acc_no, "withdraw", amount, result
+            )
 
         # Send notification (non-fatal if fails)
         if self.notif_service and account:
@@ -301,48 +454,66 @@ class AsyncTransactionService:
                 success=False, error_message="Cannot transfer to your own account."
             )
 
-        # Check idempotency first (outside lock â€” read-only)
-        if idempotency_key and self.idempotency_repo:
-            existing = await self.idempotency_repo.get(idempotency_key)
-            if existing is not None:
-                try:
-                    data = json.loads(existing.result_json)
-                    return TransferResult(
-                        success=data.get("success", True),
-                        sender_balance=Decimal(str(data.get("sender_balance", 0))),
-                        receiver_balance=Decimal(str(data.get("receiver_balance", 0))),
-                        error_message=data.get("error_message", ""),
-                    )
-                except (json.JSONDecodeError, KeyError):
-                    pass
-
         cat = category if category in TRANSACTION_CATEGORIES else "General"
 
         # Serialize both accounts to prevent lost updates
         lock = _get_account_lock(sender_acc_no, receiver_acc_no)
         async with lock:
+            # Claim the idempotency slot BEFORE executing: the pending INSERT
+            # (DB-unique key) is atomic, so a concurrent same-key request
+            # either replays this result or reports in-progress — it can
+            # never double-execute.
+            status, existing = await self._claim_idempotency(
+                idempotency_key, sender_acc_no, "transfer", amount
+            )
+            cached = self._idempotency_transfer_result(status, existing)
+            if cached is not None:
+                return cached
+
             sender = await self.account_repo.get(sender_acc_no)
             receiver = await self.account_repo.get(receiver_acc_no)
 
             if sender is None:
-                return TransferResult(success=False, error_message="Sender account not found.")
+                failure = TransferResult(success=False, error_message="Sender account not found.")
+                await self._complete_idempotency(
+                    idempotency_key, sender_acc_no, "transfer", amount, failure
+                )
+                return failure
             if receiver is None:
-                return TransferResult(success=False, error_message="Recipient account not found.")
+                failure = TransferResult(
+                    success=False, error_message="Recipient account not found."
+                )
+                await self._complete_idempotency(
+                    idempotency_key, sender_acc_no, "transfer", amount, failure
+                )
+                return failure
 
             if not sender.can_transact:
-                return TransferResult(
+                failure = TransferResult(
                     success=False, error_message="Your account is frozen or closed."
                 )
+                await self._complete_idempotency(
+                    idempotency_key, sender_acc_no, "transfer", amount, failure
+                )
+                return failure
             if not receiver.can_transact:
-                return TransferResult(
+                failure = TransferResult(
                     success=False, error_message="Recipient account is frozen or closed."
                 )
+                await self._complete_idempotency(
+                    idempotency_key, sender_acc_no, "transfer", amount, failure
+                )
+                return failure
 
             if amount > sender.balance:
-                return TransferResult(
+                failure = TransferResult(
                     success=False,
                     error_message=f"Insufficient balance. Available: {fmt_currency(float(sender.balance))}",
                 )
+                await self._complete_idempotency(
+                    idempotency_key, sender_acc_no, "transfer", amount, failure
+                )
+                return failure
 
             # Perform atomic transfer
             try:
@@ -390,6 +561,15 @@ class AsyncTransactionService:
                     error_message="Transfer failed due to a database error. Please try again.",
                 )
 
+            result = TransferResult(
+                success=True,
+                sender_balance=sender.balance,
+                receiver_balance=receiver.balance,
+            )
+            await self._complete_idempotency(
+                idempotency_key, sender_acc_no, "transfer", amount, result
+            )
+
         # Send notifications (non-fatal if fails, outside lock)
         if self.notif_service:
             try:
@@ -411,37 +591,6 @@ class AsyncTransactionService:
                 from unionbank.utils.logger import logger
 
                 logger.warning("Failed to send transfer notification", exc_info=True)
-
-        result = TransferResult(
-            success=True,
-            sender_balance=sender.balance,
-            receiver_balance=receiver.balance,
-        )
-
-        # Store idempotency result (non-fatal if fails, outside lock)
-        if idempotency_key and self.idempotency_repo:
-            try:
-                record = IdempotencyRecord(
-                    idempotency_key=idempotency_key,
-                    account_number=sender_acc_no,
-                    operation="transfer",
-                    result_json=json.dumps(
-                        {
-                            "success": result.success,
-                            "sender_balance": float(result.sender_balance),
-                            "receiver_balance": float(result.receiver_balance),
-                            "error_message": result.error_message,
-                        }
-                    ),
-                    amount=amount,
-                )
-                await self.idempotency_repo.create(record)
-                await self.idempotency_repo.commit()
-            except (SQLAlchemyError, OSError):
-                from unionbank.utils.logger import logger
-
-                logger.warning("Failed to persist idempotency record for transfer", exc_info=True)
-                await self.idempotency_repo.rollback()
 
         return result
 

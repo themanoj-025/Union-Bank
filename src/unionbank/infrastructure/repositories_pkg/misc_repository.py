@@ -41,9 +41,25 @@ class SqlAlchemyIdempotencyRepository:
             operation=record.operation,
             result_json=record.result_json,
             amount=record.amount,
+            created_at=record.created_at,
         )
         self.session.add(model)
         return record
+
+    def update(self, record: IdempotencyRecord) -> None:
+        """Update an existing idempotency record (claim → completed result)."""
+        model = (
+            self.session.query(IdempotencyModel)
+            .filter_by(idempotency_key=record.idempotency_key)
+            .first()
+        )
+        if model is not None:
+            model.result_json = record.result_json
+            model.amount = record.amount
+
+    def flush(self) -> None:
+        """Flush the pending INSERT/UPDATE to the DB without committing."""
+        self.session.flush()
 
     def commit(self) -> None:
         self.session.commit()
