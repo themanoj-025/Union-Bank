@@ -107,7 +107,7 @@ def seed_data(fast_mode: bool = True) -> None:
         print("  Fast mode: using single hash for all accounts")
         hashed_password = hash_password(DEFAULT_PASSWORD)
     else:
-        print(f"  Hashing password '{DEFAULT_PASSWORD}' for each account...")
+        print("  Hashing default seed password for each account...")
         hashed_password = None
 
     session = get_session()
