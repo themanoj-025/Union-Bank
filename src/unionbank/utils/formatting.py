@@ -2,8 +2,8 @@
 formatting.py  –  Formatting helpers, ID generators, and CLI input helpers.
 """
 
-import random
 import re
+import secrets
 import string
 from datetime import datetime
 
@@ -36,7 +36,7 @@ def generate_account_number(max_attempts: int = 1000) -> str:
     c = get_container()
     repo = c.account_repo()
     for _ in range(max_attempts):
-        number = str(random.randint(1000000000, 9999999999))
+        number = str(secrets.randbelow(9_000_000_000) + 1_000_000_000)
         if not repo.exists(number):
             return number
     raise RuntimeError(
@@ -47,22 +47,22 @@ def generate_account_number(max_attempts: int = 1000) -> str:
 
 def generate_transaction_id() -> str:
     """Return a unique transaction ID like TXN-XXXXXXXX."""
-    return "TXN-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return "TXN-" + "".join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
 
 def generate_goal_id() -> str:
     """Generate a unique goal ID like GOAL-XXXXXXXX."""
-    return "GOAL-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return "GOAL-" + "".join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
 
 def generate_loan_id() -> str:
     """Generate a unique loan ID like LON-XXXXXXXX."""
-    return "LON-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return "LON-" + "".join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
 
 def generate_notification_id() -> str:
     """Generate a unique notification ID like NTF-XXXXXXXX."""
-    return "NTF-" + "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return "NTF-" + "".join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(8))
 
 
 #  EMI Calculator
