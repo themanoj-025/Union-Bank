@@ -130,3 +130,8 @@ radar_balance.txt
 
 # Legacy lock file (superseded by requirements.lock)
 requirements-lock.txt
+
+# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
+*.db
+*.db-shm
+*.db-wal
