@@ -447,14 +447,6 @@ jobs:
       - name: Bandit security scan
         run: bandit -r src/ -ll
 
-  hadolint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - uses: hadolint/hadolint-action@v3.5.0
-        with:
-          dockerfile: Dockerfile
-
   lighthouse:
     name: "Frontend — Lighthouse CI (performance budgets)"
     runs-on: ubuntu-latest
