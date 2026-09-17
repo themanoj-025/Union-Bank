@@ -25,6 +25,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 from unionbank.config import settings
+from typing import Any
 
 #  Model Base (re-exported for Alembic)
 

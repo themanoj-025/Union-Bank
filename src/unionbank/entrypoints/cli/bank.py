@@ -6,6 +6,7 @@ no direct JSON reads or writes.
 """
 
 import time as _time
+from typing import Any
 
 from unionbank.entrypoints.cli.account import Account
 from unionbank.entrypoints.cli.ui import (

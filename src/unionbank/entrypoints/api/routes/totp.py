@@ -5,6 +5,7 @@ Extracted from main.py to reduce file size and improve maintainability.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 
 from unionbank.entrypoints.api.common import get_current_admin

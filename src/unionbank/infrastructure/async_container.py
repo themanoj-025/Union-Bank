@@ -26,6 +26,8 @@ from __future__ import annotations
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from typing import Any
+
 from unionbank.infrastructure.async_repositories import (
     AsyncSqlAlchemyAccountRepository,
     AsyncSqlAlchemyAdminRepository,

@@ -6,9 +6,15 @@ All route modules import from here instead of duplicating these utilities.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from fastapi import HTTPException, Request
 
 from unionbank.entrypoints.api.models import ApiResponse
+
+if TYPE_CHECKING:
+    from fastapi.responses import JSONResponse
+    from unionbank.infrastructure.container import Container
 
 
 def _get_container() -> Container:
