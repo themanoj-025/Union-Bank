@@ -84,6 +84,9 @@ def get_engine() -> Any:
         _engine_instance.dispose()
         _engine_instance = None
         _session_maker = None
+        # Invalidate the thread-local session: it is still bound to the
+        # disposed engine, so writes would silently target the old database.
+        close_session()
 
     engine_kwargs = {
         "echo": False,

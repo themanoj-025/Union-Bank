@@ -1,134 +1,148 @@
-"""Tests for UNION-BANK- services_pkg."""
+"""
+Tests for unionbank.application.services_pkg (the Async* services).
+
+These exercise the async use-case layer against MagicMock repos with
+pytest-asyncio in auto mode — no real database required.
+"""
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
+from unionbank.application.services_pkg import (
+    AsyncAccountService,
+    AsyncAdminService,
+    AsyncAuthService,
+    AsyncTransactionService,
+)
 
 pytestmark = pytest.mark.unit
 
 
+def _async_repo() -> MagicMock:
+    """MagicMock whose attribute accesses return AsyncMock for coroutine use."""
+    repo = MagicMock()
+    repo.get = AsyncMock()
+    repo.get_all = AsyncMock()
+    repo.get_by_username = AsyncMock()
+    repo.get_by_account = AsyncMock()
+    repo.is_locked = AsyncMock(return_value=(False, 0))
+    repo.record_failure = AsyncMock(return_value=1)
+    repo.reset = AsyncMock()
+    repo.commit = AsyncMock()
+    return repo
 
-class TestAccountService:
-    """Tests for account_service."""
 
-    def test_create_account(self) -> None:
-        from unionbank.application.services_pkg.account_service import AccountService
+class TestAsyncAccountService:
+    """Tests for AsyncAccountService."""
 
-        repo = MagicMock()
-        repo.get_all.return_value = []
-        svc = AccountService(repo)
-        result = svc.create_account("John Doe", "john@test.com", "1234567890", 1000.0)
-        assert result is not None
-        assert result.name == "John Doe"
-
-    def test_get_account(self) -> None:
-        from unionbank.application.services_pkg.account_service import AccountService
-
-        repo = MagicMock()
+    async def test_get_profile(self) -> None:
+        repo = _async_repo()
         acc = MagicMock()
         acc.account_number = "123"
-        repo.get_by_number.return_value = acc
-        svc = AccountService(repo)
-        result = svc.get_account("123")
+        repo.get.return_value = acc
+        svc = AsyncAccountService(repo, MagicMock())
+        result = await svc.get_profile("123")
         assert result is acc
 
-    def test_get_account_not_found(self) -> None:
-        from unionbank.application.services_pkg.account_service import AccountService
-
-        repo = MagicMock()
-        repo.get_by_number.return_value = None
-        svc = AccountService(repo)
-        result = svc.get_account("999")
+    async def test_get_profile_not_found(self) -> None:
+        repo = _async_repo()
+        repo.get.return_value = None
+        svc = AsyncAccountService(repo, MagicMock())
+        result = await svc.get_profile("999")
         assert result is None
 
-    def test_list_accounts(self) -> None:
-        from unionbank.application.services_pkg.account_service import AccountService
+    async def test_get_balance(self) -> None:
+        from decimal import Decimal
 
-        repo = MagicMock()
-        repo.get_all.return_value = [MagicMock(), MagicMock()]
-        svc = AccountService(repo)
-        result = svc.list_accounts()
-        assert len(result) == 2
+        repo = _async_repo()
+        repo.get.return_value = MagicMock(balance=Decimal("500.00"))
+        svc = AsyncAccountService(repo, MagicMock())
+        result = await svc.get_balance("123")
+        assert result == Decimal("500.00")
 
 
-class TestAuthService:
-    """Tests for auth_service."""
+class TestAsyncAuthService:
+    """Tests for AsyncAuthService.admin_login."""
 
-    def test_authenticate_success(self) -> None:
-        from unionbank.application.services_pkg.auth_service import AuthService
+    async def test_admin_login_success(self) -> None:
+        from unionbank.utils.hashing import hash_password
 
-        repo = MagicMock()
+        account_repo, admin_repo = _async_repo(), _async_repo()
+        login_repo = _async_repo()
         admin = MagicMock()
         admin.username = "admin"
-        admin.verify_password.return_value = True
-        repo.get_admin.return_value = admin
-        svc = AuthService(repo)
-        result = svc.authenticate("admin", "password123")
-        assert result is True
+        admin.password = hash_password("password123")
+        admin_repo.get_by_username.return_value = admin
 
-    def test_authenticate_wrong_password(self) -> None:
-        from unionbank.application.services_pkg.auth_service import AuthService
+        svc = AsyncAuthService(account_repo, admin_repo, login_repo)
+        result = await svc.admin_login("admin", "password123")
+        assert result.success is True
 
-        repo = MagicMock()
+    async def test_admin_login_wrong_password(self) -> None:
+        from unionbank.utils.hashing import hash_password
+
+        account_repo, admin_repo = _async_repo(), _async_repo()
+        login_repo = _async_repo()
         admin = MagicMock()
         admin.username = "admin"
-        admin.verify_password.return_value = False
-        repo.get_admin.return_value = admin
-        svc = AuthService(repo)
-        result = svc.authenticate("admin", "wrong")
-        assert result is False
+        admin.password = hash_password("password123")
+        admin_repo.get_by_username.return_value = admin
 
-    def test_authenticate_nonexistent_user(self) -> None:
-        from unionbank.application.services_pkg.auth_service import AuthService
+        svc = AsyncAuthService(account_repo, admin_repo, login_repo)
+        result = await svc.admin_login("admin", "wrong")
+        assert result.success is False
 
-        repo = MagicMock()
-        repo.get_admin.return_value = None
-        svc = AuthService(repo)
-        result = svc.authenticate("ghost", "pwd")
-        assert result is False
+    async def test_admin_login_nonexistent_user(self) -> None:
+        account_repo, admin_repo = _async_repo(), _async_repo()
+        login_repo = _async_repo()
+        admin_repo.get_by_username.return_value = None
+
+        svc = AsyncAuthService(account_repo, admin_repo, login_repo)
+        result = await svc.admin_login("ghost", "pwd")
+        assert result.success is False
 
 
-class TestTransactionService:
-    """Tests for transaction_service."""
+class TestAsyncTransactionService:
+    """Tests for AsyncTransactionService statement accessors."""
 
-    def test_get_transactions(self) -> None:
-        from unionbank.application.services_pkg.transaction_service import TransactionService
-
-        repo = MagicMock()
+    async def test_get_statement(self) -> None:
+        repo = _async_repo()
         repo.get_by_account.return_value = [MagicMock(), MagicMock()]
-        svc = TransactionService(repo)
-        result = svc.get_transactions("123")
+        svc = AsyncTransactionService(MagicMock(), repo)
+        result = await svc.get_statement("123")
         assert len(result) == 2
 
-    def test_get_transactions_empty(self) -> None:
-        from unionbank.application.services_pkg.transaction_service import TransactionService
-
-        repo = MagicMock()
+    async def test_get_statement_empty(self) -> None:
+        repo = _async_repo()
         repo.get_by_account.return_value = []
-        svc = TransactionService(repo)
-        result = svc.get_transactions("123")
+        svc = AsyncTransactionService(MagicMock(), repo)
+        result = await svc.get_statement("123")
         assert len(result) == 0
 
 
-class TestAdminService:
-    """Tests for admin_service."""
+class TestAsyncAdminService:
+    """Tests for AsyncAdminService."""
 
-    def test_get_all_accounts(self) -> None:
-        from unionbank.application.services_pkg.admin_service import AdminService
-
-        svc = AdminService(MagicMock())
-        svc.account_repo = MagicMock()
-        svc.account_repo.get_all.return_value = [MagicMock(), MagicMock()]
-        result = svc.get_all_accounts()
+    async def test_list_accounts(self) -> None:
+        account_repo = _async_repo()
+        account_repo.get_all.return_value = [MagicMock(), MagicMock()]
+        svc = AsyncAdminService(account_repo, MagicMock(), MagicMock())
+        result = await svc.list_accounts()
         assert len(result) == 2
 
-    def test_get_account_count(self) -> None:
-        from unionbank.application.services_pkg.admin_service import AdminService
+    async def test_list_accounts_empty(self) -> None:
+        account_repo = _async_repo()
+        account_repo.get_all.return_value = []
+        svc = AsyncAdminService(account_repo, MagicMock(), MagicMock())
+        result = await svc.list_accounts()
+        assert len(result) == 0
 
-        svc = AdminService(MagicMock())
-        svc.account_repo = MagicMock()
-        svc.account_repo.get_all.return_value = [MagicMock()]
-        result = svc.get_account_count()
-        assert result == 1
+    async def test_search_accounts(self) -> None:
+        account_repo = _async_repo()
+        account_repo.search = AsyncMock(return_value=[MagicMock()])
+        svc = AsyncAdminService(account_repo, MagicMock(), MagicMock())
+        result = await svc.search_accounts("John")
+        assert len(result) == 1

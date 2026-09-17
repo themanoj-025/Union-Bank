@@ -2,51 +2,63 @@
 
 from __future__ import annotations
 
-import hashlib
-from datetime import datetime, timedelta
-from unittest.mock import MagicMock
+from decimal import Decimal
 
 import pytest
 
-pytestmark = pytest.mark.integration
+from unionbank.domain.entities import Account
+from datetime import UTC
 
+pytestmark = pytest.mark.integration
 
 
 class TestAccountEntity:
     """Tests for domain Account entity."""
 
     def test_account_creation(self) -> None:
-        from unionbank.domain.entities import Account
-
         acc = Account(
             account_number="1234567890",
             name="John Doe",
             email="john@test.com",
-            balance=1000.0,
+            balance=Decimal("1000.00"),
         )
         assert acc.account_number == "1234567890"
-        assert acc.balance == 1000.0
+        assert acc.balance == Decimal("1000.00")
 
-    def test_account_debit(self) -> None:
-        from unionbank.domain.entities import Account
+    def test_account_defaults(self) -> None:
+        acc = Account(account_number="123", name="Test")
+        assert acc.balance == Decimal("0.00")
+        assert acc.is_active is True
+        assert acc.is_frozen is False
+        assert acc.deleted_at is None
 
-        acc = Account(account_number="123", name="Test", email="t@t.com", balance=1000.0)
-        acc.debit(200.0)
-        assert acc.balance == 800.0
+    def test_account_status_active(self) -> None:
+        acc = Account(account_number="123", name="Test")
+        assert acc.status.value == "active"
+        assert acc.can_transact is True
 
-    def test_account_credit(self) -> None:
-        from unionbank.domain.entities import Account
+    def test_account_status_frozen(self) -> None:
+        acc = Account(account_number="123", name="Test", is_frozen=True)
+        assert acc.status.value == "frozen"
+        assert acc.can_transact is False
 
-        acc = Account(account_number="123", name="Test", email="t@t.com", balance=1000.0)
-        acc.credit(500.0)
-        assert acc.balance == 1500.0
+    def test_account_status_closed(self) -> None:
+        acc = Account(account_number="123", name="Test", is_active=False)
+        assert acc.status.value == "closed"
+        assert acc.can_transact is False
 
-    def test_account_insufficient_funds(self) -> None:
-        from unionbank.domain.entities import Account
+    def test_account_is_deleted(self) -> None:
+        from datetime import datetime, timezone
 
-        acc = Account(account_number="123", name="Test", email="t@t.com", balance=100.0)
-        with pytest.raises((ValueError, RuntimeError)):
-            acc.debit(200.0)
+        acc = Account(account_number="123", name="Test")
+        assert acc.is_deleted is False
+        acc.deleted_at = datetime.now(UTC)
+        assert acc.is_deleted is True
+
+    def test_account_repr(self) -> None:
+        acc = Account(account_number="1234567890", name="Jane")
+        assert "1234567890" in repr(acc)
+        assert "Jane" in repr(acc)
 
 
 class TestValidation:
@@ -62,20 +74,15 @@ class TestValidation:
 
         assert validate_email("not-an-email") is False
 
-    def test_validate_account_number(self) -> None:
-        from unionbank.utils.validation import validate_account_number
+    def test_validate_name_valid(self) -> None:
+        from unionbank.utils.validation import validate_name
 
-        assert validate_account_number("1234567890") is True
+        assert validate_name("John Doe") is True
 
-    def test_validate_amount_positive(self) -> None:
-        from unionbank.utils.validation import validate_amount
+    def test_validate_name_invalid(self) -> None:
+        from unionbank.utils.validation import validate_name
 
-        assert validate_amount("100.50") is True
-
-    def test_validate_amount_negative(self) -> None:
-        from unionbank.utils.validation import validate_amount
-
-        assert validate_amount("-50") is False
+        assert validate_name("") is False
 
 
 class TestHashing:
@@ -102,36 +109,58 @@ class TestHashing:
 
 
 class TestRateLimit:
-    """Tests for rate limiting utils."""
+    """Tests for the function-based session rate-limiting utils."""
 
-    def test_rate_limiter_basic(self) -> None:
-        from unionbank.utils.rate_limit import RateLimiter
+    def test_session_active_recently(self) -> None:
+        import time
 
-        rl = RateLimiter(max_requests=5, window_seconds=60)
-        for _ in range(5):
-            assert rl.allow("user1") is True
-        assert rl.allow("user1") is False
+        from unionbank.utils.rate_limit import check_session_timeout
 
-    def test_rate_limiter_different_users(self) -> None:
-        from unionbank.utils.rate_limit import RateLimiter
+        assert check_session_timeout(time.time()) is True
 
-        rl = RateLimiter(max_requests=1, window_seconds=60)
-        assert rl.allow("user1") is True
-        assert rl.allow("user2") is True
-        assert rl.allow("user1") is False
+    def test_session_expired(self) -> None:
+        import time
+
+        from unionbank.utils.rate_limit import (
+            SESSION_TIMEOUT_SECONDS,
+            check_session_timeout,
+        )
+
+        past_time = time.time() - SESSION_TIMEOUT_SECONDS - 10
+        assert check_session_timeout(past_time) is False
+
+    def test_session_timeout_constant(self) -> None:
+        from unionbank.utils.rate_limit import (
+            SESSION_TIMEOUT_SECONDS,
+            get_session_timeout_seconds,
+        )
+
+        assert get_session_timeout_seconds() == SESSION_TIMEOUT_SECONDS
+        assert isinstance(SESSION_TIMEOUT_SECONDS, int)
+        assert SESSION_TIMEOUT_SECONDS > 0
 
 
 class TestFormatting:
     """Tests for formatting utils."""
 
-    def test_format_currency(self) -> None:
-        from unionbank.utils.formatting import format_currency
+    def test_fmt_currency(self) -> None:
+        from unionbank.utils.formatting import fmt_currency
 
-        result = format_currency(1234.56)
-        assert "1" in result or "1234" in result
+        result = fmt_currency(1234.56)
+        assert "₹" in result
+        assert "1,234.56" in result
 
-    def test_format_date(self) -> None:
-        from unionbank.utils.formatting import format_date
+    def test_now_str(self) -> None:
+        from unionbank.utils.formatting import now_str
 
-        result = format_date("2024-01-15T10:30:00")
+        result = now_str()
         assert result is not None
+        assert isinstance(result, str)
+        assert "-" in result
+
+    def test_mask_account_number(self) -> None:
+        from unionbank.utils.formatting import mask_account_number
+
+        masked = mask_account_number("1234567890")
+        assert masked != "1234567890"
+        assert "1234567890" not in masked

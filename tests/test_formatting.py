@@ -80,7 +80,7 @@ class TestIDGenerators:
     def test_notification_id_format(self) -> None:
         nid = generate_notification_id()
         assert nid.startswith("NTF-")
-        assert len(nid) == 13  # NTF- + 8 chars
+        assert len(nid) == 12  # NTF- + 8 chars
 
     def test_all_ids_alphanumeric(self) -> None:
         for gen in [generate_transaction_id, generate_goal_id, generate_loan_id, generate_notification_id]:
