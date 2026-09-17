@@ -32,12 +32,15 @@ from unionbank.utils import (
     generate_csv_filename,
     get_category_choice,
     get_float,
+    hash_password,
     now_str,
     validate_email,
     validate_name,
     validate_password,
     validate_phone,
+    verify_password,
 )
+from unionbank.utils.logger import logger
 
 _ = _utcnow
 

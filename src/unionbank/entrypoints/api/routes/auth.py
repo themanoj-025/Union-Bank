@@ -7,6 +7,7 @@ Extracted from main.py to reduce file size and improve maintainability.
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from slowapi import Limiter
 
 from unionbank.entrypoints.api.common import (
     create_token_pair,
@@ -67,7 +68,7 @@ class RefreshRequest(BaseModel):
 # ── Auth Endpoints ────────────────────────────────────────────────────────
 
 
-def _get_limiter() -> RateLimiter:
+def _get_limiter() -> Limiter:
     from unionbank.entrypoints.api.main import limiter
     return limiter
 

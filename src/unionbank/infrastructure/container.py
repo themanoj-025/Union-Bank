@@ -20,6 +20,8 @@ from unionbank.application.services import (
     TransactionService,
 )
 from unionbank.infrastructure.database import close_session, get_session, init_db
+from typing import Any
+
 from unionbank.infrastructure.repositories import (
     SqlAlchemyAccountRepository,
     SqlAlchemyAdminRepository,
