@@ -37,7 +37,7 @@ except ImportError:
     SQLAlchemyError = Exception  # fallback if sqlalchemy not installed
     IntegrityError = Exception
 
-from .interfaces import (
+from unionbank.application.interfaces import (
     KeysetPage,
 )
 

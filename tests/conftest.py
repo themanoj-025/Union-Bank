@@ -133,6 +133,124 @@ def sample_account() -> None:
 
 
 @pytest.fixture
+def account_repo():
+    """Fresh in-memory fake account repository (shared with test_services*)."""
+    from tests.fakes import FakeAccountRepository
+
+    return FakeAccountRepository()
+
+
+@pytest.fixture
+def txn_repo():
+    from tests.fakes import FakeTransactionRepository
+
+    return FakeTransactionRepository()
+
+
+@pytest.fixture
+def admin_repo():
+    from tests.fakes import FakeAdminRepository
+
+    return FakeAdminRepository()
+
+
+@pytest.fixture
+def login_attempt_repo():
+    from tests.fakes import FakeLoginAttemptRepository
+
+    return FakeLoginAttemptRepository()
+
+
+@pytest.fixture
+def token_version_repo():
+    from tests.fakes import FakeTokenVersionRepository
+
+    return FakeTokenVersionRepository()
+
+
+@pytest.fixture
+def audit_log_repo():
+    from tests.fakes import FakeAuditLogRepository
+
+    return FakeAuditLogRepository()
+
+
+@pytest.fixture
+def savings_goal_repo():
+    from tests.fakes import FakeSavingsGoalRepository
+
+    return FakeSavingsGoalRepository()
+
+
+@pytest.fixture
+def auth_service(account_repo, admin_repo, login_attempt_repo, token_version_repo):
+    from unionbank.application.services import AuthService
+
+    return AuthService(
+        account_repo=account_repo,
+        admin_repo=admin_repo,
+        login_attempt_repo=login_attempt_repo,
+        token_version_repo=token_version_repo,
+    )
+
+
+@pytest.fixture
+def account_service(account_repo, txn_repo, token_version_repo):
+    from unionbank.application.services import AccountService
+
+    return AccountService(
+        account_repo=account_repo,
+        txn_repo=txn_repo,
+        token_version_repo=token_version_repo,
+    )
+
+
+@pytest.fixture
+def transaction_service(account_repo, txn_repo):
+    from unionbank.application.services import TransactionService
+
+    return TransactionService(
+        account_repo=account_repo,
+        txn_repo=txn_repo,
+    )
+
+
+@pytest.fixture
+def admin_service(account_repo, txn_repo, admin_repo, audit_log_repo):
+    from unionbank.application.services import AdminService
+
+    return AdminService(
+        account_repo=account_repo,
+        txn_repo=txn_repo,
+        admin_repo=admin_repo,
+        audit_log_repo=audit_log_repo,
+    )
+
+
+@pytest.fixture
+def savings_goal_service(account_repo, txn_repo, savings_goal_repo):
+    from unionbank.application.services import SavingsGoalService
+
+    return SavingsGoalService(
+        goal_repo=savings_goal_repo,
+        account_repo=account_repo,
+        txn_repo=txn_repo,
+    )
+
+
+@pytest.fixture
+def sample_admin():
+    from unionbank.domain.entities import AdminUser
+    from unionbank.utils.hashing import hash_password
+
+    return AdminUser(
+        username="admin",
+        password=hash_password("AdminPass1"),
+        role="admin",
+    )
+
+
+@pytest.fixture
 def sample_transaction_records() -> list[dict]:
     """Return sample transaction records for CSV/statement tests."""
     return [
