@@ -341,3 +341,16 @@ class ServiceResult:
     success: bool
     message: str = ""
     data: dict | None = None
+
+
+@dataclass
+class AuditLog:
+    """Immutable audit entry for admin actions — never deleted or updated."""
+
+    actor: str
+    action: str
+    target: str | None = None
+    details: str | None = None
+    ip_address: str | None = None
+    reason: str | None = None
+    timestamp: datetime = field(default_factory=_utcnow)

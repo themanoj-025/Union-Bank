@@ -6,6 +6,7 @@ import jwt
 from fastapi import APIRouter, Request, Response, status
 
 from unionbank.entrypoints.api.common import (
+    _get_verifying_key,
     create_token_pair,
     revoke_refresh_token,
     verify_refresh_token,

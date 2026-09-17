@@ -6,6 +6,8 @@ Admin accounts are created via the bootstrap CLI command:
     python main.py create-admin
 """
 
+from typing import Any
+
 from unionbank.entrypoints.cli.ui import (
     BOLD,
     CYAN,

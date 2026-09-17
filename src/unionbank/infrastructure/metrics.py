@@ -16,6 +16,7 @@ Then add a route for ``/metrics`` that calls ``generate_latest()``.
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from prometheus_client import (
     REGISTRY,

@@ -37,6 +37,7 @@ from unionbank.infrastructure.database import (
     init_db as _init_db,
 )
 from unionbank.infrastructure.persistence import AccountModel
+from typing import Any
 
 # Re-export session management for backward compatibility
 atomic_session = _atomic_session
