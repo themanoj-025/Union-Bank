@@ -209,7 +209,9 @@ class TestTransactionCategories:
         # Create a temp account and call log_transaction directly
         # Note: log_transaction now writes to SQLite only (no JSON)
         from unionbank.infrastructure.container import get_container
+        from unionbank.infrastructure.database import init_db
 
+        init_db()  # ensure schema exists for the fresh per-test SQLite file
         c = get_container()
 
         data = {
@@ -288,6 +290,13 @@ class TestAtomicTransfer:
 
     def _setup_accounts(self, tmp_data_dir) -> tuple[object, ...]:
         """Create two test accounts with known balances."""
+        # Ensure the SQLite schema exists for the fresh per-test data dir
+        # (atomic_session/atomic_transfer use the URL-aware engine, which
+        # points at a brand-new DB file under tmp_data_dir).
+        from unionbank.infrastructure.database import init_db
+
+        init_db()
+
         sender_data = {
             "account_number": self.SENDER,
             "name": "Sender",
@@ -430,8 +439,10 @@ class TestAtomicTransfer:
         try:
             with atomic_session() as session:
                 sender = session.query(DbAccount).filter_by(account_number=self.SENDER).first()
-                # Make a change (debit sender)
-                sender.balance -= 300.0
+                # Make a change (debit sender) — balance column is Decimal
+                from decimal import Decimal
+
+                sender.balance -= Decimal("300.0")
                 # ⚡ CRASH: Exception before commit → rollback
                 raise RuntimeError("Simulated crash during transaction!")
         except RuntimeError:
