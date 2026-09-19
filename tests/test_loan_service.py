@@ -9,15 +9,13 @@ import pytest
 from tests.fakes import (
     FakeAccountRepository,
     FakeAuditLogRepository,
-    FakeSavingsGoalRepository,
-    FakeTokenVersionRepository,
     FakeTransactionRepository,
 )
 from tests.fakes_repositories_ext import (
     FakeLoanRepository,
 )
 from unionbank.application.loan_service import LOAN_PRODUCTS, LOAN_TYPES, LoanService
-from unionbank.domain.entities import Account, LoanStatus, LoanType
+from unionbank.domain.entities import Account, LoanType
 
 pytestmark = pytest.mark.slow
 

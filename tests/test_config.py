@@ -1,6 +1,5 @@
 """Tests for UNION-BANK- configuration module."""
 
-import os
 
 import pytest
 

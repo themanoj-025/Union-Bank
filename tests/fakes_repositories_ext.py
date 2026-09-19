@@ -6,7 +6,6 @@ from datetime import datetime, timedelta, UTC
 from decimal import Decimal
 
 from unionbank.domain.entities import (
-    AuditLog,
     Loan,
     Notification,
     NotificationPreference,

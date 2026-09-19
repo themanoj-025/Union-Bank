@@ -2,31 +2,20 @@
 
 from __future__ import annotations
 
-import random
-import time
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta
 from decimal import Decimal
-from typing import Any
 
 from unionbank.application.interfaces import KeysetPage
 from unionbank.domain.entities import (
     Account,
     AdminUser,
-    AuditLog,
     LoginAttempt,
-    Notification,
-    NotificationPreference,
-    RefreshToken,
     SavingsGoal,
-    TokenVersion,
     Transaction,
 )
 
 from tests.fakes import (
     SimulatedDuplicateKeyError,
-    SimulatedForeignKeyViolation,
-    SimulatedRaceConditionError,
-    SimulatedDatabaseTimeout,
     _FakeSession,
     _utcnow,
 )

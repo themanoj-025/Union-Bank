@@ -4,9 +4,7 @@ from pathlib import Path
 
 import csv
 import os
-import tempfile
 
-import pytest
 
 from unionbank.utils.csv_export import export_transactions_to_csv, generate_csv_filename
 

@@ -10,12 +10,6 @@ Usage:
 """
 
 from __future__ import annotations
-import os
-import tempfile
-from decimal import Decimal
-import pytest
-from fastapi.testclient import TestClient
-from unionbank.infrastructure.container import get_container, reset_container
 
 
 class TestSavingsGoals:
