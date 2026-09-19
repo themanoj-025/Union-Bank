@@ -70,6 +70,7 @@ class RefreshRequest(BaseModel):
 
 def _get_limiter() -> Limiter:
     from unionbank.entrypoints.api.main import limiter
+
     return limiter
 
 
@@ -83,9 +84,7 @@ def customer_login(request: Request, req: LoginRequest) -> Response:
     auth_result = c.auth_service().customer_login(req.account_number, req.password)
     if not auth_result.success:
         if "locked" in auth_result.message.lower():
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=auth_result.message
-            )
+            raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=auth_result.message)
         if "not found" in auth_result.message.lower():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=auth_result.message)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=auth_result.message)
@@ -134,9 +133,7 @@ def customer_register(request: Request, req: RegisterRequest) -> Response:
     if not valid_pwd:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=pwd_msg)
     if req.password != req.confirm_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match.")
 
     from unionbank.infrastructure.container import get_container
 
@@ -150,9 +147,7 @@ def customer_register(request: Request, req: RegisterRequest) -> Response:
         password=req.password,
     )
     if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=result.message
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.message)
     return MessageResponse(message=result.message)
 
 
@@ -166,12 +161,8 @@ def admin_login(request: Request, req: AdminLoginRequest) -> Response:
     auth_result = c.auth_service().admin_login(req.username, req.password)
     if not auth_result.success:
         if "locked" in auth_result.message.lower():
-            raise HTTPException(
-                status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=auth_result.message
-            )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail=auth_result.message
-        )
+            raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=auth_result.message)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=auth_result.message)
 
     # Check TOTP 2FA if enabled
     admin_user = c.admin_repo().get_by_username(req.username)
@@ -185,9 +176,7 @@ def admin_login(request: Request, req: AdminLoginRequest) -> Response:
 
         totp = pyotp.TOTP(admin_user.totp_secret)
         if not totp.verify(req.totp_code, valid_window=1):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid TOTP code."
-            )
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid TOTP code.")
 
     tokens = create_token_pair(subject=req.username, role="admin")
     response = Response(
@@ -229,9 +218,7 @@ def refresh_token(request: Request, req: RefreshRequest | None = None) -> dict:
 
     payload = verify_refresh_token(refresh_token_value)
     if payload is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token."
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token.")
 
     sub = payload.get("sub", "")
     role = payload.get("role", "customer")
@@ -307,9 +294,7 @@ def admin_totp_setup(request: Request, admin: dict = Depends(get_current_admin))
     username = admin.get("username")
     secret = pyotp.random_base32()
     totp = pyotp.TOTP(secret)
-    provisioning_uri = totp.provisioning_uri(
-        name=username, issuer_name="Union Bank Admin"
-    )
+    provisioning_uri = totp.provisioning_uri(name=username, issuer_name="Union Bank Admin")
 
     from unionbank.infrastructure.container import get_container
 
@@ -373,15 +358,11 @@ def admin_totp_disable(
     c = get_container()
     admin_user = c.admin_repo().get_by_username(username)
     if not admin_user or not admin_user.totp_secret:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="2FA is not enabled."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="2FA is not enabled.")
 
     totp = pyotp.TOTP(admin_user.totp_secret)
     if not totp.verify(req.code, valid_window=1):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid TOTP code."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid TOTP code.")
 
     c.admin_repo().update_totp(username, None, False)
     c.admin_repo().commit()

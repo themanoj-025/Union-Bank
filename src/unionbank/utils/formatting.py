@@ -96,12 +96,7 @@ def calculate_emi(principal: float, annual_rate: float, tenure_months: int) -> f
     if monthly_rate == 0:
         return round(principal / tenure_months, 2)
 
-    emi = (
-        principal
-        * monthly_rate
-        * ((1 + monthly_rate) ** tenure_months)
-        / (((1 + monthly_rate) ** tenure_months) - 1)
-    )
+    emi = principal * monthly_rate * ((1 + monthly_rate) ** tenure_months) / (((1 + monthly_rate) ** tenure_months) - 1)
     return round(emi, 2)
 
 

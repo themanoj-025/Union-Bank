@@ -44,9 +44,7 @@ class AsyncSqlAlchemyAccountRepository:
         return map_account(model) if model else None
 
     async def get_all(self) -> list[Account]:
-        result = await self.session.execute(
-            select(AccountModel).where(AccountModel.deleted_at.is_(None))
-        )
+        result = await self.session.execute(select(AccountModel).where(AccountModel.deleted_at.is_(None)))
         models = result.scalars().all()
         return [map_account(m) for m in models]
 
@@ -244,9 +242,7 @@ class AsyncSqlAlchemyAccountRepository:
                         else_=0,
                     )
                 ).label("active_count"),
-                func.sum(case((AccountModel.is_frozen.is_(True), 1), else_=0)).label(
-                    "frozen_count"
-                ),
+                func.sum(case((AccountModel.is_frozen.is_(True), 1), else_=0)).label("frozen_count"),
                 func.sum(
                     case(
                         (AccountModel.is_active.is_(False) & AccountModel.is_frozen.is_(False), 1),
@@ -266,9 +262,7 @@ class AsyncSqlAlchemyAccountRepository:
             "total_balance": float(row.total_balance or Decimal("0.00")),
         }
 
-    async def get_all_paginated(
-        self, page: int = 1, per_page: int = 20
-    ) -> tuple[list[Account], int]:
+    async def get_all_paginated(self, page: int = 1, per_page: int = 20) -> tuple[list[Account], int]:
         total_result = await self.session.execute(
             select(func.count()).select_from(AccountModel).where(AccountModel.deleted_at.is_(None))
         )
@@ -302,16 +296,12 @@ class AsyncSqlAlchemySavingsGoalRepository:
         self.session = session
 
     async def get_by_account(self, acc_no: str) -> list[SavingsGoal]:
-        result = await self.session.execute(
-            select(SavingsGoalModel).where(SavingsGoalModel.account_number == acc_no)
-        )
+        result = await self.session.execute(select(SavingsGoalModel).where(SavingsGoalModel.account_number == acc_no))
         models = result.scalars().all()
         return [map_savings_goal(m) for m in models]
 
     async def get(self, goal_id: str) -> SavingsGoal | None:
-        result = await self.session.execute(
-            select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
-        )
+        result = await self.session.execute(select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id))
         model = result.scalar_one_or_none()
         return map_savings_goal(model) if model else None
 
@@ -328,9 +318,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
         return goal
 
     async def update(self, goal: SavingsGoal) -> SavingsGoal:
-        result = await self.session.execute(
-            select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal.goal_id)
-        )
+        result = await self.session.execute(select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal.goal_id))
         model = result.scalar_one_or_none()
         if model:
             model.name = goal.name
@@ -341,9 +329,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
         return goal
 
     async def contribute(self, goal_id: str, amount: Decimal) -> SavingsGoal | None:
-        result = await self.session.execute(
-            select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
-        )
+        result = await self.session.execute(select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id))
         model = result.scalar_one_or_none()
         if model is None:
             return None
@@ -353,9 +339,7 @@ class AsyncSqlAlchemySavingsGoalRepository:
         return map_savings_goal(model)
 
     async def delete(self, goal_id: str) -> SavingsGoal | None:
-        result = await self.session.execute(
-            select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id)
-        )
+        result = await self.session.execute(select(SavingsGoalModel).where(SavingsGoalModel.goal_id == goal_id))
         model = result.scalar_one_or_none()
         if model is None:
             return None

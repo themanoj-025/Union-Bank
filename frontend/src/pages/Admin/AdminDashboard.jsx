@@ -26,7 +26,7 @@ function AdminDashboard() {
   }, []);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="dashboard-container"
@@ -67,7 +67,7 @@ function AdminDashboard() {
             <h4 style={{ color: 'var(--gray-text)', margin: '0 0 10px 0' }}>Total Customers</h4>
             <h2 style={{ margin: 0, fontSize: '32px' }}>{stats.total_customers}</h2>
           </div>
-          
+
           <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
             <h4 style={{ color: 'var(--gray-text)', margin: '0 0 10px 0' }}>Active Accounts</h4>
             <h2 style={{ margin: 0, fontSize: '32px', color: 'green' }}>{stats.active_accounts}</h2>
@@ -87,7 +87,7 @@ function AdminDashboard() {
             <h4 style={{ color: 'var(--gray-text)', margin: '0 0 10px 0' }}>Total Deposits</h4>
             <h2 style={{ margin: 0, fontSize: '24px' }}>${stats.total_deposits.toFixed(2)}</h2>
           </div>
-          
+
           <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
             <h4 style={{ color: 'var(--gray-text)', margin: '0 0 10px 0' }}>Total Withdrawals</h4>
             <h2 style={{ margin: 0, fontSize: '24px' }}>${stats.total_withdrawals.toFixed(2)}</h2>

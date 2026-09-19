@@ -9,7 +9,6 @@ import pytest
 pytestmark = pytest.mark.unit
 
 
-
 class TestHealthRoutes:
     """Tests for health check endpoints."""
 

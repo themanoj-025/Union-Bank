@@ -112,9 +112,7 @@ class TestAlembicMigrations:
         ]
 
         for table in expected:
-            assert table in tables, (
-                f"Expected table '{table}' not found after migration (got {tables})"
-            )
+            assert table in tables, f"Expected table '{table}' not found after migration (got {tables})"
 
         # Alembic's own table
         assert "alembic_version" in tables

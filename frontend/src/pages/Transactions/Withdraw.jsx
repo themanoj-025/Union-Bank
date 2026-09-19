@@ -35,7 +35,7 @@ function Withdraw() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="dashboard-container"
@@ -48,34 +48,34 @@ function Withdraw() {
 
       <div style={{ backgroundColor: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         {error && <div style={{ color: 'red', marginBottom: '20px' }}>{error}</div>}
-        
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Amount</label>
-            <input 
-              type="number" 
-              step="0.01" 
-              min="0.01" 
-              value={amount} 
-              onChange={(e) => setAmount(e.target.value)} 
-              placeholder="0.00" 
-              required 
+            <input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0.00"
+              required
               style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ddd', fontSize: '16px' }}
             />
           </div>
-          
+
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Category</label>
-            <Dropdown 
+            <Dropdown
               options={categories}
               value={category}
               onChange={setCategory}
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn-primary" 
+          <button
+            type="submit"
+            className="btn-primary"
             disabled={loading}
             style={{ padding: '15px', fontSize: '16px', marginTop: '10px' }}
           >

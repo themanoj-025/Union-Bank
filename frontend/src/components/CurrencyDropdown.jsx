@@ -17,11 +17,11 @@ const CurrencyDropdown = ({ value, onChange, options, getFlag }) => {
 
   return (
     <div ref={dropdownRef} style={{ position: 'relative' }}>
-      <div 
+      <div
         onClick={() => setIsOpen(!isOpen)}
         style={{
-          display: 'flex', 
-          alignItems: 'center', 
+          display: 'flex',
+          alignItems: 'center',
           gap: '5px',
           cursor: 'pointer',
           fontWeight: 'bold',
@@ -29,8 +29,8 @@ const CurrencyDropdown = ({ value, onChange, options, getFlag }) => {
         }}
       >
         <span>{value}</span>
-        <motion.svg 
-          animate={{ rotate: isOpen ? 180 : 0 }} 
+        <motion.svg
+          animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
           width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"
         >

@@ -35,4 +35,3 @@ __all__ = [
     "TransactionService",
     "_account_lock",
 ]
-

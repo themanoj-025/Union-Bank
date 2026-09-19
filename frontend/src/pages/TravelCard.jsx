@@ -16,14 +16,14 @@ function TravelCard() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero bg-gray"
         initial="hidden"
         animate="visible"
@@ -34,7 +34,7 @@ function TravelCard() {
         }}
       >
         <div className="subpage-hero-text">
-          <motion.h1 
+          <motion.h1
             style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px' }}
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -43,7 +43,7 @@ function TravelCard() {
           >
             THE ONLY CARD <br/> YOU NEED TO PACK
           </motion.h1>
-          <motion.p 
+          <motion.p
             style={{ fontSize: '20px', color: 'var(--gray-text)', maxWidth: '800px', marginBottom: '40px' }}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -53,7 +53,7 @@ function TravelCard() {
             Spend abroad with the real exchange rate. No sneaky transaction fees. Always know exactly what you're paying in your local currency.
           </motion.p>
           <Link to="/signup">
-            <motion.button 
+            <motion.button
               className="btn-primary"
               variants={{
                 hidden: { opacity: 0, y: 20 },
@@ -66,7 +66,7 @@ function TravelCard() {
             </motion.button>
           </Link>
         </div>
-        <motion.div 
+        <motion.div
           className="subpage-hero-image" style={{ display: 'flex', justifyContent: 'center' }}
           variants={{
             hidden: { opacity: 0, x: 50 },
@@ -77,7 +77,7 @@ function TravelCard() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"

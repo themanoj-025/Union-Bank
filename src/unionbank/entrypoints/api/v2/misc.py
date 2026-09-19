@@ -20,6 +20,7 @@ from unionbank.entrypoints.api.v2.helpers import _err, _ok
 
 router = APIRouter()
 
+
 @router.get("/categories", response_model=ApiResponse[list[str]])
 def v2_list_categories() -> dict[str, object]:
     """List all available transaction categories."""

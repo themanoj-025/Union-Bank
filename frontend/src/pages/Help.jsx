@@ -18,14 +18,14 @@ function Help() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero bg-gray"
         initial="hidden"
         animate="visible"
@@ -36,7 +36,7 @@ function Help() {
         }}
         style={{ justifyContent: 'center', textAlign: 'center', flexDirection: 'column' }}
       >
-        <motion.h1 
+        <motion.h1
           style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px' }}
           variants={{
             hidden: { opacity: 0, scale: 0.9, y: 30 },
@@ -45,7 +45,7 @@ function Help() {
         >
           HOW CAN WE HELP?
         </motion.h1>
-        <motion.p 
+        <motion.p
           style={{ fontSize: '20px', marginBottom: '40px', maxWidth: '600px', color: 'var(--gray-text)' }}
           variants={{
             hidden: { opacity: 0, y: 20 },
@@ -54,17 +54,17 @@ function Help() {
         >
           Search our knowledge base or get in touch with our friendly support team.
         </motion.p>
-        
-        <motion.div 
+
+        <motion.div
           style={{ width: '100%', maxWidth: '600px', position: 'relative' }}
           variants={{
             hidden: { opacity: 0, y: 30 },
             visible: { opacity: 1, y: 0, transition: { duration: 0.7, type: "spring", bounce: 0.3 } }
           }}
         >
-          <input 
-            type="text" 
-            placeholder="E.g. How do I order a travel card?" 
+          <input
+            type="text"
+            placeholder="E.g. How do I order a travel card?"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="help-search"
@@ -73,7 +73,7 @@ function Help() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"
@@ -103,7 +103,7 @@ function Help() {
           </div>
         </div>
       </motion.section>
-      
+
       <section style={{ padding: '0 5% 80px 5%', textAlign: 'center' }}>
         <h3 style={{ fontSize: '24px', fontWeight: '800', marginBottom: '20px' }}>Still need help?</h3>
         <p style={{ marginBottom: '30px', color: 'var(--gray-text)' }}>Our 24/7 support team is always ready to assist you.</p>

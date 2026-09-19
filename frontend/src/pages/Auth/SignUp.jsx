@@ -55,7 +55,7 @@ function SignUp() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
@@ -76,7 +76,7 @@ function SignUp() {
             </svg>
             <span style={{ fontWeight: '900', fontSize: '24px', letterSpacing: '-0.5px', color: 'var(--dark-green)' }}>Union Bank</span>
           </Link>
-          
+
           <h2>Create your account</h2>
           <p>Join Union Bank to send, spend, and manage your money globally.</p>
 
@@ -88,7 +88,7 @@ function SignUp() {
               <label htmlFor="signup-name">Full Name</label>
               <input id="signup-name" type="text" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} autoComplete="name" aria-label="Full name" required />
             </div>
-            
+
             <div style={{ display: 'flex', gap: '15px' }}>
               <div className="form-group" style={{ flex: 1 }}>
                 <label htmlFor="signup-age">Age</label>
@@ -97,10 +97,10 @@ function SignUp() {
               <div className="form-group" style={{ flex: 1 }}>
                 <label htmlFor="signup-gender">Gender</label>
                 <div id="signup-gender" aria-label="Gender">
-                <Dropdown 
-                  options={['Male', 'Female', 'Other']} 
-                  value={formData.gender} 
-                  onChange={handleGenderChange} 
+                <Dropdown
+                  options={['Male', 'Female', 'Other']}
+                  value={formData.gender}
+                  onChange={handleGenderChange}
                 />
                 </div>
               </div>
@@ -115,7 +115,7 @@ function SignUp() {
               <label htmlFor="signup-email">Email address</label>
               <input id="signup-email" type="email" name="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} autoComplete="email" aria-label="Email address" required />
             </div>
-            
+
             <div className="form-group">
               <label htmlFor="signup-password">Password</label>
               <input id="signup-password" type="password" name="password" placeholder="Create a password" value={formData.password} onChange={handleChange} autoComplete="new-password" aria-label="Password" required />
@@ -125,7 +125,7 @@ function SignUp() {
               <label htmlFor="signup-confirm-password">Confirm Password</label>
               <input id="signup-confirm-password" type="password" name="confirm_password" placeholder="Confirm your password" value={formData.confirm_password} onChange={handleChange} autoComplete="new-password" aria-label="Confirm password" required />
             </div>
-            
+
             <p style={{fontSize: '12px', color: 'var(--gray-text)', margin: '15px 0'}}>
               By registering, you confirm that you accept our Terms of Use and Privacy Policy.
             </p>
@@ -140,7 +140,7 @@ function SignUp() {
           </p>
         </div>
       </div>
-      
+
       <div className="auth-split right" style={{position: 'relative'}}>
         <div style={{position: 'absolute', top: '40px', left: '40px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff'}}>
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">

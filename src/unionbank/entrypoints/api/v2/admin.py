@@ -19,6 +19,7 @@ from unionbank.entrypoints.api.v2.helpers import _err, _fmt_currency, _get_conta
 
 router = APIRouter()
 
+
 @router.get("/admin/loans", response_model=ApiResponse[LoanAdminStats])
 def v2_admin_list_loans(admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """View all loan applications with statistics (admin only)."""
@@ -74,9 +75,7 @@ def v2_admin_list_pending_loans(admin: dict = Depends(get_current_admin)) -> Api
 def v2_admin_approve_loan(loan_id: str, admin: dict = Depends(get_current_admin)) -> dict[str, str]:
     """Approve a pending loan application and disburse funds (admin only)."""
     c = _get_container()
-    result = c.loan_service().approve_loan(
-        loan_id=loan_id, admin_user=admin.get("username", "admin")
-    )
+    result = c.loan_service().approve_loan(loan_id=loan_id, admin_user=admin.get("username", "admin"))
     if not result.success:
         if "not found" in result.message.lower():
             _err(result.message, status.HTTP_404_NOT_FOUND)
@@ -86,9 +85,7 @@ def v2_admin_approve_loan(loan_id: str, admin: dict = Depends(get_current_admin)
 
 
 @router.post("/admin/loans/{loan_id}/reject", response_model=ApiResponse[MessageData])
-def v2_admin_reject_loan(
-    loan_id: str, req: LoanRejectRequest, admin: dict = Depends(get_current_admin)
-) -> ApiResponse:
+def v2_admin_reject_loan(loan_id: str, req: LoanRejectRequest, admin: dict = Depends(get_current_admin)) -> ApiResponse:
     """Reject a pending loan application (admin only)."""
     c = _get_container()
     result = c.loan_service().reject_loan(

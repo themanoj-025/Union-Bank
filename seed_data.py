@@ -53,12 +53,39 @@ END_DATE = datetime(2024, 12, 31)
 GENDERS = ["Male", "Female"]
 
 # Split names by gender for realistic generation
-FIRST_NAMES_MALE = [n for n in FIRST_NAMES if n not in (
-    "Ananya", "Diya", "Isha", "Priya", "Neha", "Anjali", "Pooja",
-    "Kavya", "Meera", "Riya", "Myra", "Saanvi", "Aadhya", "Aisha",
-    "Nisha", "Sunita", "Geeta", "Suman", "Rekha", "Usha", "Kamla",
-    "Savita", "Aarti", "Kiran", "Leela", "Lata",
-)]
+FIRST_NAMES_MALE = [
+    n
+    for n in FIRST_NAMES
+    if n
+    not in (
+        "Ananya",
+        "Diya",
+        "Isha",
+        "Priya",
+        "Neha",
+        "Anjali",
+        "Pooja",
+        "Kavya",
+        "Meera",
+        "Riya",
+        "Myra",
+        "Saanvi",
+        "Aadhya",
+        "Aisha",
+        "Nisha",
+        "Sunita",
+        "Geeta",
+        "Suman",
+        "Rekha",
+        "Usha",
+        "Kamla",
+        "Savita",
+        "Aarti",
+        "Kiran",
+        "Leela",
+        "Lata",
+    )
+]
 FIRST_NAMES_FEMALE = [n for n in FIRST_NAMES if n not in FIRST_NAMES_MALE]
 
 
@@ -202,9 +229,7 @@ def seed_data(fast_mode: bool = True) -> None:
         if (i + 1) % 500 == 0 or i == 0:
             elapsed = time.time() - start_time
             pct = (i + 1) / NUM_ACCOUNTS * 100
-            print(
-                f"  [{i + 1:>5,}/{NUM_ACCOUNTS:,}] accounts generated ({pct:.0f}%) - {elapsed:.1f}s"
-            )
+            print(f"  [{i + 1:>5,}/{NUM_ACCOUNTS:,}] accounts generated ({pct:.0f}%) - {elapsed:.1f}s")
 
     session.commit()
 

@@ -94,10 +94,7 @@ class SqlAlchemyLoanRepository:
 
     def get_all_pending(self) -> list[Loan]:
         models = (
-            self.session.query(LoanModel)
-            .filter_by(status="PENDING")
-            .order_by(LoanModel.application_date.asc())
-            .all()
+            self.session.query(LoanModel).filter_by(status="PENDING").order_by(LoanModel.application_date.asc()).all()
         )
         return [map_loan(m) for m in models]
 

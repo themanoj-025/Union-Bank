@@ -1,8 +1,8 @@
 # Threat Model — Union Bank Management System
 
-**Version:** 1.0  
-**Date:** July 15, 2026  
-**Scope:** FastAPI REST API + React SPA + SQLite backend  
+**Version:** 1.0
+**Date:** July 15, 2026
+**Scope:** FastAPI REST API + React SPA + SQLite backend
 **Classification:** Internal — do not distribute
 
 ---
@@ -30,32 +30,32 @@ graph TD
         User[Legitimate User]
         Admin[Bank Admin]
     end
-    
+
     subgraph "DMZ / Public"
         API[FastAPI - port 8000]
         React[React SPA]
         RateLimit[Rate Limiter]
         JWTAuth[JWT Authentication]
     end
-    
+
     subgraph "Application"
         Services[Application Services]
         Notifications[Notification Service]
         Audit[Audit Log]
     end
-    
+
     subgraph "Data Store"
         DB[(SQLite Database)]
         Cache[(Redis Cache)]
         Logs[(Application Logs)]
     end
-    
+
     Attacker --> API
     User --> React
     React --> API
     Admin --> API
     Admin --> React
-    
+
     API --> RateLimit
     API --> JWTAuth
     JWTAuth --> Services
@@ -65,8 +65,8 @@ graph TD
     API --> Cache
 ```
 
-**Trust boundary 1:** Internet → API (untrusted)  
-**Trust boundary 2:** API → Application services (trusted)  
+**Trust boundary 1:** Internet → API (untrusted)
+**Trust boundary 2:** API → Application services (trusted)
 **Trust boundary 3:** Application services → Data stores (trusted)
 
 ---

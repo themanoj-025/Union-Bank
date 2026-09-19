@@ -267,8 +267,7 @@ async def async_atomic_session() -> AsyncGenerator[AsyncSession, None]:
     engine = get_async_engine()
     if engine is None or _async_session_maker is None:
         raise RuntimeError(
-            "Async atomic sessions are not available with SQLite. "
-            "Set DATABASE_URL to a PostgreSQL connection string."
+            "Async atomic sessions are not available with SQLite. Set DATABASE_URL to a PostgreSQL connection string."
         )
     session = _async_session_maker()
     try:
@@ -307,9 +306,17 @@ def init_db() -> None:
 
     # Ensure all ORM models are registered with SQLAlchemy metadata
     _ = [
-        AccountModel, AdminModel, AuditLogModel, LoanModel,
-        LoginAttemptModel, NotificationModel, NotificationPreferenceModel,
-        RefreshTokenModel, SavingsGoalModel, TokenVersionModel, TransactionModel,
+        AccountModel,
+        AdminModel,
+        AuditLogModel,
+        LoanModel,
+        LoginAttemptModel,
+        NotificationModel,
+        NotificationPreferenceModel,
+        RefreshTokenModel,
+        SavingsGoalModel,
+        TokenVersionModel,
+        TransactionModel,
     ]
 
     engine = get_engine()

@@ -23,11 +23,7 @@ class SqlAlchemyAccountRepository:
         self.session = session
 
     def get(self, acc_no: str) -> Account | None:
-        model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-        )
+        model = self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first()
         return map_account(model) if model else None
 
     def get_all(self) -> list[Account]:
@@ -35,12 +31,7 @@ class SqlAlchemyAccountRepository:
         return [map_account(m) for m in models]
 
     def exists(self, acc_no: str) -> bool:
-        return (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-            is not None
-        )
+        return self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first() is not None
 
     def create(self, account: Account) -> Account:
         data = map_account_to_model(account)
@@ -50,9 +41,7 @@ class SqlAlchemyAccountRepository:
 
     def update(self, account: Account) -> Account:
         model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=account.account_number, deleted_at=None)
-            .first()
+            self.session.query(AccountModel).filter_by(account_number=account.account_number, deleted_at=None).first()
         )
         if model is None:
             return self.create(account)
@@ -62,22 +51,14 @@ class SqlAlchemyAccountRepository:
         return account
 
     def update_balance(self, acc_no: str, new_balance: Decimal) -> bool:
-        model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-        )
+        model = self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first()
         if model is None:
             return False
         model.balance = new_balance
         return True
 
     def set_active(self, acc_no: str, active: bool) -> bool:
-        model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-        )
+        model = self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first()
         if model is None:
             return False
         model.is_active = active
@@ -91,11 +72,7 @@ class SqlAlchemyAccountRepository:
         closing, and unfreezing does not imply reactivating.
         Callers that need to change both must call set_active() separately.
         """
-        model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-        )
+        model = self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first()
         if model is None:
             return False
         model.is_frozen = frozen
@@ -109,11 +86,7 @@ class SqlAlchemyAccountRepository:
         Soft-deleted accounts are excluded from all default queries via the
         `_active_query()` helper but remain recoverable via `get_deleted()`.
         """
-        model = (
-            self.session.query(AccountModel)
-            .filter_by(account_number=acc_no, deleted_at=None)
-            .first()
-        )
+        model = self.session.query(AccountModel).filter_by(account_number=acc_no, deleted_at=None).first()
         if model is None:
             return False
         from unionbank.domain.clock import utcnow as _now
@@ -230,9 +203,7 @@ class SqlAlchemyAccountRepository:
                         else_=0,
                     )
                 ).label("active_count"),
-                func.sum(case((AccountModel.is_frozen.is_(True), 1), else_=0)).label(
-                    "frozen_count"
-                ),
+                func.sum(case((AccountModel.is_frozen.is_(True), 1), else_=0)).label("frozen_count"),
                 func.sum(
                     case(
                         (AccountModel.is_active.is_(False) & AccountModel.is_frozen.is_(False), 1),
@@ -263,9 +234,7 @@ class SqlAlchemyAccountRepository:
         base_q = self.session.query(AccountModel).filter_by(deleted_at=None)
         total = base_q.count()
         offset = (page - 1) * per_page
-        models = (
-            base_q.order_by(AccountModel.created_at.desc()).offset(offset).limit(per_page).all()
-        )
+        models = base_q.order_by(AccountModel.created_at.desc()).offset(offset).limit(per_page).all()
         return [map_account(m) for m in models], total
 
     def commit(self) -> None:

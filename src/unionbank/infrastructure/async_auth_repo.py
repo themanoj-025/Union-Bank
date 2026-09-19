@@ -36,9 +36,7 @@ class AsyncSqlAlchemyAdminRepository:
         self.session = session
 
     async def get_by_username(self, username: str) -> AdminUser | None:
-        result = await self.session.execute(
-            select(AdminModel).where(AdminModel.username == username)
-        )
+        result = await self.session.execute(select(AdminModel).where(AdminModel.username == username))
         model = result.scalar_one_or_none()
         return map_admin(model) if model else None
 
@@ -56,23 +54,17 @@ class AsyncSqlAlchemyAdminRepository:
         return admin
 
     async def update_password(self, username: str, new_hashed: str) -> bool:
-        result = await self.session.execute(
-            select(AdminModel).where(AdminModel.username == username)
-        )
+        result = await self.session.execute(select(AdminModel).where(AdminModel.username == username))
         model = result.scalar_one_or_none()
         if model is None:
             return False
         model.password = new_hashed
         return True
 
-    async def update_totp(
-        self, username: str, totp_secret: str | None, totp_enabled: bool
-    ) -> bool:
+    async def update_totp(self, username: str, totp_secret: str | None, totp_enabled: bool) -> bool:
         from unionbank.utils.token_security import encrypt_totp_secret
 
-        result = await self.session.execute(
-            select(AdminModel).where(AdminModel.username == username)
-        )
+        result = await self.session.execute(select(AdminModel).where(AdminModel.username == username))
         model = result.scalar_one_or_none()
         if model is None:
             return False
@@ -101,9 +93,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
         self.session = session
 
     async def get(self, key: str) -> LoginAttempt | None:
-        result = await self.session.execute(
-            select(LoginAttemptModel).where(LoginAttemptModel.key == key)
-        )
+        result = await self.session.execute(select(LoginAttemptModel).where(LoginAttemptModel.key == key))
         model = result.scalar_one_or_none()
         if model is None:
             return None
@@ -115,9 +105,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
             updated_at=model.updated_at,
         )
 
-    async def record_failure(
-        self, key: str, max_attempts: int = 5, lockout_minutes: int = 15
-    ) -> int:
+    async def record_failure(self, key: str, max_attempts: int = 5, lockout_minutes: int = 15) -> int:
         record = await self.get(key)
         now = _utcnow()
 
@@ -125,9 +113,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
             model = LoginAttemptModel(key=key, count=1, first_failed=now)
             self.session.add(model)
         else:
-            result = await self.session.execute(
-                select(LoginAttemptModel).where(LoginAttemptModel.key == key)
-            )
+            result = await self.session.execute(select(LoginAttemptModel).where(LoginAttemptModel.key == key))
             model = result.scalar_one_or_none()
 
             if model and model.lockout_until and now >= model.lockout_until:
@@ -145,9 +131,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
         return max(0, max_attempts - (current_count or 0))
 
     async def is_locked(self, key: str, max_attempts: int = 5) -> tuple[bool, int]:
-        result = await self.session.execute(
-            select(LoginAttemptModel).where(LoginAttemptModel.key == key)
-        )
+        result = await self.session.execute(select(LoginAttemptModel).where(LoginAttemptModel.key == key))
         model = result.scalar_one_or_none()
         if model is None or (model.count or 0) < max_attempts:
             return False, 0
@@ -166,9 +150,7 @@ class AsyncSqlAlchemyLoginAttemptRepository:
         return False, 0
 
     async def reset(self, key: str) -> None:
-        result = await self.session.execute(
-            select(LoginAttemptModel).where(LoginAttemptModel.key == key)
-        )
+        result = await self.session.execute(select(LoginAttemptModel).where(LoginAttemptModel.key == key))
         model = result.scalar_one_or_none()
         if model:
             await self.session.delete(model)
@@ -225,9 +207,7 @@ class AsyncSqlAlchemyRefreshTokenRepository:
         self.session = session
 
     async def get(self, token_id: str) -> RefreshToken | None:
-        result = await self.session.execute(
-            select(RefreshTokenModel).where(RefreshTokenModel.token_id == token_id)
-        )
+        result = await self.session.execute(select(RefreshTokenModel).where(RefreshTokenModel.token_id == token_id))
         model = result.scalar_one_or_none()
         return map_refresh_token(model) if model else None
 
@@ -252,9 +232,7 @@ class AsyncSqlAlchemyRefreshTokenRepository:
         return token
 
     async def revoke(self, token_id: str) -> bool:
-        result = await self.session.execute(
-            select(RefreshTokenModel).where(RefreshTokenModel.token_id == token_id)
-        )
+        result = await self.session.execute(select(RefreshTokenModel).where(RefreshTokenModel.token_id == token_id))
         model = result.scalar_one_or_none()
         if model is None:
             return False
@@ -276,9 +254,7 @@ class AsyncSqlAlchemyRefreshTokenRepository:
 
     async def clean_expired(self) -> int:
         now = datetime.now(UTC)
-        result = await self.session.execute(
-            select(RefreshTokenModel).where(RefreshTokenModel.expires_at < now)
-        )
+        result = await self.session.execute(select(RefreshTokenModel).where(RefreshTokenModel.expires_at < now))
         models = result.scalars().all()
         count = len(models)
         for model in models:

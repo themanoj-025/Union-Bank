@@ -20,7 +20,6 @@ from unionbank.utils.hashing import hash_password
 pytestmark = pytest.mark.integration
 
 
-
 pytestmark = pytest.mark.slow
 #  Fixtures
 
@@ -394,7 +393,6 @@ class TestCookieSecurity:
         """CSRF token cookie should NOT be httpOnly (JS needs to read it)."""
         import os
         import random
-
 
         unique = os.urandom(4).hex()
         reg_resp = client.post(

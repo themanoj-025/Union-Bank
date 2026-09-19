@@ -31,9 +31,7 @@ class AsyncSqlAlchemyNotificationRepository:
         self.session = session
 
     async def get(self, notif_id: str) -> Notification | None:
-        result = await self.session.execute(
-            select(NotificationModel).where(NotificationModel.notif_id == notif_id)
-        )
+        result = await self.session.execute(select(NotificationModel).where(NotificationModel.notif_id == notif_id))
         model = result.scalar_one_or_none()
         return map_notification(model) if model else None
 
@@ -86,9 +84,7 @@ class AsyncSqlAlchemyNotificationRepository:
         return notification
 
     async def mark_as_read(self, notif_id: str) -> bool:
-        result = await self.session.execute(
-            select(NotificationModel).where(NotificationModel.notif_id == notif_id)
-        )
+        result = await self.session.execute(select(NotificationModel).where(NotificationModel.notif_id == notif_id))
         model = result.scalar_one_or_none()
         if model is None:
             return False
@@ -110,9 +106,7 @@ class AsyncSqlAlchemyNotificationRepository:
 
     async def delete_old(self, days: int = 30) -> int:
         cutoff = _utcnow() - timedelta(days=days)
-        result = await self.session.execute(
-            select(NotificationModel).where(NotificationModel.created_at < cutoff)
-        )
+        result = await self.session.execute(select(NotificationModel).where(NotificationModel.created_at < cutoff))
         models = result.scalars().all()
         count = len(models)
         for model in models:
@@ -137,9 +131,7 @@ class AsyncSqlAlchemyNotificationPreferenceRepository:
 
     async def get(self, acc_no: str) -> NotificationPreference | None:
         result = await self.session.execute(
-            select(NotificationPreferenceModel).where(
-                NotificationPreferenceModel.account_number == acc_no
-            )
+            select(NotificationPreferenceModel).where(NotificationPreferenceModel.account_number == acc_no)
         )
         model = result.scalar_one_or_none()
         if model is None:
@@ -160,9 +152,7 @@ class AsyncSqlAlchemyNotificationPreferenceRepository:
 
     async def create_or_update(self, pref: NotificationPreference) -> NotificationPreference:
         result = await self.session.execute(
-            select(NotificationPreferenceModel).where(
-                NotificationPreferenceModel.account_number == pref.account_number
-            )
+            select(NotificationPreferenceModel).where(NotificationPreferenceModel.account_number == pref.account_number)
         )
         model = result.scalar_one_or_none()
         if model is None:

@@ -17,8 +17,8 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select an option' }
 
   return (
     <div className="custom-dropdown" ref={dropdownRef} style={{ position: 'relative', width: '100%' }}>
-      <div 
-        className="dropdown-header" 
+      <div
+        className="dropdown-header"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           padding: '12px 16px',
@@ -35,8 +35,8 @@ const Dropdown = ({ options, value, onChange, placeholder = 'Select an option' }
         }}
       >
         <span>{value || placeholder}</span>
-        <motion.svg 
-          animate={{ rotate: isOpen ? 180 : 0 }} 
+        <motion.svg
+          animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
           width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
         >

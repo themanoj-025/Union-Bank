@@ -19,14 +19,7 @@ import pytest
 
 pytestmark = pytest.mark.slow
 # Resolve the path to api/common.py (now lives in src/unionbank/entrypoints/api/)
-_COMMON_PY_PATH = (
-    Path(__file__).resolve().parent.parent
-    / "src"
-    / "unionbank"
-    / "entrypoints"
-    / "api"
-    / "common.py"
-)
+_COMMON_PY_PATH = Path(__file__).resolve().parent.parent / "src" / "unionbank" / "entrypoints" / "api" / "common.py"
 
 
 def _get_all_response_model_fields() -> dict[str, set[str]]:
@@ -101,9 +94,7 @@ def _get_current_customer_return_dict() -> list[str]:
                 for subnode in ast.walk(node):
                     # Look for the final return dict literal
                     if isinstance(subnode, ast.Return) and isinstance(subnode.value, ast.Dict):
-                        return [
-                            key.value for key in subnode.value.keys if isinstance(key, ast.Constant)
-                        ]
+                        return [key.value for key in subnode.value.keys if isinstance(key, ast.Constant)]
     return []
 
 
@@ -114,8 +105,7 @@ class TestNoPasswordLeak:
         """Verify that every Pydantic response model lacks a 'password' field."""
         leaks = _get_all_response_model_fields()
         assert not leaks, (
-            f"The following response models contain password-related fields, "
-            f"which should never be serialized: {leaks}"
+            f"The following response models contain password-related fields, which should never be serialized: {leaks}"
         )
 
     def test_get_current_customer_does_not_return_password(self) -> None:
@@ -141,7 +131,6 @@ class TestNoPasswordLeak:
     def test_password_not_in_profile_response(self) -> None:
         """Verify ProfileData model doesn't contain any password fields."""
         from unionbank.entrypoints.api.models import ProfileData
-
 
         fields = ProfileData.model_fields
         assert "password" not in fields, (

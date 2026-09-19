@@ -87,9 +87,7 @@ def v2_get_statement_keyset(
         except (ValueError, TypeError):
             _err("Invalid cursor format. Use ISO 8601 timestamp.")
 
-    page = c.transaction_service().get_paginated_keyset(
-        acc_no=acc_no, limit=limit, cursor=cursor_dt
-    )
+    page = c.transaction_service().get_paginated_keyset(acc_no=acc_no, limit=limit, cursor=cursor_dt)
 
     items = [
         TransactionOut(
@@ -128,9 +126,7 @@ def v2_export_csv(customer: dict = Depends(get_current_customer)) -> ApiResponse
 
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(
-        ["Transaction ID", "Date/Time", "Type", "Amount", "Balance", "Description", "Category"]
-    )
+    writer.writerow(["Transaction ID", "Date/Time", "Type", "Amount", "Balance", "Description", "Category"])
     for t in domain_txns:
         sign = "+" if t.type.value in ("DEPOSIT", "TRANSFER_IN") else "-"
         writer.writerow(

@@ -31,7 +31,7 @@ function Dashboard() {
   }, []);
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="dashboard-container"
@@ -79,7 +79,7 @@ function Dashboard() {
             <h3 style={{ margin: 0 }}>Recent Transactions</h3>
             <Link to="/statement" style={{ color: 'var(--primary-green)', textDecoration: 'none', fontWeight: 'bold' }}>View All</Link>
           </div>
-          
+
           {loading ? (
             <p>Loading transactions...</p>
           ) : transactions.length > 0 ? (

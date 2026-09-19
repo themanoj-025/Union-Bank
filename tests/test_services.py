@@ -374,9 +374,7 @@ class TestTransactionService:
         assert result.success is False
 
     def test_transfer_insufficient_balance(self, transaction_service, account_repo, sample_account) -> None:
-        receiver = Account(
-            account_number="2000000002", name="Receiver", password=hash_password("p")
-        )
+        receiver = Account(account_number="2000000002", name="Receiver", password=hash_password("p"))
         account_repo.create(sample_account)
         account_repo.create(receiver)
 
@@ -432,5 +430,3 @@ class TestTransactionService:
 
 
 #  AdminService Tests
-
-

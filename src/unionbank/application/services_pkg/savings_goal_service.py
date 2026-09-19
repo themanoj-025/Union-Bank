@@ -62,7 +62,6 @@ def _get_account_lock(*acc_nos: str) -> asyncio.Lock:
 #  Async Transaction Service
 
 
-
 class AsyncSavingsGoalService:
     """Async savings goal use-cases."""
 

@@ -20,8 +20,7 @@ def _require_env(name: str, default: str | None = None) -> str:
     value = os.environ.get(name, default)
     if value is None:
         raise RuntimeError(
-            f"Missing required environment variable: {name}. "
-            f"See .env.example or set it before starting the app."
+            f"Missing required environment variable: {name}. See .env.example or set it before starting the app."
         )
     return value
 
@@ -41,16 +40,12 @@ _TESTING = os.environ.get("UNION_BANK_TESTING", "0") == "1"
 class Config:
     # ── Secrets ──────────────────────────────────────────────────────────────
     JWT_SECRET: str = field(
-        default_factory=lambda: (
-            _require_env("JWT_SECRET") if not _TESTING else "test-secret-not-for-prod"
-        )
+        default_factory=lambda: _require_env("JWT_SECRET") if not _TESTING else "test-secret-not-for-prod"
     )
     JWT_PRIVATE_KEY: str = field(default_factory=lambda: _optional_env("JWT_PRIVATE_KEY", "") or "")
     JWT_PUBLIC_KEY: str = field(default_factory=lambda: _optional_env("JWT_PUBLIC_KEY", "") or "")
     FLASK_SECRET_KEY: str = field(
-        default_factory=lambda: (
-            _require_env("FLASK_SECRET_KEY") if not _TESTING else os.urandom(24).hex()
-        )
+        default_factory=lambda: _require_env("FLASK_SECRET_KEY") if not _TESTING else os.urandom(24).hex()
     )
 
     # ── JWT ───────────────────────────────────────────────────────────────────
@@ -88,9 +83,7 @@ class Config:
             "http://localhost:5000,http://localhost:8000,http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:5177",
         ).split(",")
     )
-    CORS_ALLOW_METHODS: list[str] = field(
-        default_factory=lambda: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    )
+    CORS_ALLOW_METHODS: list[str] = field(default_factory=lambda: ["GET", "POST", "PUT", "DELETE", "OPTIONS"])
     CORS_ALLOW_HEADERS: list[str] = field(
         default_factory=lambda: [
             "Authorization",
@@ -105,9 +98,7 @@ class Config:
     # ── Security ──────────────────────────────────────────────────────────────
     # Token encryption key for TOTP secrets (Fernet). Generate with:
     #   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-    TOKEN_ENCRYPTION_KEY: str = field(
-        default_factory=lambda: _optional_env("TOKEN_ENCRYPTION_KEY", "") or ""
-    )
+    TOKEN_ENCRYPTION_KEY: str = field(default_factory=lambda: _optional_env("TOKEN_ENCRYPTION_KEY", "") or "")
     # Account-based rate limits for money-movement endpoints
     MONEY_MOVEMENT_RATE_LIMIT: str = "5/hour"  # max 5 money-movement ops per account per hour
 
@@ -139,10 +130,7 @@ class Config:
             )
         # Validate ENV value
         if self.ENV not in ("development", "testing", "production"):
-            raise ValueError(
-                f"Invalid ENV value: '{self.ENV}'. Must be one of: "
-                f"development, testing, production."
-            )
+            raise ValueError(f"Invalid ENV value: '{self.ENV}'. Must be one of: development, testing, production.")
         # Fail-fast: RS256 requires RSA keys (except in testing mode with fallback)
         if self.JWT_ALGORITHM == "RS256" and not self.JWT_PRIVATE_KEY:
             raise RuntimeError(

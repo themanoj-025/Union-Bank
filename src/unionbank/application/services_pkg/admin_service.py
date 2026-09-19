@@ -58,7 +58,6 @@ def _get_account_lock(*acc_nos: str) -> asyncio.Lock:
 #  Async Transaction Service
 
 
-
 class AsyncAdminService:
     """Async admin use-cases for account oversight."""
 
@@ -103,9 +102,7 @@ class AsyncAdminService:
     async def search_accounts(self, query: str) -> list[Account]:
         return await self.account_repo.search(query)
 
-    async def freeze_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    async def freeze_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -134,13 +131,9 @@ class AsyncAdminService:
 
                 logger.warning("Failed to send freeze notification", exc_info=True)
 
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({account.name}) has been frozen."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({account.name}) has been frozen.")
 
-    async def unfreeze_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    async def unfreeze_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -166,13 +159,9 @@ class AsyncAdminService:
 
                 logger.warning("Failed to send unfreeze notification", exc_info=True)
 
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({account.name}) has been unfrozen."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({account.name}) has been unfrozen.")
 
-    async def delete_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    async def delete_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = await self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -188,13 +177,9 @@ class AsyncAdminService:
             details=f"Deleted account for {acc_name}",
             reason=reason,
         )
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({acc_name}) has been deleted."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({acc_name}) has been deleted.")
 
-    async def list_accounts_paginated(
-        self, page: int = 1, per_page: int = 20
-    ) -> tuple[list[Account], int]:
+    async def list_accounts_paginated(self, page: int = 1, per_page: int = 20) -> tuple[list[Account], int]:
         """Get accounts with pagination."""
         return await self.account_repo.get_all_paginated(page=page, per_page=per_page)
 
@@ -241,5 +226,3 @@ class AsyncAdminService:
 
 
 #  Async Savings Goal Service
-
-

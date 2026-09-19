@@ -33,7 +33,7 @@ function AdminLogin() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
@@ -48,9 +48,9 @@ function AdminLogin() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Username</label>
-            <input 
-              type="text" 
-              placeholder="Admin Username" 
+            <input
+              type="text"
+              placeholder="Admin Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -59,9 +59,9 @@ function AdminLogin() {
           </div>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Password</label>
-            <input 
-              type="password" 
-              placeholder="Password" 
+            <input
+              type="password"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

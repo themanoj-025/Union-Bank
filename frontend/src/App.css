@@ -798,28 +798,28 @@
   .header-left .nav-links { display: none; }
   .header-right { display: none; }
   .hamburger-menu { display: block; }
-  
+
   .features, .split-section, .transparent-content, .reviews-scroll, .countries-tabs { flex-direction: column; gap: 30px; }
   .split-section { margin: 60px auto; }
   .split-image { height: 300px; width: 100%; margin-top: 20px; }
-  
+
   .countries-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
   .footer-links-grid, .footer-legal-links { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 20px; }
-  
+
   .hero { padding: 40px 20px; }
   .transparent-section { padding: 40px 20px; }
-  
+
   .countries-section { padding: 30px 20px; margin: 40px 20px; border-radius: 20px; }
   .reviews-section { padding: 60px 0; }
   .review-card { min-width: 280px; padding: 25px; }
-  
+
   .calculator-widget { width: 100%; padding: 20px; box-sizing: border-box; }
   .amount { font-size: 28px; width: 120px !important; }
-  
+
   .auth-container { flex-direction: column; }
   .auth-split { padding: 20px; }
   .auth-split.left, .auth-split.right { min-height: 50vh; }
-  
+
   .qr-box { max-width: 100%; width: 100%; box-sizing: border-box; }
 }
 

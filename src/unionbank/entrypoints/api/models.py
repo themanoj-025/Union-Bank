@@ -182,18 +182,14 @@ class TokenData(BaseModel):
 class TransactionRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Positive transaction amount")
     category: str = Field(default="General", description="Transaction category")
-    idempotency_key: str | None = Field(
-        default=None, description="Idempotency key for retry-safe operations"
-    )
+    idempotency_key: str | None = Field(default=None, description="Idempotency key for retry-safe operations")
 
 
 class TransferRequest(BaseModel):
     target_account: str = Field(..., description="Recipient account number")
     amount: float = Field(..., gt=0, description="Transfer amount")
     category: str = Field(default="General", description="Transaction category")
-    idempotency_key: str | None = Field(
-        default=None, description="Idempotency key for retry-safe operations"
-    )
+    idempotency_key: str | None = Field(default=None, description="Idempotency key for retry-safe operations")
 
 
 #  Account Request Models
@@ -426,9 +422,7 @@ class HealthData(BaseModel):
 class AnalyzrQueryRequest(BaseModel):
     """Natural-language transaction search request."""
 
-    query: str = Field(
-        ..., min_length=1, description="Natural-language query (e.g. 'large deposits last month')"
-    )
+    query: str = Field(..., min_length=1, description="Natural-language query (e.g. 'large deposits last month')")
     account_number: str | None = Field(None, description="Account number to scope the search")
     max_results: int = Field(50, ge=1, le=200, description="Maximum number of results")
 
