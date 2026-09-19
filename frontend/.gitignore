@@ -5,6 +5,7 @@ node_modules/
 dist/
 dist-ssr/
 build/
+storybook-static/
 
 # ── Environment variables (NEVER COMMIT secrets) ─────────────────────────────
 .env

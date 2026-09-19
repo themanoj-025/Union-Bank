@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import pytest
 
-from unionbank.entrypoints.api.models import ApiResponse
 
 pytestmark = pytest.mark.slow
 

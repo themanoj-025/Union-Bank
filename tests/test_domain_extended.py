@@ -33,7 +33,7 @@ class TestAccountEntity:
 
     def test_account_is_deleted(self) -> None:
         from unionbank.domain.entities import Account
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         acc = Account(account_number="1000000001", name="Test", deleted_at=datetime.now(UTC))
         assert acc.is_deleted is True

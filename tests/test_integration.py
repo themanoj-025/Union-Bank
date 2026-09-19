@@ -257,8 +257,6 @@ class TestAccountCRUD:
         must only move the money once. The second call replays the first
         result without touching the balances again.
         """
-        from unionbank.domain.entities import IdempotencyRecord
-
         for acc_no, bal in [("1000000001", "1000.00"), ("1000000002", "0.00")]:
             c.account_repo().create(
                 Account(account_number=acc_no, name=f"Acct {acc_no}", balance=Decimal(bal), password="pw")

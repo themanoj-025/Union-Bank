@@ -48,7 +48,7 @@ class TestAccountEntity:
         assert acc.can_transact is False
 
     def test_account_is_deleted(self) -> None:
-        from datetime import datetime, timezone
+        from datetime import datetime
 
         acc = Account(account_number="123", name="Test")
         assert acc.is_deleted is False

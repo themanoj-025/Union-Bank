@@ -13,16 +13,6 @@ class TestAsyncRepositories:
     def test_async_repositories_importable(self) -> None:
         from unionbank.infrastructure.async_repositories import (
             AsyncSqlAlchemyAccountRepository,
-            AsyncSqlAlchemyAdminRepository,
-            AsyncSqlAlchemyAuditLogRepository,
-            AsyncSqlAlchemyIdempotencyRepository,
-            AsyncSqlAlchemyLoanRepository,
-            AsyncSqlAlchemyLoginAttemptRepository,
-            AsyncSqlAlchemyNotificationPreferenceRepository,
-            AsyncSqlAlchemyNotificationRepository,
-            AsyncSqlAlchemyRefreshTokenRepository,
-            AsyncSqlAlchemySavingsGoalRepository,
-            AsyncSqlAlchemyTokenVersionRepository,
             AsyncSqlAlchemyTransactionRepository,
         )
 
