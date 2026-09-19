@@ -14,10 +14,12 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
-
-import pytest
-
-pytestmark = pytest.mark.slow
+# NOTE: this module is deliberately NOT marked slow. These are fast, static
+# (AST + pydantic model) regression checks, and the earlier module-level
+# ``pytestmark = pytest.mark.slow`` meant the default ``-m 'not slow'`` filter
+# in pyproject addopts silently deselected all of them — so the password-leak
+# gate depended on them was checking nothing.
+#
 # Resolve the path to api/common.py (now lives in src/unionbank/entrypoints/api/)
 _COMMON_PY_PATH = Path(__file__).resolve().parent.parent / "src" / "unionbank" / "entrypoints" / "api" / "common.py"
 
