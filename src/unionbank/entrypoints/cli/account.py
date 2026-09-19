@@ -23,18 +23,13 @@ from unionbank.entrypoints.cli.ui import (
     WHITE,
     YELLOW,
     divider,
-    error,
     header,
     info,
-    prompt_password,
-    success,
-    warning,
 )
 from unionbank.utils import (
     fmt_currency,
     generate_transaction_id,
     now_str,
-    verify_password,
 )
 from unionbank.utils.logger import logger
 

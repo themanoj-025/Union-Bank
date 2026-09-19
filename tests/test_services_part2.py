@@ -7,24 +7,7 @@ The services depend only on repository protocols, which we satisfy with Fakes. â
 
 from __future__ import annotations
 from decimal import Decimal
-import pytest
-from tests.fakes import (
-    FakeAccountRepository,
-    FakeAdminRepository,
-    FakeAuditLogRepository,
-    FakeLoginAttemptRepository,
-    FakeSavingsGoalRepository,
-    FakeTokenVersionRepository,
-    FakeTransactionRepository,
-)
-from unionbank.application.services import (
-    AccountService,
-    AdminService,
-    AuthService,
-    SavingsGoalService,
-    TransactionService,
-)
-from unionbank.domain.entities import Account, AdminUser, SavingsGoal
+from unionbank.domain.entities import Account, SavingsGoal
 from unionbank.utils.hashing import hash_password
 
 

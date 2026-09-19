@@ -22,15 +22,11 @@ os.environ.setdefault("UNION_BANK_TESTING", "1")
 os.environ.setdefault("JWT_SECRET", secrets.token_hex(32))
 os.environ.setdefault("FLASK_SECRET_KEY", secrets.token_hex(24))
 
-from unionbank.config import settings
 from unionbank.utils.hashing import hash_password
 
 from seed_helpers import (
-    ADDRESSES,
-    BRANCH_CODES,
     FIRST_NAMES,
     LAST_NAMES,
-    TRANSACTION_DESCRIPTIONS,
     TRANSACTION_TYPES,
     TXN_WEIGHTS,
     TYPE_CATEGORY_MAP,

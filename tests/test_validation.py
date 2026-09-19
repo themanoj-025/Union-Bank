@@ -1,6 +1,5 @@
 """Tests for UNION-BANK- input validation helpers."""
 
-import pytest
 
 from unionbank.utils.validation import (
     validate_email,

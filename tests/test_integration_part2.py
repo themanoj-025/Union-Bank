@@ -11,12 +11,9 @@ database is the most faithful test environment. — Part 2.
 """
 
 from __future__ import annotations
-import os
-import tempfile
 from decimal import Decimal
-import pytest
-from unionbank.domain.entities import Account, TransactionType
-from unionbank.infrastructure.container import get_container, reset_container
+from unionbank.domain.entities import Account
+from unionbank.infrastructure.container import get_container
 
 
 class TestSavingsGoalPersistence:

@@ -2,7 +2,6 @@
 
 import hashlib
 
-import pytest
 
 from unionbank.utils.token_security import hash_token_id
 

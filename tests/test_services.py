@@ -27,7 +27,7 @@ from unionbank.application.services import (
     SavingsGoalService,
     TransactionService,
 )
-from unionbank.domain.entities import Account, AdminUser, SavingsGoal
+from unionbank.domain.entities import Account, AdminUser
 from unionbank.utils.hashing import hash_password
 
 #  Fixtures
