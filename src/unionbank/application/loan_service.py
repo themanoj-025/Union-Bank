@@ -71,9 +71,7 @@ class LoanService:
         self.audit_log_repo = audit_log_repo
         self.notif_service = notif_service
 
-    def _audit_log(
-        self, actor: str, action: str, target: str | None = None, details: str | None = None
-    ) -> None:
+    def _audit_log(self, actor: str, action: str, target: str | None = None, details: str | None = None) -> None:
         if self.audit_log_repo:
             self.audit_log_repo.log(
                 actor=actor,
@@ -164,9 +162,7 @@ class LoanService:
                 message=f"Interest rate must be between {min_rate}% and {max_rate}% for {loan_type} loans.",
             )
 
-        emi = Decimal(
-            str(calculate_emi(float(principal_amount), float(interest_rate), tenure_months))
-        )
+        emi = Decimal(str(calculate_emi(float(principal_amount), float(interest_rate), tenure_months)))
 
         now = _utcnow()
         loan = Loan(
@@ -262,9 +258,7 @@ class LoanService:
             except pybreaker.CircuitBreakerError:
                 from unionbank.utils.logger import logger
 
-                logger.warning(
-                    "Notification circuit breaker open, skipping loan approval notification"
-                )
+                logger.warning("Notification circuit breaker open, skipping loan approval notification")
             except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
@@ -278,9 +272,7 @@ class LoanService:
 
     # ── Admin: Reject loan ──
 
-    def reject_loan(
-        self, loan_id: str, reason: str = "", admin_user: str = "admin"
-    ) -> ServiceResult:
+    def reject_loan(self, loan_id: str, reason: str = "", admin_user: str = "admin") -> ServiceResult:
         """Reject a pending loan application."""
         loan = self.loan_repo.get(loan_id)
         if loan is None:
@@ -312,9 +304,7 @@ class LoanService:
             except pybreaker.CircuitBreakerError:
                 from unionbank.utils.logger import logger
 
-                logger.warning(
-                    "Notification circuit breaker open, skipping loan rejection notification"
-                )
+                logger.warning("Notification circuit breaker open, skipping loan rejection notification")
             except (OSError, ValueError, TypeError, AttributeError):
                 from unionbank.utils.logger import logger
 
@@ -429,9 +419,7 @@ class LoanService:
 
     # ── Calculate EMI preview ──
 
-    def calculate_emi_preview(
-        self, principal: float, annual_rate: float, tenure_months: int
-    ) -> dict:
+    def calculate_emi_preview(self, principal: float, annual_rate: float, tenure_months: int) -> dict:
         """Calculate EMI preview without creating an application."""
         emi = calculate_emi(principal, annual_rate, tenure_months)
         total_payable = round(emi * tenure_months, 2)

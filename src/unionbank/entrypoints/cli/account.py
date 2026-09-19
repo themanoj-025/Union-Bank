@@ -162,10 +162,7 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
             c.transaction_repo().commit()
         except IntegrityError:
             c.transaction_repo().rollback()
-            logger.warning(
-                f"Transaction logging skipped for {txn_id} "
-                f"(account {self.account_number} may not exist)"
-            )
+            logger.warning(f"Transaction logging skipped for {txn_id} (account {self.account_number} may not exist)")
 
         logger.info(
             f"TXN [{txn_id}]  {txn_type:<14}  Acc:{self.account_number}  "
@@ -180,9 +177,7 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
         print(f"  {GREEN}Name       : {BOLD}{self.name}{RESET}")
         print(f"  {GREEN}Balance    : {BOLD}{fmt_currency(self.balance)}{RESET}")
         divider()
-        logger.info(
-            f"Balance checked -> Acc:{self.account_number}  Bal:{fmt_currency(self.balance)}"
-        )
+        logger.info(f"Balance checked -> Acc:{self.account_number}  Bal:{fmt_currency(self.balance)}")
 
     def mini_statement(self) -> Any:
         header("MINI STATEMENT  (Last 5 transactions)")
@@ -193,9 +188,7 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
 
         records = []
         for txn in c.transaction_repo().get_mini(self.account_number, limit=5):
-            sign = (
-                "+" if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN) else "-"
-            )
+            sign = "+" if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN) else "-"
             color = GREEN if sign == "+" else RED
             cat = txn.category or ""
             ts = str(txn.timestamp)[:19] if txn.timestamp else ""
@@ -223,11 +216,7 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
         else:
             # Show oldest first for full statement
             for txn in reversed(records):
-                sign = (
-                    "+"
-                    if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN)
-                    else "-"
-                )
+                sign = "+" if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN) else "-"
                 color = GREEN if sign == "+" else RED
                 cat = txn.category or ""
                 ts = str(txn.timestamp)[:19] if txn.timestamp else ""

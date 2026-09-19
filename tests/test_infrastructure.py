@@ -12,11 +12,13 @@ class TestContainer:
 
     def test_container_importable(self) -> None:
         import unionbank.infrastructure.container as mod
+
         assert hasattr(mod, "__file__")
 
     def test_get_container_function(self) -> None:
         from unionbank.infrastructure.container import get_container
         import inspect
+
         sig = inspect.signature(get_container)
         assert sig.return_annotation is not inspect.Parameter.empty
 
@@ -26,6 +28,7 @@ class TestCache:
 
     def test_cache_importable(self) -> None:
         import unionbank.infrastructure.cache as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -34,6 +37,7 @@ class TestMetrics:
 
     def test_metrics_importable(self) -> None:
         import unionbank.infrastructure.metrics as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -42,6 +46,7 @@ class TestTracing:
 
     def test_tracing_importable(self) -> None:
         import unionbank.tracing as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -50,10 +55,12 @@ class TestLogging:
 
     def test_logger_importable(self) -> None:
         import unionbank.utils.logger as mod
+
         assert hasattr(mod, "__file__")
 
     def test_structured_logging_importable(self) -> None:
         import src.logging_utils.structured_logging as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -62,6 +69,7 @@ class TestDatabase:
 
     def test_database_importable(self) -> None:
         import unionbank.infrastructure.database as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -70,6 +78,7 @@ class TestPersistence:
 
     def test_persistence_importable(self) -> None:
         import unionbank.infrastructure.persistence as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -78,6 +87,7 @@ class TestMappers:
 
     def test_mappers_importable(self) -> None:
         import unionbank.infrastructure.mappers as mod
+
         assert hasattr(mod, "__file__")
 
 
@@ -86,4 +96,5 @@ class TestBackwardCompat:
 
     def test_backward_compat_importable(self) -> None:
         import unionbank.infrastructure.backward_compat as mod
+
         assert hasattr(mod, "__file__")

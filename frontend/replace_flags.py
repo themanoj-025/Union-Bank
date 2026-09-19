@@ -4,6 +4,7 @@ import structlog
 
 logger = structlog.get_logger("replace_flags")
 
+
 # ISO country code map from emoji to 2-letter ISO code
 def get_iso_from_emoji(emoji) -> str:
     if len(emoji) != 2:

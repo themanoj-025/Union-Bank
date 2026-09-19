@@ -59,7 +59,6 @@ def _get_account_lock(*acc_nos: str) -> asyncio.Lock:
 #  Async Transaction Service
 
 
-
 class AsyncAuthService:
     """Async authentication and authorization use-cases."""
 
@@ -92,17 +91,13 @@ class AsyncAuthService:
             return ServiceResult(success=False, message="Account not found.")
 
         if account.is_frozen:
-            return ServiceResult(
-                success=False, message="Account is frozen. Please contact the bank."
-            )
+            return ServiceResult(success=False, message="Account is frozen. Please contact the bank.")
 
         if not account.is_active:
             return ServiceResult(success=False, message="Account has been closed.")
 
         if not verify_password(password, account.password):
-            remaining = await self.login_attempt_repo.record_failure(
-                acc_no, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_MINUTES
-            )
+            remaining = await self.login_attempt_repo.record_failure(acc_no, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_MINUTES)
             await self.login_attempt_repo.commit()
             if remaining > 0:
                 return ServiceResult(
@@ -176,9 +171,7 @@ class AsyncAuthService:
             await self.login_attempt_repo.commit()
             return ServiceResult(success=True, data={"username": username, "role": "admin"})
 
-        remaining = await self.login_attempt_repo.record_failure(
-            lock_key, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_MINUTES
-        )
+        remaining = await self.login_attempt_repo.record_failure(lock_key, MAX_LOGIN_ATTEMPTS, LOGIN_LOCKOUT_MINUTES)
         await self.login_attempt_repo.commit()
         if remaining > 0:
             return ServiceResult(
@@ -192,5 +185,3 @@ class AsyncAuthService:
 
 
 #  Async Admin Service
-
-

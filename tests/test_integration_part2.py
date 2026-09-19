@@ -18,6 +18,7 @@ import pytest
 from unionbank.domain.entities import Account, TransactionType
 from unionbank.infrastructure.container import get_container, reset_container
 
+
 class TestSavingsGoalPersistence:
     def test_create_and_contribute_to_goal(self, c) -> None:
         """Create a savings goal, contribute to it, verify everything persisted."""
@@ -261,8 +262,7 @@ class TestConcurrentTransfers:
             f"expected {expected_sender} ({successes}/{num_transfers} succeeded)"
         )
         assert updated_receiver.balance == expected_receiver, (
-            f"Receiver balance mismatch: got {updated_receiver.balance}, "
-            f"expected {expected_receiver}"
+            f"Receiver balance mismatch: got {updated_receiver.balance}, expected {expected_receiver}"
         )
 
         # At least some transfers must succeed (or the test is meaningless)

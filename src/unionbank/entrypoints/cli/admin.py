@@ -140,9 +140,7 @@ class Admin:
             divider()
             return
 
-        print(
-            f"  {BOLD}{'ACC NUMBER':<14} {'NAME':<20} {'BALANCE':>12}  {'STATUS':<10}  CREATED{RESET}"
-        )
+        print(f"  {BOLD}{'ACC NUMBER':<14} {'NAME':<20} {'BALANCE':>12}  {'STATUS':<10}  CREATED{RESET}")
         print(f"  {CYAN}{'-' * 72}{RESET}")
         for a in domain_accounts:
             if a.is_frozen:
@@ -217,9 +215,7 @@ class Admin:
         action = "UNFREEZE" if currently_frozen else "FREEZE"
         action_color = GREEN if currently_frozen else RED
         confirm = (
-            input(f"  {action_color}{action}{RESET} account of {CYAN}{acc['name']}{RESET}? (y/n): ")
-            .strip()
-            .lower()
+            input(f"  {action_color}{action}{RESET} account of {CYAN}{acc['name']}{RESET}? (y/n): ").strip().lower()
         )
         if confirm != "y":
             warning("Cancelled.")
@@ -255,9 +251,7 @@ class Admin:
         print(f"\n  {CYAN}Account   :{WHITE} {acc_no}{RESET}")
         print(f"  {CYAN}Name      :{WHITE} {acc['name']}{RESET}")
         print(f"  {CYAN}Balance   :{WHITE} {fmt_currency(acc['balance'])}{RESET}")
-        print(
-            f"\n  {RED}{BOLD}⚠  WARNING: This will permanently delete ALL data for this account!{RESET}"
-        )
+        print(f"\n  {RED}{BOLD}⚠  WARNING: This will permanently delete ALL data for this account!{RESET}")
         confirm = input(f"  {YELLOW}Type 'DELETE' to confirm :{RESET} ").strip()
         if confirm != "DELETE":
             warning("Cancelled.")
@@ -366,9 +360,7 @@ class Admin:
                 error(f"Loan is already {loan.status.lower()}.")
             else:
                 confirm = (
-                    input(
-                        f"  Approve {fmt_currency(float(loan.principal_amount))} {loan.loan_type} loan? (y/n): "
-                    )
+                    input(f"  Approve {fmt_currency(float(loan.principal_amount))} {loan.loan_type} loan? (y/n): ")
                     .strip()
                     .lower()
                 )
@@ -391,15 +383,9 @@ class Admin:
             elif loan.status != "PENDING":
                 error(f"Loan is already {loan.status.lower()}.")
             else:
-                confirm = (
-                    input(f"  Reject {loan.loan_type} loan for {loan.account_number}? (y/n): ")
-                    .strip()
-                    .lower()
-                )
+                confirm = input(f"  Reject {loan.loan_type} loan for {loan.account_number}? (y/n): ").strip().lower()
                 if confirm == "y":
-                    result = c.loan_service().reject_loan(
-                        loan_id=loan_id, reason=reason, admin_user="admin"
-                    )
+                    result = c.loan_service().reject_loan(loan_id=loan_id, reason=reason, admin_user="admin")
                     if result.success:
                         info(result.message)
                     else:
@@ -445,9 +431,7 @@ class Admin:
 
         c = get_container()
 
-        acc_filter = input(
-            f"  {CYAN}Filter by Account Number (or press Enter to show all):{RESET} "
-        ).strip()
+        acc_filter = input(f"  {CYAN}Filter by Account Number (or press Enter to show all):{RESET} ").strip()
 
         if acc_filter:
             domain_txns = c.transaction_repo().get_by_account(acc_filter)
@@ -476,11 +460,7 @@ class Admin:
             print(f"\n  {GREEN}Account: {BOLD}{acc_no}{RESET}")
             print(f"  {CYAN}{'-' * 70}{RESET}")
             for txn in records:
-                sign = (
-                    "+"
-                    if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN)
-                    else "-"
-                )
+                sign = "+" if txn.type in (TransactionType.DEPOSIT, TransactionType.TRANSFER_IN) else "-"
                 amt_color = GREEN if sign == "+" else RED
                 print(
                     f"  [{txn.txn_id}]  {str(txn.timestamp)[:19]}  "

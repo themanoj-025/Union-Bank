@@ -1,8 +1,8 @@
 # ADR-0003: Security Hardening — Token Strategy, 2FA, and CSRF
 
-**Date:** July 2026  
-**Status:** Accepted  
-**Deciders:** Union Bank Security Team  
+**Date:** July 2026
+**Status:** Accepted
+**Deciders:** Union Bank Security Team
 
 ---
 

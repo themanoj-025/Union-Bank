@@ -52,7 +52,9 @@ def service(
 class TestDeposit:
     """Deposit use-case."""
 
-    def test_deposit_success(self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_deposit_success(
+        self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
         result = service.deposit("1000000001", Decimal("5000"))
         assert result.success is True
@@ -73,23 +75,28 @@ class TestDeposit:
         assert "not found" in result.message.lower()
 
     def test_deposit_frozen_account(self, service: TransactionService, account_repo: FakeAccountRepository) -> None:
-        frozen = Account(
-            account_number="1000000001", name="Frozen", is_frozen=True,
-            balance=Decimal("100000")
-        )
+        frozen = Account(account_number="1000000001", name="Frozen", is_frozen=True, balance=Decimal("100000"))
         account_repo.create(frozen)
         result = service.deposit("1000000001", Decimal("1000"))
         assert result.success is False
         assert "frozen" in result.message.lower()
 
-    def test_deposit_updates_balance(self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_deposit_updates_balance(
+        self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
         service.deposit("1000000001", Decimal("5000"))
         updated = account_repo.get("1000000001")
         assert updated is not None
         assert updated.balance == Decimal("105000")
 
-    def test_deposit_creates_transaction(self, service: TransactionService, account_repo: FakeAccountRepository, txn_repo: FakeTransactionRepository, sample_account: Account) -> None:
+    def test_deposit_creates_transaction(
+        self,
+        service: TransactionService,
+        account_repo: FakeAccountRepository,
+        txn_repo: FakeTransactionRepository,
+        sample_account: Account,
+    ) -> None:
         account_repo.create(sample_account)
         service.deposit("1000000001", Decimal("5000"))
         txns = txn_repo.get_by_account("1000000001")
@@ -100,13 +107,17 @@ class TestDeposit:
 class TestWithdraw:
     """Withdraw use-case."""
 
-    def test_withdraw_success(self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_withdraw_success(
+        self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
         result = service.withdraw("1000000001", Decimal("5000"))
         assert result.success is True
         assert "5,000" in result.message
 
-    def test_withdraw_insufficient_balance(self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_withdraw_insufficient_balance(
+        self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
         result = service.withdraw("1000000001", Decimal("200000"))
         assert result.success is False
@@ -116,7 +127,9 @@ class TestWithdraw:
         result = service.withdraw("1000000001", Decimal("0"))
         assert result.success is False
 
-    def test_withdraw_updates_balance(self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_withdraw_updates_balance(
+        self, service: TransactionService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
         service.withdraw("1000000001", Decimal("10000"))
         updated = account_repo.get("1000000001")
@@ -128,52 +141,46 @@ class TestTransfer:
     """Transfer use-case."""
 
     def test_transfer_success(
-        self, service: TransactionService, account_repo: FakeAccountRepository,
+        self,
+        service: TransactionService,
+        account_repo: FakeAccountRepository,
     ) -> None:
-        sender = Account(
-            account_number="1000000001", name="Sender", balance=Decimal("100000")
-        )
-        receiver = Account(
-            account_number="1000000002", name="Receiver", balance=Decimal("50000")
-        )
+        sender = Account(account_number="1000000001", name="Sender", balance=Decimal("100000"))
+        receiver = Account(account_number="1000000002", name="Receiver", balance=Decimal("50000"))
         account_repo.create(sender)
         account_repo.create(receiver)
         result = service.transfer("1000000001", "1000000002", Decimal("25000"))
         assert result.success is True
 
     def test_transfer_insufficient_balance(
-        self, service: TransactionService, account_repo: FakeAccountRepository,
+        self,
+        service: TransactionService,
+        account_repo: FakeAccountRepository,
     ) -> None:
-        sender = Account(
-            account_number="1000000001", name="Sender", balance=Decimal("1000")
-        )
-        receiver = Account(
-            account_number="1000000002", name="Receiver", balance=Decimal("50000")
-        )
+        sender = Account(account_number="1000000001", name="Sender", balance=Decimal("1000"))
+        receiver = Account(account_number="1000000002", name="Receiver", balance=Decimal("50000"))
         account_repo.create(sender)
         account_repo.create(receiver)
         result = service.transfer("1000000001", "1000000002", Decimal("5000"))
         assert result.success is False
 
     def test_transfer_self(
-        self, service: TransactionService, account_repo: FakeAccountRepository,
+        self,
+        service: TransactionService,
+        account_repo: FakeAccountRepository,
     ) -> None:
-        account = Account(
-            account_number="1000000001", name="Self", balance=Decimal("100000")
-        )
+        account = Account(account_number="1000000001", name="Self", balance=Decimal("100000"))
         account_repo.create(account)
         result = service.transfer("1000000001", "1000000001", Decimal("1000"))
         assert result.success is False
 
     def test_transfer_updates_balances(
-        self, service: TransactionService, account_repo: FakeAccountRepository,
+        self,
+        service: TransactionService,
+        account_repo: FakeAccountRepository,
     ) -> None:
-        sender = Account(
-            account_number="1000000001", name="Sender", balance=Decimal("100000")
-        )
-        receiver = Account(
-            account_number="1000000002", name="Receiver", balance=Decimal("50000")
-        )
+        sender = Account(account_number="1000000001", name="Sender", balance=Decimal("100000"))
+        receiver = Account(account_number="1000000002", name="Receiver", balance=Decimal("50000"))
         account_repo.create(sender)
         account_repo.create(receiver)
         service.transfer("1000000001", "1000000002", Decimal("25000"))

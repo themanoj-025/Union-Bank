@@ -18,14 +18,14 @@ function Platform() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero"
         style={{ backgroundColor: '#111111', color: '#ffffff' }}
         initial="hidden"
@@ -37,7 +37,7 @@ function Platform() {
         }}
       >
         <div className="subpage-hero-text">
-          <motion.h1 
+          <motion.h1
             style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px', color: '#ffffff' }}
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -46,7 +46,7 @@ function Platform() {
           >
             POWERING GLOBAL<br/><span style={{color: 'var(--primary-green)'}}>FINANCE</span>
           </motion.h1>
-          <motion.p 
+          <motion.p
             style={{ fontSize: '20px', marginBottom: '30px', maxWidth: '500px', color: '#cccccc' }}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -55,9 +55,9 @@ function Platform() {
           >
             Integrate Union Bank's powerful API into your own platform. Offer your customers world-class international payments and borderless accounts.
           </motion.p>
-          <motion.button 
-            className="btn-primary" 
-            style={{ backgroundColor: 'var(--primary-green)', color: '#000' }} 
+          <motion.button
+            className="btn-primary"
+            style={{ backgroundColor: 'var(--primary-green)', color: '#000' }}
             onClick={() => navigate('/signup')}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -69,7 +69,7 @@ function Platform() {
             Read the API Docs
           </motion.button>
         </div>
-        <motion.div 
+        <motion.div
           className="subpage-hero-image"
           variants={{
             hidden: { opacity: 0, x: 50 },
@@ -80,7 +80,7 @@ function Platform() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"

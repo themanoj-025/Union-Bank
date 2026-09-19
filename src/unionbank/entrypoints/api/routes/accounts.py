@@ -106,6 +106,7 @@ def _invalidate_admin_account_cache() -> None:
     """Invalidate the admin account list cache after balance-changing operations."""
     try:
         from unionbank.entrypoints.api.v2 import _admin_account_cache
+
         _admin_account_cache.clear()
     except (ImportError, AttributeError):
         pass
@@ -166,9 +167,7 @@ def update_profile(
         domain_account.mobile = req.mobile
     if req.email is not None:
         if not validate_email(req.email):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email format."
-            )
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid email format.")
         domain_account.email = req.email
 
     c.account_repo().update(domain_account)
@@ -183,9 +182,7 @@ def update_profile(
         email=domain_account.email,
         balance=float(domain_account.balance),
         balance_formatted=fmt_currency(float(domain_account.balance)),
-        status=_get_account_status(
-            {"is_frozen": domain_account.is_frozen, "is_active": domain_account.is_active}
-        ),
+        status=_get_account_status({"is_frozen": domain_account.is_frozen, "is_active": domain_account.is_active}),
         created_at=str(domain_account.created_at)[:19],
     )
 
@@ -206,16 +203,12 @@ def change_password(
         raise HTTPException(status_code=404, detail="Account not found.")
 
     if not verify_password(req.current_password, domain_account.password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect current password."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect current password.")
     valid_pwd, pwd_msg = validate_password(req.new_password)
     if not valid_pwd:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=pwd_msg)
     if req.new_password != req.confirm_password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Passwords do not match.")
 
     domain_account.password = hash_password(req.new_password)
     c.account_repo().update(domain_account)
@@ -240,9 +233,7 @@ def close_account(
 
     result = get_container().account_service().close_account(acc_no, req.password)
     if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=result.message
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.message)
     return MessageResponse(message=result.message)
 
 
@@ -276,9 +267,7 @@ def deposit_money(
     rate_limiter = get_account_rate_limiter()
     allowed, retry_msg = rate_limiter.check_and_record(acc_no)
     if not allowed:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg
-        )
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg)
 
     from unionbank.infrastructure.container import get_container
 
@@ -288,9 +277,7 @@ def deposit_money(
         .deposit(acc_no=acc_no, amount=Decimal(str(req.amount)), category=req.category)
     )
     if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=result.message
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.message)
     _invalidate_admin_account_cache()
     return MessageResponse(message=result.message)
 
@@ -306,9 +293,7 @@ def withdraw_money(
     rate_limiter = get_account_rate_limiter()
     allowed, retry_msg = rate_limiter.check_and_record(acc_no)
     if not allowed:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg
-        )
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg)
 
     from unionbank.infrastructure.container import get_container
 
@@ -318,9 +303,7 @@ def withdraw_money(
         .withdraw(acc_no=acc_no, amount=Decimal(str(req.amount)), category=req.category)
     )
     if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=result.message
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.message)
     _invalidate_admin_account_cache()
     return MessageResponse(message=result.message)
 
@@ -353,20 +336,14 @@ def transfer_funds(
             detail="Cannot transfer to your own account.",
         )
     if receiver.is_frozen:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Recipient account is frozen."
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Recipient account is frozen.")
     if not receiver.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="Recipient account is closed."
-        )
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Recipient account is closed.")
 
     rate_limiter = get_account_rate_limiter()
     allowed, retry_msg = rate_limiter.check_and_record(acc_no)
     if not allowed:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg
-        )
+        raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=retry_msg)
 
     result = c.transaction_service().transfer(
         sender_acc_no=acc_no,
@@ -375,9 +352,7 @@ def transfer_funds(
         category=req.category,
     )
     if not result.success:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail=result.error_message
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error_message)
 
     _invalidate_admin_account_cache()
     return MessageResponse(
@@ -387,9 +362,7 @@ def transfer_funds(
 
 
 @router.get("/api/account/statements", response_model=list[TransactionOut])
-def get_full_statement(
-    request: Request, customer: dict = Depends(get_current_customer)
-) -> dict:
+def get_full_statement(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the full transaction statement (newest first)."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -412,9 +385,7 @@ def get_full_statement(
 
 
 @router.get("/api/account/statements/mini", response_model=list[TransactionOut])
-def get_mini_statement(
-    request: Request, customer: dict = Depends(get_current_customer)
-) -> dict:
+def get_mini_statement(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Get the last 5 transactions (mini statement)."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -437,9 +408,7 @@ def get_mini_statement(
 
 
 @router.get("/api/account/export-csv")
-def export_csv(
-    request: Request, customer: dict = Depends(get_current_customer)
-) -> dict:
+def export_csv(request: Request, customer: dict = Depends(get_current_customer)) -> dict:
     """Download transaction history as a CSV file."""
     acc_no = customer["account_number"]
     from unionbank.infrastructure.container import get_container
@@ -447,9 +416,7 @@ def export_csv(
     domain_txns = get_container().transaction_repo().get_by_account(acc_no)
     output = io.StringIO()
     writer = csv.writer(output)
-    writer.writerow(
-        ["Transaction ID", "Date/Time", "Type", "Amount", "Balance", "Description", "Category"]
-    )
+    writer.writerow(["Transaction ID", "Date/Time", "Type", "Amount", "Balance", "Description", "Category"])
     for t in domain_txns:
         sign = "+" if t.type.value in ("DEPOSIT", "TRANSFER_IN") else "-"
         writer.writerow(

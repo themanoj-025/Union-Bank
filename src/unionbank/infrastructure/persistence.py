@@ -305,9 +305,7 @@ class AuditLogModel(ModelBase):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     actor = Column(String(50), nullable=False, index=True)  # Admin username
-    action = Column(
-        String(50), nullable=False, index=True
-    )  # freeze, unfreeze, delete, close, password_reset
+    action = Column(String(50), nullable=False, index=True)  # freeze, unfreeze, delete, close, password_reset
     target = Column(String(50), nullable=True)  # Account number or username affected
     details = Column(String(500), nullable=True)  # Human-readable details (no PII)
     ip_address = Column(String(45), nullable=True)  # Client IP

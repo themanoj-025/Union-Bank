@@ -132,9 +132,7 @@ def admin_view_accounts(
         return [AccountListItem(**item) for item in cached]
 
     # Use SQL-level pagination instead of loading all accounts into memory
-    domain_accounts, _total = (
-        get_container().admin_service().list_accounts_paginated(page=page, per_page=per_page)
-    )
+    domain_accounts, _total = get_container().admin_service().list_accounts_paginated(page=page, per_page=per_page)
     page_accounts = domain_accounts
 
     result = [_account_to_list_item(a) for a in page_accounts]
@@ -277,9 +275,7 @@ def admin_view_transactions(
             acc_no=account, page=page, per_page=per_page
         )
     else:
-        domain_txns, _total = c.transaction_service().get_paginated_transactions(
-            page=page, per_page=per_page
-        )
+        domain_txns, _total = c.transaction_service().get_paginated_transactions(page=page, per_page=per_page)
 
     return [_txn_to_out(t) for t in domain_txns]
 
@@ -325,8 +321,6 @@ def apply_interest(request: Request, customer: dict = Depends(get_current_custom
     if not result.success:
         if "No interest" in result.message:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.message)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=result.message
-        )
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=result.message)
 
     return MessageResponse(message=result.message)

@@ -46,9 +46,7 @@ def _format_results(results: list, query: str) -> str:
             if txn["type"] in ("DEPOSIT", "TRANSFER_IN")
             else f"-{float(txn['amount']):>8.2f}"
         )
-        lines.append(
-            f"  {txn['txn_id']:<14} {txn['date']:<22} {txn['type']:<14} {amt_str} {txn['category']:<16}"
-        )
+        lines.append(f"  {txn['txn_id']:<14} {txn['date']:<22} {txn['type']:<14} {amt_str} {txn['category']:<16}")
 
     lines.append(f"  {'─' * 70}")
     lines.append("")
@@ -103,9 +101,7 @@ def list_queries() -> None:
 
     print(f"\n  {H}Examples:{R}")
     print('    python scripts/analyzr.py "show me large deposits" --account 1000000001')
-    print(
-        '    python scripts/analyzr.py "what did I spend on food last month" --account 1000000001'
-    )
+    print('    python scripts/analyzr.py "what did I spend on food last month" --account 1000000001')
     print('    python scripts/analyzr.py "find suspicious transactions" --account 1000000001')
     print("    python scripts/analyzr.py list-queries")
 

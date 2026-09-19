@@ -109,9 +109,7 @@ async def run_tests() -> bool:
 
         # 4. Login V2
         if acc_no:
-            r = await c.post(
-                "/api/v2/auth/login", json={"account_number": acc_no, "password": "Password123"}
-            )
+            r = await c.post("/api/v2/auth/login", json={"account_number": acc_no, "password": "Password123"})
             data = r.json()
             ok = r.status_code == 200 and data.get("success")
             token = data.get("data", {}).get("access_token", "")
@@ -170,9 +168,7 @@ async def run_tests() -> bool:
 
         # 12. Create savings goal V2
         if token:
-            r = await c.post(
-                "/api/v2/savings", headers=hdrs, json={"name": "New Car", "target_amount": 50000}
-            )
+            r = await c.post("/api/v2/savings", headers=hdrs, json={"name": "New Car", "target_amount": 50000})
             ok = r.status_code == 201
             tests.append(("POST /api/v2/savings (create)", "PASS" if ok else "FAIL", r.status_code))
             passed += ok
@@ -205,9 +201,7 @@ async def run_tests() -> bool:
 
         # 14. Login V1
         if v1_acc:
-            r = await c.post(
-                "/api/auth/login", json={"account_number": v1_acc, "password": "Password123"}
-            )
+            r = await c.post("/api/auth/login", json={"account_number": v1_acc, "password": "Password123"})
             v1_token_data = r.json()
             ok = r.status_code == 200 and "access_token" in v1_token_data
             v1_token = v1_token_data.get("access_token", "")
@@ -225,9 +219,7 @@ async def run_tests() -> bool:
         if v1_token:
             r = await c.get("/api/account/profile", headers=v1_hdrs)
             ok = r.status_code == 200
-            tests.append(
-                ("GET  /api/account/profile (V1)", "PASS" if ok else "FAIL", r.status_code)
-            )
+            tests.append(("GET  /api/account/profile (V1)", "PASS" if ok else "FAIL", r.status_code))
             passed += ok
             failed += not ok
         else:
@@ -236,9 +228,7 @@ async def run_tests() -> bool:
 
         # ── Admin (using V2 to avoid rate limiter) ──
         # 16. Admin login V2 (no auth headers needed — login is credential-based)
-        r = await c.post(
-            "/api/v2/auth/admin-login", json={"username": "simon", "password": "simon123"}
-        )
+        r = await c.post("/api/v2/auth/admin-login", json={"username": "simon", "password": "simon123"})
         admin_data = r.json()
         ok = r.status_code == 200 and admin_data.get("success")
         admin_token = admin_data.get("data", {}).get("access_token", "")
@@ -296,9 +286,7 @@ async def run_tests() -> bool:
         # 22. Token refresh
         r = await c.post("/api/v2/auth/refresh", json={"refresh_token": "invalid"})
         ok = r.status_code == 401
-        tests.append(
-            ("POST /api/v2/auth/refresh (invalid)", "PASS" if ok else "FAIL", r.status_code)
-        )
+        tests.append(("POST /api/v2/auth/refresh (invalid)", "PASS" if ok else "FAIL", r.status_code))
         passed += ok
         failed += not ok
 
@@ -312,9 +300,7 @@ async def run_tests() -> bool:
                 json={"target_account": acc_no, "amount": 100, "category": "Test"},
             )
             ok = r.status_code == 400
-            tests.append(
-                ("POST /api/v2/account/transfer (to self)", "PASS" if ok else "FAIL", r.status_code)
-            )
+            tests.append(("POST /api/v2/account/transfer (to self)", "PASS" if ok else "FAIL", r.status_code))
             passed += ok
             failed += not ok
         else:

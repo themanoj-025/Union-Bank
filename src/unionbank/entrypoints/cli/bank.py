@@ -180,9 +180,7 @@ class Bank:
             # Check session timeout
             if not check_session_timeout(acc.last_activity):
                 mins = get_session_timeout_seconds() // 60
-                warning(
-                    f"Session timed out after {mins} minutes of inactivity. Please login again."
-                )
+                warning(f"Session timed out after {mins} minutes of inactivity. Please login again.")
                 logger.info(f"Session timeout -> Acc:{acc.account_number}  Name:{acc.name}")
                 break
 
@@ -198,9 +196,7 @@ class Bank:
 
             if acc.is_frozen:
                 error("Your account has been frozen by admin. Logging out.")
-                logger.warning(
-                    f"Session terminated - account frozen mid-session: Acc:{acc.account_number}"
-                )
+                logger.warning(f"Session terminated - account frozen mid-session: Acc:{acc.account_number}")
                 break
             if not acc.is_active:
                 warning("Account closed. Logging out.")

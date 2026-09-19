@@ -11,15 +11,15 @@ function Home() {
   const [sendCurrency, setSendCurrency] = useState('INR');
   const [receiveCurrency, setReceiveCurrency] = useState('USD');
   const [widgetTab, setWidgetTab] = useState('send');
-  
+
   const [activeTab, setActiveTab] = useState('send');
 
   const rates = { INR: 0.012, USD: 1, EUR: 1.08, GBP: 1.25 };
   const getFlag = (cur) => ({ INR: '🇮🇳', USD: '🇺🇸', EUR: '🇪🇺', GBP: '🇬🇧' }[cur]);
-  
+
   const exchangeRate = rates[sendCurrency] / rates[receiveCurrency];
   const feeRate = 0.02158325;
-  
+
   let computedSend = 0;
   let computedReceive = 0;
   let fee = 0;
@@ -47,7 +47,7 @@ function Home() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -55,7 +55,7 @@ function Home() {
       className="app-container"
     >
       {/* Hero Section */}
-      <motion.section 
+      <motion.section
         className="hero"
         initial="hidden"
         animate="visible"
@@ -65,7 +65,7 @@ function Home() {
           }
         }}
       >
-        <motion.div 
+        <motion.div
           style={{ display: 'flex', gap: '20px', justifyContent: 'center', marginBottom: '40px', flexWrap: 'wrap' }}
           variants={{
             hidden: { opacity: 0, y: -20 },
@@ -102,8 +102,8 @@ function Home() {
           Save on hidden conversion fees when you use your Union Bank Travel card, or send money abroad.
         </motion.p>
 
-        <motion.button 
-          className="btn-primary" 
+        <motion.button
+          className="btn-primary"
           onClick={() => navigate('/signup')}
           variants={{
             hidden: { opacity: 0, y: 20 },
@@ -115,7 +115,7 @@ function Home() {
           Sign up in minutes
         </motion.button>
 
-        <motion.div 
+        <motion.div
           className="hero-image-container"
           variants={{
             hidden: { opacity: 0, y: 100 },
@@ -127,7 +127,7 @@ function Home() {
       </motion.section>
 
       {/* Features Section */}
-      <motion.section 
+      <motion.section
         className="features-section"
         initial="hidden"
         whileInView="visible"
@@ -141,7 +141,7 @@ function Home() {
         }}
         style={{ padding: '80px 5%' }}
       >
-        <motion.h2 
+        <motion.h2
           className="section-title"
           variants={{
             hidden: { opacity: 0, y: 30 },
@@ -152,8 +152,8 @@ function Home() {
           TAKE CONTROL<br/>OF YOUR MONEY
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '30px', maxWidth: '1200px', margin: '0 auto' }}>
-          
-          <motion.div 
+
+          <motion.div
             variants={{
               hidden: { opacity: 0, y: 50 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -166,7 +166,7 @@ function Home() {
             <p style={{ color: 'var(--gray-text)', lineHeight: '1.6', margin: 0 }}>Winner of <a href="#" style={{ color: 'var(--dark-green)', fontWeight: '600' }}>Best Cross-Border Fintech 2025</a></p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0, y: 50 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -179,7 +179,7 @@ function Home() {
             <p style={{ color: 'var(--gray-text)', lineHeight: '1.6', margin: 0 }}>Regulated by the <a href="#" style={{ color: 'var(--dark-green)', fontWeight: '600' }}>Reserve Bank of India</a></p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             variants={{
               hidden: { opacity: 0, y: 50 },
               visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -196,7 +196,7 @@ function Home() {
       </motion.section>
 
       {/* Travel Card Split Section */}
-      <motion.section 
+      <motion.section
         className="split-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -206,7 +206,7 @@ function Home() {
         <div className="split-content">
           <h2>SAVE ON YOUR<br/>TRAVELS ABROAD</h2>
           <p>Make spending around the world simple when you pack your Union Bank Travel card.</p>
-          
+
           <div className="list-item">
             <div className="list-icon">📈</div>
             <div className="list-text">
@@ -229,7 +229,7 @@ function Home() {
       </motion.section>
 
       {/* Transfer Count Split Section */}
-      <motion.section 
+      <motion.section
         className="split-section reverse"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -239,7 +239,7 @@ function Home() {
         <div className="split-content">
           <h2>MAKE YOUR<br/>TRANSFER COUNT</h2>
           <p>Save up to 45% when you send money globally. Lightning-fast. Completely transparent.</p>
-          
+
           <div className="list-item">
             <div className="list-icon">🎓</div>
             <div className="list-text">
@@ -269,7 +269,7 @@ function Home() {
       </motion.section>
 
       {/* 100% Transparent Section */}
-      <motion.section 
+      <motion.section
         className="transparent-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -284,11 +284,11 @@ function Home() {
           </div>
           <div>
             <div style={{ display: 'flex', gap: '5px', marginBottom: '15px', backgroundColor: '#f6f7f6', padding: '5px', borderRadius: '30px', width: 'fit-content' }}>
-              <button 
+              <button
                 onClick={() => setWidgetTab('send')}
                 style={{ padding: '8px 16px', border: 'none', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: widgetTab === 'send' ? 'var(--primary-green)' : 'transparent', color: 'var(--black)' }}
               >Send money</button>
-              <button 
+              <button
                 onClick={() => setWidgetTab('hold')}
                 style={{ padding: '8px 16px', border: 'none', borderRadius: '20px', fontWeight: 'bold', cursor: 'pointer', backgroundColor: widgetTab === 'hold' ? 'var(--primary-green)' : 'transparent', color: 'var(--black)' }}
               >Hold and convert money</button>
@@ -299,17 +299,17 @@ function Home() {
                   <label>You send exactly</label>
                   <div className="currency-select" style={{padding: '5px 10px', background: '#f6f7f6', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '5px', width: 'fit-content'}}>
                     <span>{getFlag(sendCurrency)}</span>
-                    <CurrencyDropdown 
-                      value={sendCurrency} 
+                    <CurrencyDropdown
+                      value={sendCurrency}
                       onChange={setSendCurrency}
                       options={['INR', 'USD', 'EUR', 'GBP']}
                       getFlag={getFlag}
                     />
                   </div>
                 </div>
-                <input 
-                  type="number" 
-                  className="amount" 
+                <input
+                  type="number"
+                  className="amount"
                   value={inputMode === 'send' ? inputAmount : computedSend.toFixed(2)}
                   onChange={(e) => {
                     setInputMode('send');
@@ -331,17 +331,17 @@ function Home() {
                 <div className="calc-input">
                   <div className="currency-select" style={{padding: '5px 10px', background: '#f6f7f6', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '5px', width: 'fit-content'}}>
                     <span>{getFlag(receiveCurrency)}</span>
-                    <CurrencyDropdown 
-                      value={receiveCurrency} 
+                    <CurrencyDropdown
+                      value={receiveCurrency}
                       onChange={setReceiveCurrency}
                       options={['INR', 'USD', 'EUR', 'GBP']}
                       getFlag={getFlag}
                     />
                   </div>
                 </div>
-                <input 
-                  type="number" 
-                  className="amount" 
+                <input
+                  type="number"
+                  className="amount"
                   value={inputMode === 'receive' ? inputAmount : computedReceive.toFixed(2)}
                   onChange={(e) => {
                     setInputMode('receive');
@@ -358,7 +358,7 @@ function Home() {
                 <a href="#" style={{textDecoration: 'underline', color: 'var(--black)', fontWeight: '600', alignSelf: 'flex-end'}}>{fee.toFixed(2)} {sendCurrency} &gt;</a>
               </div>
               <button className="calc-btn" onClick={() => navigate('/signup')}>{widgetTab === 'send' ? 'Send money' : 'Hold money'}</button>
-              
+
               <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginTop: '20px'}}>
                 <div style={{display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', color: 'var(--gray-text)', fontWeight: '600'}}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -375,7 +375,7 @@ function Home() {
       </motion.section>
 
       {/* Safe at Every Step Section */}
-      <motion.section 
+      <motion.section
         className="split-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -385,7 +385,7 @@ function Home() {
         <div className="split-content">
           <h2>SAFE AT EVERY STEP</h2>
           <p>100,000 new customers join Union Bank every month in India. Here's how we keep their rupees secure.</p>
-          
+
           <div className="list-item">
             <div className="list-icon">👥</div>
             <div className="list-text">
@@ -415,7 +415,7 @@ function Home() {
       </motion.section>
 
       {/* Excellent Everywhere Section */}
-      <motion.section 
+      <motion.section
         className="reviews-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -490,7 +490,7 @@ function Home() {
       </motion.section>
 
       {/* Countries Section */}
-      <motion.section 
+      <motion.section
         className="countries-section"
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -509,37 +509,37 @@ function Home() {
             <div className="country-item"><span className="country-flag fi fi-gr fis"></span><a href="#">Send money to Greece</a></div>
             <div className="country-item"><span className="country-flag fi fi-gp fis"></span><a href="#">Send money to Guadeloupe</a></div>
             <div className="country-item"><span className="country-flag fi fi-gg fis"></span><a href="#">Send money to Guernsey</a></div>
-            
+
             <div className="country-item"><span className="country-flag fi fi-hk fis"></span><a href="#">Send money to Hong Kong</a></div>
             <div className="country-item"><span className="country-flag fi fi-hu fis"></span><a href="#">Send money to Hungary</a></div>
             <div className="country-item"><span className="country-flag fi fi-in fis"></span><a href="#">Send money to India</a></div>
             <div className="country-item"><span className="country-flag fi fi-id fis"></span><a href="#">Send money to Indonesia</a></div>
             <div className="country-item"><span className="country-flag fi fi-ie fis"></span><a href="#">Send money to Ireland</a></div>
-            
+
             <div className="country-item"><span className="country-flag fi fi-im fis"></span><a href="#">Send money to Isle of Man</a></div>
             <div className="country-item"><span className="country-flag fi fi-il fis"></span><a href="#">Send money to Israel</a></div>
             <div className="country-item"><span className="country-flag fi fi-it fis"></span><a href="#">Send money to Italy</a></div>
             <div className="country-item"><span className="country-flag fi fi-jp fis"></span><a href="#">Send money to Japan</a></div>
             <div className="country-item"><span className="country-flag fi fi-je fis"></span><a href="#">Send money to Jersey</a></div>
-  
+
             <div className="country-item"><span className="country-flag fi fi-ke fis"></span><a href="#">Send money to Kenya</a></div>
             <div className="country-item"><span className="country-flag fi fi-lv fis"></span><a href="#">Send money to Latvia</a></div>
             <div className="country-item"><span className="country-flag fi fi-li fis"></span><a href="#">Send money to Liechtenstein</a></div>
             <div className="country-item"><span className="country-flag fi fi-lt fis"></span><a href="#">Send money to Lithuania</a></div>
             <div className="country-item"><span className="country-flag fi fi-lu fis"></span><a href="#">Send money to Luxembourg</a></div>
-            
+
             <div className="country-item"><span className="country-flag fi fi-my fis"></span><a href="#">Send money to Malaysia</a></div>
             <div className="country-item"><span className="country-flag fi fi-mt fis"></span><a href="#">Send money to Malta</a></div>
             <div className="country-item"><span className="country-flag fi fi-mh fis"></span><a href="#">Send money to Marshall Islands</a></div>
             <div className="country-item"><span className="country-flag fi fi-mq fis"></span><a href="#">Send money to Martinique</a></div>
             <div className="country-item"><span className="country-flag fi fi-yt fis"></span><a href="#">Send money to Mayotte</a></div>
-  
+
             <div className="country-item"><span className="country-flag fi fi-mx fis"></span><a href="#">Send money to Mexico</a></div>
             <div className="country-item"><span className="country-flag fi fi-fm fis"></span><a href="#">Send money to Micronesia</a></div>
             <div className="country-item"><span className="country-flag fi fi-mc fis"></span><a href="#">Send money to Monaco</a></div>
             <div className="country-item"><span className="country-flag fi fi-me fis"></span><a href="#">Send money to Montenegro</a></div>
             <div className="country-item"><span className="country-flag fi fi-ma fis"></span><a href="#">Send money to Morocco</a></div>
-            
+
             <div className="country-item"><span className="country-flag fi fi-bl fis"></span><a href="#">Send money to Saint Barthélemy</a></div>
             <div className="country-item"><span className="country-flag fi fi-mf fis"></span><a href="#">Send money to Saint Martin</a></div>
             <div className="country-item"><span className="country-flag fi fi-pm fis"></span><a href="#">Send money to Saint Pierre</a></div>
@@ -553,7 +553,7 @@ function Home() {
             <div className="country-item"><span className="country-flag fi fi-eu fis"></span><a href="#">Hold Euros</a></div>
             <div className="country-item"><span className="country-flag fi fi-ca fis"></span><a href="#">Hold Canadian Dollars</a></div>
             <div className="country-item"><span className="country-flag fi fi-au fis"></span><a href="#">Hold Australian Dollars</a></div>
-            
+
             <div className="country-item"><span className="country-flag fi fi-jp fis"></span><a href="#">Hold Japanese Yen</a></div>
             <div className="country-item"><span className="country-flag fi fi-sg fis"></span><a href="#">Hold Singapore Dollars</a></div>
             <div className="country-item"><span className="country-flag fi fi-ch fis"></span><a href="#">Hold Swiss Francs</a></div>
@@ -564,7 +564,7 @@ function Home() {
       </motion.section>
 
       {/* Take Everywhere Section */}
-      <motion.section 
+      <motion.section
         className="split-section reverse" style={{alignItems: 'center'}}
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}

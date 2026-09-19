@@ -1,8 +1,8 @@
 # ADR-0001: Consolidate Codebase to Single Canonical Tree
 
-**Status:** Implemented  
-**Date:** July 15, 2026  
-**Author:** Automated audit + manual import tracing  
+**Status:** Implemented
+**Date:** July 15, 2026
+**Author:** Automated audit + manual import tracing
 
 ## Context
 

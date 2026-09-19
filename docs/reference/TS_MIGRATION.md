@@ -1,7 +1,7 @@
 # TypeScript Migration Plan
 
-**Status:** Planned  
-**Date:** 2026-07-16  
+**Status:** Planned
+**Date:** 2026-07-16
 
 ---
 

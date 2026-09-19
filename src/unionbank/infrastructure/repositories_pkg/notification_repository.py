@@ -44,11 +44,7 @@ class SqlAlchemyNotificationRepository:
         return [map_notification(m) for m in models]
 
     def get_unread_count(self, acc_no: str) -> int:
-        return (
-            self.session.query(NotificationModel)
-            .filter_by(account_number=acc_no, is_read=False)
-            .count()
-        )
+        return self.session.query(NotificationModel).filter_by(account_number=acc_no, is_read=False).count()
 
     def get_unread(self, acc_no: str, limit: int = 20) -> list[Notification]:
         models = (
@@ -91,11 +87,7 @@ class SqlAlchemyNotificationRepository:
 
     def delete_old(self, days: int = 30) -> int:
         cutoff = _utcnow() - timedelta(days=days)
-        deleted = (
-            self.session.query(NotificationModel)
-            .filter(NotificationModel.created_at < cutoff)
-            .delete()
-        )
+        deleted = self.session.query(NotificationModel).filter(NotificationModel.created_at < cutoff).delete()
         return deleted
 
     def commit(self) -> None:
@@ -112,9 +104,7 @@ class SqlAlchemyNotificationPreferenceRepository:
         self.session = session
 
     def get(self, acc_no: str) -> NotificationPreference | None:
-        model = (
-            self.session.query(NotificationPreferenceModel).filter_by(account_number=acc_no).first()
-        )
+        model = self.session.query(NotificationPreferenceModel).filter_by(account_number=acc_no).first()
         if model is None:
             return None
         return NotificationPreference(
@@ -132,11 +122,7 @@ class SqlAlchemyNotificationPreferenceRepository:
         )
 
     def create_or_update(self, pref: NotificationPreference) -> NotificationPreference:
-        model = (
-            self.session.query(NotificationPreferenceModel)
-            .filter_by(account_number=pref.account_number)
-            .first()
-        )
+        model = self.session.query(NotificationPreferenceModel).filter_by(account_number=pref.account_number).first()
         if model is None:
             model = NotificationPreferenceModel(
                 account_number=pref.account_number,
@@ -220,11 +206,7 @@ class SqlAlchemyRefreshTokenRepository:
 
     def clean_expired(self) -> int:
         now = datetime.now(UTC)
-        deleted = (
-            self.session.query(RefreshTokenModel)
-            .filter(RefreshTokenModel.expires_at < now)
-            .delete()
-        )
+        deleted = self.session.query(RefreshTokenModel).filter(RefreshTokenModel.expires_at < now).delete()
         return deleted
 
     def commit(self) -> None:

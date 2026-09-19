@@ -27,6 +27,7 @@ from unionbank.application.services import (
 from unionbank.domain.entities import Account, AdminUser, SavingsGoal
 from unionbank.utils.hashing import hash_password
 
+
 class TestAdminService:
     def test_list_accounts(self, admin_service, account_repo, sample_account) -> None:
         account_repo.create(sample_account)
@@ -156,16 +157,12 @@ class TestSavingsGoalService:
         assert goals[0].name == "New Laptop"
 
     def test_create_goal_short_name(self, savings_goal_service) -> None:
-        result = savings_goal_service.create_goal(
-            acc_no="1000000001", name="X", target_amount=Decimal("100.00")
-        )
+        result = savings_goal_service.create_goal(acc_no="1000000001", name="X", target_amount=Decimal("100.00"))
         assert result.success is False
         assert "2 characters" in result.message.lower()
 
     def test_create_goal_zero_target(self, savings_goal_service) -> None:
-        result = savings_goal_service.create_goal(
-            acc_no="1000000001", name="Goal", target_amount=Decimal("0")
-        )
+        result = savings_goal_service.create_goal(acc_no="1000000001", name="Goal", target_amount=Decimal("0"))
         assert result.success is False
         assert "positive" in result.message.lower()
 
@@ -189,9 +186,7 @@ class TestSavingsGoalService:
         goals = savings_goal_service.list_goals("1000000001")
         assert len(goals) == 2
 
-    def test_contribute_success(
-        self, savings_goal_service, account_repo, savings_goal_repo, sample_account
-    ) -> None:
+    def test_contribute_success(self, savings_goal_service, account_repo, savings_goal_repo, sample_account) -> None:
         account_repo.create(sample_account)
         goal = SavingsGoal(
             goal_id="GOAL-001",

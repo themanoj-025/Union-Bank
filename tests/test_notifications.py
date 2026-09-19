@@ -93,9 +93,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify(
-            "1000000001", "deposit", "Deposit Received", "You got ₹1000", "TXN001"
-        )
+        notif = service.notify("1000000001", "deposit", "Deposit Received", "You got ₹1000", "TXN001")
         assert notif.account_number == "1000000001"
         assert notif.type == "deposit"
         assert notif.title == "Deposit Received"
@@ -105,9 +103,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify_and_commit(
-            "1000000001", "welcome", "Welcome!", "Thanks for joining"
-        )
+        notif = service.notify_and_commit("1000000001", "welcome", "Welcome!", "Thanks for joining")
         assert notif.type == "welcome"
 
     def test_notify_deposit(
@@ -130,9 +126,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify_transfer_sent(
-            "1000000001", Decimal("3000"), "1000000002", Decimal("7000"), "TXN003"
-        )
+        notif = service.notify_transfer_sent("1000000001", Decimal("3000"), "1000000002", Decimal("7000"), "TXN003")
         assert notif.type == "transfer_sent"
         assert "1000000002" in notif.message
 
@@ -157,9 +151,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify_loan_approved(
-            "1000000001", Decimal("500000"), "Personal", "LOAN001"
-        )
+        notif = service.notify_loan_approved("1000000001", Decimal("500000"), "Personal", "LOAN001")
         assert notif.type == "loan_approved"
         assert "LOAN001" in notif.message
 
@@ -167,9 +159,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify_loan_rejected(
-            "1000000001", "Home", "LOAN002", "Insufficient income"
-        )
+        notif = service.notify_loan_rejected("1000000001", "Home", "LOAN002", "Insufficient income")
         assert notif.type == "loan_rejected"
         assert "Insufficient income" in notif.message
 
@@ -177,9 +167,7 @@ class TestNotificationService:
         self, service: NotificationService, account_repo: FakeAccountRepository, sample_account: Account
     ) -> None:
         account_repo.create(sample_account)
-        notif = service.notify_emi_paid(
-            "1000000001", Decimal("10000"), "Personal", "LOAN001", Decimal("490000")
-        )
+        notif = service.notify_emi_paid("1000000001", Decimal("10000"), "Personal", "LOAN001", Decimal("490000"))
         assert notif.type == "loan_emi_paid"
         assert "₹10,000" in notif.message
 

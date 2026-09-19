@@ -1,7 +1,7 @@
 # ADR-0006: Database Migration & Performance
 
-**Status:** Accepted  
-**Date:** 2026-07-16  
+**Status:** Accepted
+**Date:** 2026-07-16
 **References:**
 - [ADR-0005: Data Retention & Idempotency](ADR-0005-data-retention.md)
 - [THREAT_MODEL.md](./../reference/THREAT_MODEL.md)
@@ -65,7 +65,7 @@ single aggregate query using SQLAlchemy `func.count()`, `func.sum()`, and
 `case()` expressions. This replaces 5 separate queries (count, active_count,
 frozen_count, closed_count, total_balance) with 1.
 
-**Before:** 10 separate DB round-trips  
+**Before:** 10 separate DB round-trips
 **After:** 2 DB round-trips (1 for account stats, 1 for txn stats)
 
 ### 4. Paginated admin account list

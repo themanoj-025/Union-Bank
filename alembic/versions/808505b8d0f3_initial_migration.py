@@ -39,9 +39,7 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
         sa.PrimaryKeyConstraint("account_number"),
     )
-    op.create_index(
-        "idx_accounts_name_number", "accounts", ["name", "account_number"], unique=False
-    )
+    op.create_index("idx_accounts_name_number", "accounts", ["name", "account_number"], unique=False)
     op.create_index("idx_accounts_status", "accounts", ["is_active", "is_frozen"], unique=False)
     op.create_index(op.f("ix_accounts_email"), "accounts", ["email"], unique=False)
     op.create_index(op.f("ix_accounts_name"), "accounts", ["name"], unique=False)
@@ -105,9 +103,7 @@ def upgrade() -> None:
         sa.Column("next_emi_date", sa.DateTime(timezone=True), nullable=True),
         sa.Column("purpose", sa.String(length=500), nullable=False),
         sa.Column("admin_notes", sa.String(length=500), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["account_number"], ["accounts.account_number"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["account_number"], ["accounts.account_number"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("loan_id"),
     )
     op.create_index("idx_loans_account_status", "loans", ["account_number", "status"], unique=False)
@@ -127,9 +123,7 @@ def upgrade() -> None:
         sa.Column("loan_alerts", sa.Boolean(), nullable=False),
         sa.Column("admin_alerts", sa.Boolean(), nullable=False),
         sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["account_number"], ["accounts.account_number"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["account_number"], ["accounts.account_number"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("account_number"),
     )
     op.create_table(
@@ -143,20 +137,12 @@ def upgrade() -> None:
         sa.Column("is_read", sa.Boolean(), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("related_txn_id", sa.String(length=20), nullable=True),
-        sa.ForeignKeyConstraint(
-            ["account_number"], ["accounts.account_number"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["account_number"], ["accounts.account_number"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "idx_notif_account_read", "notifications", ["account_number", "is_read"], unique=False
-    )
-    op.create_index(
-        op.f("ix_notifications_account_number"), "notifications", ["account_number"], unique=False
-    )
-    op.create_index(
-        op.f("ix_notifications_created_at"), "notifications", ["created_at"], unique=False
-    )
+    op.create_index("idx_notif_account_read", "notifications", ["account_number", "is_read"], unique=False)
+    op.create_index(op.f("ix_notifications_account_number"), "notifications", ["account_number"], unique=False)
+    op.create_index(op.f("ix_notifications_created_at"), "notifications", ["created_at"], unique=False)
     op.create_index(op.f("ix_notifications_is_read"), "notifications", ["is_read"], unique=False)
     op.create_index(op.f("ix_notifications_notif_id"), "notifications", ["notif_id"], unique=True)
     op.create_index(op.f("ix_notifications_type"), "notifications", ["type"], unique=False)
@@ -170,14 +156,10 @@ def upgrade() -> None:
         sa.Column("target_date", sa.String(length=10), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("is_completed", sa.Boolean(), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["account_number"], ["accounts.account_number"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["account_number"], ["accounts.account_number"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("goal_id"),
     )
-    op.create_index(
-        op.f("ix_savings_goals_account_number"), "savings_goals", ["account_number"], unique=False
-    )
+    op.create_index(op.f("ix_savings_goals_account_number"), "savings_goals", ["account_number"], unique=False)
     op.create_table(
         "transactions",
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
@@ -190,18 +172,12 @@ def upgrade() -> None:
         sa.Column("category", sa.String(length=50), nullable=True),
         sa.Column("target_account", sa.String(length=10), nullable=True),
         sa.Column("timestamp", sa.DateTime(timezone=True), nullable=False),
-        sa.ForeignKeyConstraint(
-            ["account_number"], ["accounts.account_number"], ondelete="CASCADE"
-        ),
+        sa.ForeignKeyConstraint(["account_number"], ["accounts.account_number"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        "idx_txns_account_ts", "transactions", ["account_number", "timestamp"], unique=False
-    )
+    op.create_index("idx_txns_account_ts", "transactions", ["account_number", "timestamp"], unique=False)
     op.create_index("idx_txns_ts_type", "transactions", ["timestamp", "type"], unique=False)
-    op.create_index(
-        op.f("ix_transactions_account_number"), "transactions", ["account_number"], unique=False
-    )
+    op.create_index(op.f("ix_transactions_account_number"), "transactions", ["account_number"], unique=False)
     op.create_index(op.f("ix_transactions_category"), "transactions", ["category"], unique=False)
     op.create_index(op.f("ix_transactions_timestamp"), "transactions", ["timestamp"], unique=False)
     op.create_index(op.f("ix_transactions_txn_id"), "transactions", ["txn_id"], unique=True)

@@ -18,14 +18,14 @@ function Business() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero"
         style={{ backgroundColor: 'var(--primary-green)' }}
         initial="hidden"
@@ -37,7 +37,7 @@ function Business() {
         }}
       >
         <div className="subpage-hero-text">
-          <motion.h1 
+          <motion.h1
             style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px', color: 'var(--dark-green)' }}
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -46,7 +46,7 @@ function Business() {
           >
             GLOBAL BUSINESS<br/>MADE LOCAL
           </motion.h1>
-          <motion.p 
+          <motion.p
             style={{ fontSize: '20px', marginBottom: '30px', maxWidth: '500px', color: 'var(--dark-green)' }}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -55,8 +55,8 @@ function Business() {
           >
             Powerful banking tools for businesses of all sizes. Pay international suppliers, receive payments like a local, and manage team expenses.
           </motion.p>
-          <motion.button 
-            className="btn-primary" 
+          <motion.button
+            className="btn-primary"
             onClick={() => navigate('/signup')}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -68,7 +68,7 @@ function Business() {
             Open a business account
           </motion.button>
         </div>
-        <motion.div 
+        <motion.div
           className="subpage-hero-image"
           variants={{
             hidden: { opacity: 0, x: 50 },
@@ -79,7 +79,7 @@ function Business() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"

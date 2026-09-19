@@ -1,4 +1,5 @@
 from pathlib import Path
+
 """Tests for UNION-BANK- CSV export module."""
 
 import csv
@@ -16,7 +17,15 @@ class TestExportTransactionsToCsv:
     def test_creates_file(self, tmp_path: Path) -> None:
         filepath = str(tmp_path / "test.csv")
         records = [
-            {"txn_id": "T001", "timestamp": "2025-01-01", "type": "DEPOSIT", "amount": 1000, "balance": 5000, "description": "Salary", "category": "Income"},
+            {
+                "txn_id": "T001",
+                "timestamp": "2025-01-01",
+                "type": "DEPOSIT",
+                "amount": 1000,
+                "balance": 5000,
+                "description": "Salary",
+                "category": "Income",
+            },
         ]
         result = export_transactions_to_csv("ACC001", records, filepath)
         assert os.path.exists(result)
@@ -33,7 +42,15 @@ class TestExportTransactionsToCsv:
     def test_deposit_positive_sign(self, tmp_path: Path) -> None:
         filepath = str(tmp_path / "test.csv")
         records = [
-            {"txn_id": "T001", "timestamp": "2025-01-01", "type": "DEPOSIT", "amount": 500, "balance": 1000, "description": "", "category": "General"},
+            {
+                "txn_id": "T001",
+                "timestamp": "2025-01-01",
+                "type": "DEPOSIT",
+                "amount": 500,
+                "balance": 1000,
+                "description": "",
+                "category": "General",
+            },
         ]
         export_transactions_to_csv("ACC001", records, filepath)
         with open(filepath) as f:
@@ -45,7 +62,15 @@ class TestExportTransactionsToCsv:
     def test_withdraw_negative_sign(self, tmp_path: Path) -> None:
         filepath = str(tmp_path / "test.csv")
         records = [
-            {"txn_id": "T002", "timestamp": "2025-01-02", "type": "WITHDRAW", "amount": 200, "balance": 800, "description": "ATM", "category": "General"},
+            {
+                "txn_id": "T002",
+                "timestamp": "2025-01-02",
+                "type": "WITHDRAW",
+                "amount": 200,
+                "balance": 800,
+                "description": "ATM",
+                "category": "General",
+            },
         ]
         export_transactions_to_csv("ACC001", records, filepath)
         with open(filepath) as f:

@@ -266,14 +266,10 @@ class TestAccountCRUD:
         c.account_repo().commit()
 
         svc = c.transaction_service()
-        r1 = svc.transfer(
-            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001"
-        )
+        r1 = svc.transfer("1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001")
         assert r1.success
 
-        r2 = svc.transfer(
-            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001"
-        )
+        r2 = svc.transfer("1000000001", "1000000002", Decimal("300.00"), idempotency_key="tx-dup-001")
         assert r2.success
         assert r2.sender_balance == Decimal("700.00")  # replays the first result
 
@@ -306,9 +302,7 @@ class TestAccountCRUD:
         c.idempotency_repo().commit()
 
         svc = c.transaction_service()
-        result = svc.transfer(
-            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="corrupt-key-001"
-        )
+        result = svc.transfer("1000000001", "1000000002", Decimal("300.00"), idempotency_key="corrupt-key-001")
         assert result.success is False
         assert "corrupted" in result.error_message.lower()
 
@@ -341,9 +335,7 @@ class TestAccountCRUD:
         c.idempotency_repo().commit()
 
         svc = c.transaction_service()
-        result = svc.transfer(
-            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="pending-key-001"
-        )
+        result = svc.transfer("1000000001", "1000000002", Decimal("300.00"), idempotency_key="pending-key-001")
         assert result.success is False
         assert "in progress" in result.error_message.lower()
         assert c.account_repo().get("1000000001").balance == Decimal("1000.00")
@@ -378,9 +370,7 @@ class TestAccountCRUD:
         c.idempotency_repo().commit()
 
         svc = c.transaction_service()
-        result = svc.transfer(
-            "1000000001", "1000000002", Decimal("300.00"), idempotency_key="stale-key-001"
-        )
+        result = svc.transfer("1000000001", "1000000002", Decimal("300.00"), idempotency_key="stale-key-001")
         assert result.success is False
         assert "unknown" in result.error_message.lower()
         assert c.account_repo().get("1000000001").balance == Decimal("1000.00")
@@ -479,8 +469,7 @@ class TestAccountCRUD:
 
         # ═══ CRITICAL: Transaction history MUST survive ═══
         assert txn_repo.count_by_account("1000000001") == 1, (
-            "Transaction history was destroyed! Soft-delete must preserve "
-            "transaction records for audit and compliance."
+            "Transaction history was destroyed! Soft-delete must preserve transaction records for audit and compliance."
         )
 
         # Verify we can still read the transaction
@@ -651,4 +640,3 @@ class TestAdminOperations:
 
 
 #  Integration: Savings Goals via Container
-

@@ -278,9 +278,7 @@ def get_cache() -> Cache:
                     password=parsed.password,
                 )
             except (ValueError, TypeError, OSError):
-                logger.warning(
-                    "Failed to parse REDIS_URL, falling back to NullCache", exc_info=True
-                )
+                logger.warning("Failed to parse REDIS_URL, falling back to NullCache", exc_info=True)
                 _cache_instance = NullCache()
         else:
             _cache_instance = NullCache()

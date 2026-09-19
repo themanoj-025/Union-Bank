@@ -1,8 +1,8 @@
 # ADR-0007: Git Strategy — Branching, Commits, and Releases
 
-**Status:** Adopted  
-**Date:** 2026-07-17  
-**Driver:** Phase 8 — Git Hygiene  
+**Status:** Adopted
+**Date:** 2026-07-17
+**Driver:** Phase 8 — Git Hygiene
 
 ---
 

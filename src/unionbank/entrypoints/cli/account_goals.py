@@ -35,11 +35,7 @@ class AccountGoalsMixin:
 
     def _show_goal(self, goal: dict, index: int) -> Any:
         """Display a single savings goal."""
-        pct = (
-            (goal["current_amount"] / goal["target_amount"] * 100)
-            if goal["target_amount"] > 0
-            else 0
-        )
+        pct = (goal["current_amount"] / goal["target_amount"] * 100) if goal["target_amount"] > 0 else 0
         status = "✅ COMPLETED" if goal.get("is_completed") else "🔄 ACTIVE"
         bar_len = 30
         filled = int(bar_len * pct / 100)
@@ -81,9 +77,7 @@ class AccountGoalsMixin:
             if goals:
                 total_saved = sum(g["current_amount"] for g in goals)
                 completed = sum(1 for g in goals if g.get("is_completed"))
-                print(
-                    f"  Goals: {len(goals)}  |  Completed: {completed}  |  Total saved: {fmt_currency(total_saved)}"
-                )
+                print(f"  Goals: {len(goals)}  |  Completed: {completed}  |  Total saved: {fmt_currency(total_saved)}")
                 print()
                 for i, g in enumerate(goals, 1):
                     self._show_goal(g, i)
@@ -157,9 +151,7 @@ class AccountGoalsMixin:
 
         header("💰 CONTRIBUTE TO GOAL")
         for i, g in enumerate(active, 1):
-            print(
-                f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}"
-            )
+            print(f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}")
         print()
         idx = get_int("  Select goal number: ")
         if idx is None or idx < 1 or idx > len(active):
@@ -171,11 +163,7 @@ class AccountGoalsMixin:
         if amount is None:
             return
 
-        confirm = (
-            input(f"  Contribute {YELLOW}{fmt_currency(amount)}{RESET} to '{goal.name}'? (y/n): ")
-            .strip()
-            .lower()
-        )
+        confirm = input(f"  Contribute {YELLOW}{fmt_currency(amount)}{RESET} to '{goal.name}'? (y/n): ").strip().lower()
         if confirm != "y":
             warning("Cancelled.")
             return
@@ -204,9 +192,7 @@ class AccountGoalsMixin:
 
         header("✏️ EDIT GOAL")
         for i, g in enumerate(domain_goals, 1):
-            print(
-                f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}"
-            )
+            print(f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}")
         print()
         idx = get_int("  Select goal number: ")
         if idx is None or idx < 1 or idx > len(domain_goals):
@@ -245,9 +231,7 @@ class AccountGoalsMixin:
 
         header("🗑️ DELETE GOAL")
         for i, g in enumerate(domain_goals, 1):
-            print(
-                f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}"
-            )
+            print(f"  {i}. {g.name} — {fmt_currency(float(g.current_amount))} / {fmt_currency(float(g.target_amount))}")
         print()
         idx = get_int("  Select goal number: ")
         if idx is None or idx < 1 or idx > len(domain_goals):
@@ -260,9 +244,7 @@ class AccountGoalsMixin:
             warning("Cancelled.")
             return
 
-        result = c.savings_goal_service().delete_goal(
-            acc_no=self.account_number, goal_id=goal.goal_id
-        )
+        result = c.savings_goal_service().delete_goal(acc_no=self.account_number, goal_id=goal.goal_id)
         if result.success:
             if goal.current_amount > 0:
                 self.balance += float(goal.current_amount)

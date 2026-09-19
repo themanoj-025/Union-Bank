@@ -106,9 +106,11 @@ app = FastAPI(
 # --- OpenTelemetry distributed tracing (OTEL_ENABLED=true) ---
 try:
     from unionbank.tracing import setup_tracing
+
     _otel_ok = setup_tracing("unionbank-api")
     if _otel_ok:
         from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
         FastAPIInstrumentor.instrument_app(app)
 except ImportError:
     pass
@@ -152,15 +154,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        response.headers["Permissions-Policy"] = (
-            "camera=(), microphone=(), geolocation=(), interest-cohort=()"
-        )
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; "
-            "script-src 'self'; "
-            "style-src 'self'; "
-            "img-src 'self' data:; "
-            "connect-src 'self'"
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'"
         )
         return response
 
@@ -245,9 +241,7 @@ app.add_middleware(
 # Uses bank.jsonl (the JSON log file) so all structured logs live together.
 
 # Compute project root from this file's location for log file path
-_PROJECT_ROOT = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 _JSON_LOG_DIR = os.path.join(_PROJECT_ROOT, "data")
 os.makedirs(_JSON_LOG_DIR, exist_ok=True)
 _JSON_LOG_FILE = os.path.join(_JSON_LOG_DIR, "bank.jsonl")

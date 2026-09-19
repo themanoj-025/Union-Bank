@@ -450,12 +450,10 @@ class TestAtomicTransfer:
 
         # Verify rollback: sender balance must be unchanged
         assert get_db_balance(self.SENDER) == 1000.0, (
-            "Sender balance changed after rollback! "
-            "The atomic transaction did not prevent data loss!"
+            "Sender balance changed after rollback! The atomic transaction did not prevent data loss!"
         )
         assert get_db_balance(self.RECEIVER) == 500.0, (
-            "Receiver balance changed after rollback! "
-            "The atomic transaction did not prevent data loss!"
+            "Receiver balance changed after rollback! The atomic transaction did not prevent data loss!"
         )
 
     def test_atomic_apply_interest_rolls_back_on_failure(self, tmp_data_dir) -> None:

@@ -33,7 +33,7 @@ function Login() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
@@ -49,7 +49,7 @@ function Login() {
             </svg>
             <span style={{ fontWeight: '900', fontSize: '24px', letterSpacing: '-0.5px', color: 'var(--dark-green)' }}>Union Bank</span>
           </Link>
-          
+
           <h2>Welcome back</h2>
           <p>Log in to your Union Bank account to continue.</p>
 
@@ -58,11 +58,11 @@ function Login() {
           <form className="auth-form" onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="login-account-number">Account number</label>
-              <input 
+              <input
                 id="login-account-number"
                 name="account_number"
-                type="text" 
-                placeholder="Enter your 10-digit account number" 
+                type="text"
+                placeholder="Enter your 10-digit account number"
                 value={accountNumber}
                 onChange={(e) => setAccountNumber(e.target.value)}
                 autoComplete="username"
@@ -72,11 +72,11 @@ function Login() {
             </div>
             <div className="form-group">
               <label htmlFor="login-password">Password</label>
-              <input 
+              <input
                 id="login-password"
                 name="password"
-                type="password" 
-                placeholder="Enter your password" 
+                type="password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
@@ -84,7 +84,7 @@ function Login() {
                 required
               />
             </div>
-            
+
             <div className="form-options">
               <label className="checkbox-label">
                 <input type="checkbox" />
@@ -103,7 +103,7 @@ function Login() {
           </p>
         </div>
       </div>
-      
+
       <div className="auth-split right" style={{position: 'relative'}}>
         <div style={{position: 'absolute', top: '40px', left: '40px', display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff'}}>
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
