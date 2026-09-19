@@ -237,16 +237,10 @@ class FakeLoanRepository:
         return sum(1 for ln in self._loans.values() if ln.status == status)
 
     def total_disbursed(self) -> Decimal:
-        return sum(
-            ln.principal_amount for ln in self._loans.values()
-            if ln.status in ("ACTIVE", "CLOSED")
-        )
+        return sum(ln.principal_amount for ln in self._loans.values() if ln.status in ("ACTIVE", "CLOSED"))
 
     def total_outstanding(self) -> Decimal:
-        return sum(
-            ln.remaining_amount for ln in self._loans.values()
-            if ln.status == "ACTIVE"
-        )
+        return sum(ln.remaining_amount for ln in self._loans.values() if ln.status == "ACTIVE")
 
     def commit(self) -> None:
         pass

@@ -69,15 +69,11 @@ class SqlAlchemyTokenVersionRepository:
         self.session = session
 
     def get_version(self, account_number: str) -> int:
-        model = (
-            self.session.query(TokenVersionModel).filter_by(account_number=account_number).first()
-        )
+        model = self.session.query(TokenVersionModel).filter_by(account_number=account_number).first()
         return model.version if model else 0
 
     def increment(self, account_number: str) -> int:
-        model = (
-            self.session.query(TokenVersionModel).filter_by(account_number=account_number).first()
-        )
+        model = self.session.query(TokenVersionModel).filter_by(account_number=account_number).first()
         if model is None:
             model = TokenVersionModel(account_number=account_number, version=1)
             self.session.add(model)

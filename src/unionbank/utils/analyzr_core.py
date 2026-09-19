@@ -286,9 +286,7 @@ def _compute_average_txn_amount(txns: list) -> Decimal:
     """Compute the average transaction amount from a list of transactions."""
     if not txns:
         return Decimal("500.00")
-    total = sum(
-        (Decimal(str(t.amount)) if not isinstance(t.amount, Decimal) else t.amount) for t in txns
-    )
+    total = sum((Decimal(str(t.amount)) if not isinstance(t.amount, Decimal) else t.amount) for t in txns)
     return total / len(txns)
 
 
@@ -306,9 +304,7 @@ def classify_intent(query: str) -> list[dict]:
     return matched
 
 
-def extract_amount_range(
-    query: str, intents: list[dict]
-) -> tuple[Decimal | None, Decimal | None]:
+def extract_amount_range(query: str, intents: list[dict]) -> tuple[Decimal | None, Decimal | None]:
     """Extract min/max amount from a natural-language query."""
     min_amt, max_amt = None, None
 
@@ -351,22 +347,16 @@ def compute_time_window(intents: list[dict]) -> tuple[datetime | None, datetime 
             from_date = yesterday.replace(hour=0, minute=0, second=0, microsecond=0)
             to_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
         elif tw == "this_week":
-            from_date = (now - timedelta(days=now.weekday())).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
+            from_date = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
         elif tw == "last_week":
             last_monday = now - timedelta(days=now.weekday() + 7)
             from_date = last_monday.replace(hour=0, minute=0, second=0, microsecond=0)
-            to_date = (last_monday + timedelta(days=7)).replace(
-                hour=0, minute=0, second=0, microsecond=0
-            )
+            to_date = (last_monday + timedelta(days=7)).replace(hour=0, minute=0, second=0, microsecond=0)
         elif tw == "this_month":
             from_date = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         elif tw == "last_month":
             first_of_this = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            from_date = (first_of_this - timedelta(days=1)).replace(
-                day=1, hour=0, minute=0, second=0, microsecond=0
-            )
+            from_date = (first_of_this - timedelta(days=1)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
             to_date = first_of_this
         elif tw == "last_90_days":
             from_date = now - timedelta(days=90)

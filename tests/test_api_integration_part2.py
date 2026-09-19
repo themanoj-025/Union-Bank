@@ -17,6 +17,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unionbank.infrastructure.container import get_container, reset_container
 
+
 class TestSavingsGoals:
     def test_create_goal(self, client, registered_customer) -> None:
         """POST /api/savings should create a new savings goal."""

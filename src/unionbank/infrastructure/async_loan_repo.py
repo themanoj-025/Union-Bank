@@ -35,18 +35,14 @@ class AsyncSqlAlchemyLoanRepository:
 
     async def get_by_account(self, acc_no: str) -> list[Loan]:
         result = await self.session.execute(
-            select(LoanModel)
-            .where(LoanModel.account_number == acc_no)
-            .order_by(LoanModel.application_date.desc())
+            select(LoanModel).where(LoanModel.account_number == acc_no).order_by(LoanModel.application_date.desc())
         )
         models = result.scalars().all()
         return [map_loan(m) for m in models]
 
     async def get_all_pending(self) -> list[Loan]:
         result = await self.session.execute(
-            select(LoanModel)
-            .where(LoanModel.status == "PENDING")
-            .order_by(LoanModel.application_date.asc())
+            select(LoanModel).where(LoanModel.status == "PENDING").order_by(LoanModel.application_date.asc())
         )
         models = result.scalars().all()
         return [map_loan(m) for m in models]
@@ -61,9 +57,7 @@ class AsyncSqlAlchemyLoanRepository:
         return [map_loan(m) for m in models]
 
     async def get_all(self) -> list[Loan]:
-        result = await self.session.execute(
-            select(LoanModel).order_by(LoanModel.application_date.desc())
-        )
+        result = await self.session.execute(select(LoanModel).order_by(LoanModel.application_date.desc()))
         models = result.scalars().all()
         return [map_loan(m) for m in models]
 
@@ -89,9 +83,7 @@ class AsyncSqlAlchemyLoanRepository:
         return loan
 
     async def update(self, loan: Loan) -> Loan:
-        result = await self.session.execute(
-            select(LoanModel).where(LoanModel.loan_id == loan.loan_id)
-        )
+        result = await self.session.execute(select(LoanModel).where(LoanModel.loan_id == loan.loan_id))
         model = result.scalar_one_or_none()
         if model:
             model.loan_type = loan.loan_type
@@ -116,17 +108,13 @@ class AsyncSqlAlchemyLoanRepository:
 
     async def total_disbursed(self) -> Decimal:
         result = await self.session.execute(
-            select(func.sum(LoanModel.principal_amount)).where(
-                LoanModel.status.in_(["APPROVED", "ACTIVE", "CLOSED"])
-            )
+            select(func.sum(LoanModel.principal_amount)).where(LoanModel.status.in_(["APPROVED", "ACTIVE", "CLOSED"]))
         )
         return result.scalar() or Decimal("0.00")
 
     async def total_outstanding(self) -> Decimal:
         result = await self.session.execute(
-            select(func.sum(LoanModel.remaining_amount)).where(
-                LoanModel.status.in_(["APPROVED", "ACTIVE"])
-            )
+            select(func.sum(LoanModel.remaining_amount)).where(LoanModel.status.in_(["APPROVED", "ACTIVE"]))
         )
         return result.scalar() or Decimal("0.00")
 

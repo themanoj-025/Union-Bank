@@ -56,7 +56,6 @@ def _get_account_lock(*acc_nos: str) -> asyncio.Lock:
 #  Async Transaction Service
 
 
-
 class AsyncAccountService:
     """Async customer account management use-cases."""
 
@@ -123,5 +122,3 @@ class AsyncAccountService:
 
 
 #  Async Auth Service
-
-

@@ -61,9 +61,7 @@ class TransactionService:
         self.notif_service = notif_service
         self.idempotency_repo = idempotency_repo
 
-    def _ensure_non_negative_balance(
-        self, balance: Decimal, operation: str = "transaction"
-    ) -> None:
+    def _ensure_non_negative_balance(self, balance: Decimal, operation: str = "transaction") -> None:
         """App-level guard: raise ValueError if balance would go negative."""
         if balance < Decimal("0.00"):
             raise ValueError(f"Insufficient balance for {operation}.")
@@ -90,9 +88,10 @@ class TransactionService:
             # declares timezone=True — normalize so the staleness math holds.
             if created_at is not None and created_at.tzinfo is None:
                 created_at = created_at.replace(tzinfo=UTC)
-            if created_at is not None and (
-                _utcnow() - created_at
-            ).total_seconds() > TransactionService._IDEMPOTENCY_STALE_SECONDS:
+            if (
+                created_at is not None
+                and (_utcnow() - created_at).total_seconds() > TransactionService._IDEMPOTENCY_STALE_SECONDS
+            ):
                 # A pending claim older than the staleness bound means the
                 # holder crashed mid-flight — the outcome is unknowable.
                 return "incomplete", data
@@ -197,11 +196,7 @@ class TransactionService:
         """Map a claim status to a ServiceResult (deposit/withdraw). None → claimed."""
         if status == "replay" and existing is not None:
             try:
-                data = (
-                    existing
-                    if isinstance(existing, dict)
-                    else json.loads(existing.result_json)
-                )
+                data = existing if isinstance(existing, dict) else json.loads(existing.result_json)
                 return ServiceResult(
                     success=data.get("success", True),
                     message=data.get("message", "Operation already completed."),
@@ -211,9 +206,7 @@ class TransactionService:
                 status = "corrupt"
         messages = {
             "corrupt": "Idempotency record corrupted; operation aborted. Contact support.",
-            "pending": (
-                f"{operation.capitalize()} already in progress for this idempotency key."
-            ),
+            "pending": (f"{operation.capitalize()} already in progress for this idempotency key."),
             "incomplete": "Previous attempt outcome unknown. Contact support before retrying.",
             "storage_error": "Idempotency storage unavailable; operation aborted. Please retry.",
         }
@@ -222,17 +215,11 @@ class TransactionService:
             return None
         return ServiceResult(success=False, message=message)
 
-    def _idempotency_transfer_result(
-        self, status: str, existing: IdempotencyRecord | None
-    ) -> TransferResult | None:
+    def _idempotency_transfer_result(self, status: str, existing: IdempotencyRecord | None) -> TransferResult | None:
         """Map a claim status to a TransferResult. None → claimed."""
         if status == "replay" and existing is not None:
             try:
-                data = (
-                    existing
-                    if isinstance(existing, dict)
-                    else json.loads(existing.result_json)
-                )
+                data = existing if isinstance(existing, dict) else json.loads(existing.result_json)
                 return TransferResult(
                     success=data.get("success", True),
                     sender_balance=Decimal(str(data.get("sender_balance", 0))),
@@ -263,9 +250,7 @@ class TransactionService:
             return ServiceResult(success=False, message="Amount must be positive.")
 
         with _account_lock(acc_no):
-            status, existing = self._claim_idempotency(
-                idempotency_key, acc_no, "deposit", amount
-            )
+            status, existing = self._claim_idempotency(idempotency_key, acc_no, "deposit", amount)
             cached = self._idempotency_service_result(status, existing, "deposit")
             if cached is not None:
                 return cached
@@ -331,9 +316,7 @@ class TransactionService:
             return ServiceResult(success=False, message="Amount must be positive.")
 
         with _account_lock(acc_no):
-            status, existing = self._claim_idempotency(
-                idempotency_key, acc_no, "withdraw", amount
-            )
+            status, existing = self._claim_idempotency(idempotency_key, acc_no, "withdraw", amount)
             cached = self._idempotency_service_result(status, existing, "withdraw")
             if cached is not None:
                 return cached
@@ -408,9 +391,7 @@ class TransactionService:
         if amount <= 0:
             return TransferResult(success=False, error_message="Amount must be positive.")
         if sender_acc_no == receiver_acc_no:
-            return TransferResult(
-                success=False, error_message="Cannot transfer to your own account."
-            )
+            return TransferResult(success=False, error_message="Cannot transfer to your own account.")
 
         cat = category if category in TRANSACTION_CATEGORIES else "General"
 
@@ -420,9 +401,7 @@ class TransactionService:
                 # INSERT (DB-unique key) is atomic, so a concurrent same-key
                 # request either replays this result or reports in-progress —
                 # it can never double-execute.
-                status, existing = self._claim_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount
-                )
+                status, existing = self._claim_idempotency(idempotency_key, sender_acc_no, "transfer", amount)
                 cached = self._idempotency_transfer_result(status, existing)
                 if cached is not None:
                     return cached
@@ -432,47 +411,28 @@ class TransactionService:
 
                 if sender is None:
                     failure = TransferResult(success=False, error_message="Sender account not found.")
-                    self._complete_idempotency(
-                        idempotency_key, sender_acc_no, "transfer", amount, failure
-                    )
+                    self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                     return failure
                 if receiver is None:
-                    failure = TransferResult(
-                        success=False, error_message="Recipient account not found."
-                    )
-                    self._complete_idempotency(
-                        idempotency_key, sender_acc_no, "transfer", amount, failure
-                    )
+                    failure = TransferResult(success=False, error_message="Recipient account not found.")
+                    self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                     return failure
 
                 if not sender.can_transact:
-                    failure = TransferResult(
-                        success=False, error_message="Your account is frozen or closed."
-                    )
-                    self._complete_idempotency(
-                        idempotency_key, sender_acc_no, "transfer", amount, failure
-                    )
+                    failure = TransferResult(success=False, error_message="Your account is frozen or closed.")
+                    self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                     return failure
                 if not receiver.can_transact:
-                    failure = TransferResult(
-                        success=False, error_message="Recipient account is frozen or closed."
-                    )
-                    self._complete_idempotency(
-                        idempotency_key, sender_acc_no, "transfer", amount, failure
-                    )
+                    failure = TransferResult(success=False, error_message="Recipient account is frozen or closed.")
+                    self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                     return failure
 
                 if amount > sender.balance:
                     failure = TransferResult(
                         success=False,
-                        error_message=(
-                            f"Insufficient balance. "
-                            f"Available: {fmt_currency(float(sender.balance))}"
-                        ),
+                        error_message=(f"Insufficient balance. Available: {fmt_currency(float(sender.balance))}"),
                     )
-                    self._complete_idempotency(
-                        idempotency_key, sender_acc_no, "transfer", amount, failure
-                    )
+                    self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                     return failure
 
                 with self.account_repo.session.begin_nested():
@@ -521,9 +481,7 @@ class TransactionService:
                     sender_balance=sender_balance,
                     receiver_balance=receiver_balance,
                 )
-                self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, result
-                )
+                self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, result)
 
         except (OSError, ValueError, TypeError) as exc:
             from unionbank.utils.logger import logger
@@ -576,9 +534,7 @@ class TransactionService:
         if not account.can_transact:
             return ServiceResult(success=False, message="Account is frozen or closed.")
 
-        interest = Decimal(
-            str(calculate_monthly_interest(float(account.balance), settings.SAVINGS_INTEREST_RATE))
-        )
+        interest = Decimal(str(calculate_monthly_interest(float(account.balance), settings.SAVINGS_INTEREST_RATE)))
         if interest <= 0:
             return ServiceResult(success=False, message="No interest to apply.")
 

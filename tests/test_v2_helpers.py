@@ -14,24 +14,28 @@ class TestOk:
 
     def test_ok_with_data(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _ok
+
         resp = _ok({"key": "value"})
         assert resp.success is True
         assert resp.data == {"key": "value"}
 
     def test_ok_with_string_data(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _ok
+
         resp = _ok("hello")
         assert resp.success is True
         assert resp.data == "hello"
 
     def test_ok_with_meta(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _ok
+
         resp = _ok("data", meta={"page": 1})
         assert resp.success is True
         assert resp.meta == {"page": 1}
 
     def test_ok_without_meta(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _ok
+
         resp = _ok("data")
         assert resp.success is True
         assert resp.meta is None
@@ -43,6 +47,7 @@ class TestErr:
     def test_err_raises_http_exception(self) -> None:
         from fastapi import HTTPException
         from unionbank.entrypoints.api.v2.helpers import _err
+
         with pytest.raises(HTTPException) as exc_info:
             _err("Something went wrong", 400)
         assert exc_info.value.status_code == 400
@@ -50,6 +55,7 @@ class TestErr:
     def test_err_default_status(self) -> None:
         from fastapi import HTTPException
         from unionbank.entrypoints.api.v2.helpers import _err
+
         with pytest.raises(HTTPException) as exc_info:
             _err("Error")
         assert exc_info.value.status_code == 400
@@ -57,6 +63,7 @@ class TestErr:
     def test_err_with_error_code(self) -> None:
         from fastapi import HTTPException
         from unionbank.entrypoints.api.v2.helpers import _err
+
         with pytest.raises(HTTPException) as exc_info:
             _err("Invalid", 422, "VALIDATION_ERROR")
         assert exc_info.value.status_code == 422
@@ -70,11 +77,13 @@ class TestFmtCurrency:
 
     def test_fmt_currency(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _fmt_currency
+
         result = _fmt_currency(100000.0)
         assert "100,000" in result or "100000" in result
 
     def test_fmt_currency_zero(self) -> None:
         from unionbank.entrypoints.api.v2.helpers import _fmt_currency
+
         result = _fmt_currency(0.0)
         assert "0" in result
 

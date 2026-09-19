@@ -23,7 +23,6 @@ from unionbank.infrastructure.container import get_container, reset_container
 pytestmark = pytest.mark.integration
 
 
-
 pytestmark = pytest.mark.slow
 #  Fixtures
 
@@ -481,15 +480,11 @@ class TestTransactions:
         assert "transferred" in data["message"].lower()
 
         # Verify sender balance decreased
-        sender_bal = client.get(
-            "/api/account/balance", headers=registered_customer["headers"]
-        ).json()
+        sender_bal = client.get("/api/account/balance", headers=registered_customer["headers"]).json()
         assert sender_bal["balance"] >= 700.0  # 1000 - 300 = 700
 
         # Verify receiver balance increased
-        receiver_bal = client.get(
-            "/api/account/balance", headers=second_registered_customer["headers"]
-        ).json()
+        receiver_bal = client.get("/api/account/balance", headers=second_registered_customer["headers"]).json()
         assert receiver_bal["balance"] >= 300.0
 
     def test_transfer_to_self(self, client, registered_customer) -> None:
@@ -531,12 +526,8 @@ class TestTransactions:
     def test_full_statement(self, client, registered_customer) -> None:
         """GET /api/account/statements should return transaction history."""
         # Do some transactions first
-        client.post(
-            "/api/account/deposit", headers=registered_customer["headers"], json={"amount": 100.0}
-        )
-        client.post(
-            "/api/account/withdraw", headers=registered_customer["headers"], json={"amount": 50.0}
-        )
+        client.post("/api/account/deposit", headers=registered_customer["headers"], json={"amount": 100.0})
+        client.post("/api/account/withdraw", headers=registered_customer["headers"], json={"amount": 50.0})
 
         resp = client.get("/api/account/statements", headers=registered_customer["headers"])
         assert resp.status_code == 200
@@ -565,4 +556,3 @@ class TestTransactions:
 
 
 #  5.  Savings Goals
-

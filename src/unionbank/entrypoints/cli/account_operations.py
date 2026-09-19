@@ -68,11 +68,7 @@ class AccountOperationsMixin:
 
         from unionbank.infrastructure.container import get_container
 
-        result = (
-            get_container()
-            .transaction_service()
-            .deposit(self.account_number, Decimal(str(amount)), category)
-        )
+        result = get_container().transaction_service().deposit(self.account_number, Decimal(str(amount)), category)
         if result.success:
             self.balance = result.data["balance"]
             success(result.message)
@@ -91,11 +87,7 @@ class AccountOperationsMixin:
 
         from unionbank.infrastructure.container import get_container
 
-        result = (
-            get_container()
-            .transaction_service()
-            .withdraw(self.account_number, Decimal(str(amount)), category)
-        )
+        result = get_container().transaction_service().withdraw(self.account_number, Decimal(str(amount)), category)
         if result.success:
             self.balance = result.data["balance"]
             success(result.message)
@@ -242,9 +234,7 @@ class AccountOperationsMixin:
 
     def close_account(self) -> Any:
         header("CLOSE ACCOUNT")
-        confirm = input(
-            f"  Are you sure you want to close account {CYAN}{self.account_number}{RESET}? (y/n): "
-        ).strip()
+        confirm = input(f"  Are you sure you want to close account {CYAN}{self.account_number}{RESET}? (y/n): ").strip()
         if confirm.lower() != "y":
             warning("Account closure cancelled.")
             divider()

@@ -67,9 +67,7 @@ class AsyncSqlAlchemyTransactionRepository:
         return transaction
 
     async def get_all(self) -> list[Transaction]:
-        result = await self.session.execute(
-            select(TransactionModel).order_by(TransactionModel.timestamp.desc())
-        )
+        result = await self.session.execute(select(TransactionModel).order_by(TransactionModel.timestamp.desc()))
         models = result.scalars().all()
         return [map_transaction(m) for m in models]
 
@@ -85,17 +83,13 @@ class AsyncSqlAlchemyTransactionRepository:
 
     async def count_by_account(self, acc_no: str) -> int:
         result = await self.session.execute(
-            select(func.count())
-            .select_from(TransactionModel)
-            .where(TransactionModel.account_number == acc_no)
+            select(func.count()).select_from(TransactionModel).where(TransactionModel.account_number == acc_no)
         )
         return result.scalar() or 0
 
     async def get_category_totals(self) -> dict[str, Decimal]:
         result = await self.session.execute(
-            select(TransactionModel.category, func.sum(TransactionModel.amount)).group_by(
-                TransactionModel.category
-            )
+            select(TransactionModel.category, func.sum(TransactionModel.amount)).group_by(TransactionModel.category)
         )
         rows = result.all()
         return {cat: total or Decimal("0.00") for cat, total in rows}
@@ -166,9 +160,7 @@ class AsyncSqlAlchemyTransactionRepository:
         if cursor is not None:
             query = query.where(TransactionModel.timestamp < cursor)
 
-        result = await self.session.execute(
-            query.order_by(TransactionModel.timestamp.desc()).limit(fetch_limit)
-        )
+        result = await self.session.execute(query.order_by(TransactionModel.timestamp.desc()).limit(fetch_limit))
         models = result.scalars().all()
 
         has_more = len(models) > limit
@@ -274,9 +266,7 @@ class AsyncSqlAlchemyAuditLogRepository:
         self.session.add(model)
 
     async def get_recent(self, limit: int = 50) -> list:
-        result = await self.session.execute(
-            select(AuditLogModel).order_by(AuditLogModel.timestamp.desc()).limit(limit)
-        )
+        result = await self.session.execute(select(AuditLogModel).order_by(AuditLogModel.timestamp.desc()).limit(limit))
         models = result.scalars().all()
         return [
             {

@@ -167,6 +167,6 @@ LOC
 
 ---
 
-*Generated: 2026-07-17*  
-*Baseline: `pre-audit-baseline` (Phase 0)*  
+*Generated: 2026-07-17*
+*Baseline: `pre-audit-baseline` (Phase 0)*
 *Current: `v2.2.0` (Phase 9 complete)*

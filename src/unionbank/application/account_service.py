@@ -141,9 +141,7 @@ class AdminService:
     def search_accounts(self, query: str) -> list[Account]:
         return self.account_repo.search(query)
 
-    def freeze_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    def freeze_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -166,9 +164,7 @@ class AdminService:
 
         if self.notif_service:
             try:
-                NOTIFICATION_BREAKER.call(self.notif_service.notify_account_frozen)(
-                    acc_no, reason=reason or ""
-                )
+                NOTIFICATION_BREAKER.call(self.notif_service.notify_account_frozen)(acc_no, reason=reason or "")
             except pybreaker.CircuitBreakerError:
                 from unionbank.utils.logger import logger
 
@@ -178,13 +174,9 @@ class AdminService:
 
                 logger.warning("Failed to send freeze notification", exc_info=True)
 
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({account.name}) has been frozen."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({account.name}) has been frozen.")
 
-    def unfreeze_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    def unfreeze_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -214,13 +206,9 @@ class AdminService:
 
                 logger.warning("Failed to send unfreeze notification", exc_info=True)
 
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({account.name}) has been unfrozen."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({account.name}) has been unfrozen.")
 
-    def delete_account(
-        self, acc_no: str, actor: str = "admin", reason: str | None = None
-    ) -> ServiceResult:
+    def delete_account(self, acc_no: str, actor: str = "admin", reason: str | None = None) -> ServiceResult:
         account = self.account_repo.get(acc_no)
         if account is None:
             return ServiceResult(success=False, message="Account not found.")
@@ -236,13 +224,9 @@ class AdminService:
             details=f"Deleted account for {acc_name}",
             reason=reason,
         )
-        return ServiceResult(
-            success=True, message=f"Account {acc_no} ({acc_name}) has been deleted."
-        )
+        return ServiceResult(success=True, message=f"Account {acc_no} ({acc_name}) has been deleted.")
 
-    def list_accounts_paginated(
-        self, page: int = 1, per_page: int = 20
-    ) -> tuple[list[Account], int]:
+    def list_accounts_paginated(self, page: int = 1, per_page: int = 20) -> tuple[list[Account], int]:
         """Get accounts with pagination (delegates to the repository)."""
         return self.account_repo.get_all_paginated(page=page, per_page=per_page)
 

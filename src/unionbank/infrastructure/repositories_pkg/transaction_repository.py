@@ -59,15 +59,11 @@ class SqlAlchemyTransactionRepository:
         return transaction
 
     def get_all(self) -> list[Transaction]:
-        models = (
-            self.session.query(TransactionModel).order_by(TransactionModel.timestamp.desc()).all()
-        )
+        models = self.session.query(TransactionModel).order_by(TransactionModel.timestamp.desc()).all()
         return [map_transaction(m) for m in models]
 
     def total_by_type(self, txn_type: str) -> Decimal:
-        result = (
-            self.session.query(func.sum(TransactionModel.amount)).filter_by(type=txn_type).scalar()
-        )
+        result = self.session.query(func.sum(TransactionModel.amount)).filter_by(type=txn_type).scalar()
         return result or Decimal("0.00")
 
     def count(self) -> int:
@@ -106,9 +102,7 @@ class SqlAlchemyTransactionRepository:
 
         total = query.count()
         offset = (page - 1) * per_page
-        models = (
-            query.order_by(TransactionModel.timestamp.desc()).offset(offset).limit(per_page).all()
-        )
+        models = query.order_by(TransactionModel.timestamp.desc()).offset(offset).limit(per_page).all()
 
         return [map_transaction(m) for m in models], total
 

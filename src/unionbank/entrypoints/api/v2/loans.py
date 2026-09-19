@@ -32,14 +32,9 @@ def v2_list_loans(customer: dict = Depends(get_current_customer)) -> ApiResponse
 
     loan_list = []
     for loan in loans:
-        pct = (
-            float(loan.amount_paid / loan.principal_amount * 100)
-            if loan.principal_amount > 0
-            else 0
-        )
+        pct = float(loan.amount_paid / loan.principal_amount * 100) if loan.principal_amount > 0 else 0
         remaining_emis = (
-            int(loan.remaining_amount / loan.emi_amount)
-            + (1 if loan.remaining_amount % loan.emi_amount > 0 else 0)
+            int(loan.remaining_amount / loan.emi_amount) + (1 if loan.remaining_amount % loan.emi_amount > 0 else 0)
             if loan.emi_amount > 0
             else 0
         )
@@ -73,13 +68,9 @@ def v2_list_loans(customer: dict = Depends(get_current_customer)) -> ApiResponse
     active_loans = sum(1 for loan in loans if loan.status in ("APPROVED", "ACTIVE"))
     closed_loans = sum(1 for loan in loans if loan.status == "CLOSED")
     total_disbursed = sum(
-        float(loan.principal_amount)
-        for loan in loans
-        if loan.status in ("APPROVED", "ACTIVE", "CLOSED")
+        float(loan.principal_amount) for loan in loans if loan.status in ("APPROVED", "ACTIVE", "CLOSED")
     )
-    total_outstanding = sum(
-        float(loan.remaining_amount) for loan in loans if loan.status in ("APPROVED", "ACTIVE")
-    )
+    total_outstanding = sum(float(loan.remaining_amount) for loan in loans if loan.status in ("APPROVED", "ACTIVE"))
 
     return _ok(
         LoanSummaryData(
@@ -95,9 +86,7 @@ def v2_list_loans(customer: dict = Depends(get_current_customer)) -> ApiResponse
     )
 
 
-@router.post(
-    "/loans/apply", response_model=ApiResponse[MessageData], status_code=status.HTTP_201_CREATED
-)
+@router.post("/loans/apply", response_model=ApiResponse[MessageData], status_code=status.HTTP_201_CREATED)
 def v2_apply_loan(req: LoanApplyRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Apply for a new loan."""
     acc_no = customer["account_number"]
@@ -131,8 +120,7 @@ def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)) ->
 
     pct = float(loan.amount_paid / loan.principal_amount * 100) if loan.principal_amount > 0 else 0
     remaining_emis = (
-        int(loan.remaining_amount / loan.emi_amount)
-        + (1 if loan.remaining_amount % loan.emi_amount > 0 else 0)
+        int(loan.remaining_amount / loan.emi_amount) + (1 if loan.remaining_amount % loan.emi_amount > 0 else 0)
         if loan.emi_amount > 0
         else 0
     )
@@ -165,9 +153,7 @@ def v2_get_loan(loan_id: str, customer: dict = Depends(get_current_customer)) ->
 
 
 @router.post("/loans/{loan_id}/pay-emi", response_model=ApiResponse[MessageData])
-def v2_pay_emi(
-    loan_id: str, req: LoanPayEMIRequest, customer: dict = Depends(get_current_customer)
-) -> ApiResponse:
+def v2_pay_emi(loan_id: str, req: LoanPayEMIRequest, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Pay the monthly EMI for a loan."""
     acc_no = customer["account_number"]
     c = _get_container()

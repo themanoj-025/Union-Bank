@@ -1,8 +1,8 @@
 # ADR-0005: Data Retention & Idempotency
 
-**Status:** Accepted  
-**Date:** 2026-07-16  
-**Deciders:** Engineering Team  
+**Status:** Accepted
+**Date:** 2026-07-16
+**Deciders:** Engineering Team
 **References:**
 - [ADR-0002: Consolidate Service Layer](ADR-0002-consolidate-service-layer.md)
 - [THREAT_MODEL.md](./../reference/THREAT_MODEL.md)
@@ -52,7 +52,7 @@ and `TransferRequest` API models, and to the three service methods:
 2. `withdraw(acc_no, amount, category, idempotency_key?)`
 3. `transfer(sender, receiver, amount, category, idempotency_key?)`
 
-**Protocol:**  
+**Protocol:**
 - Client generates a globally unique key (e.g. UUIDv4) per operation.
 - Server checks `IdempotencyRepository.get(key)` before executing.
 - If a cached record exists → return it. Never re-execute.

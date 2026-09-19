@@ -88,69 +88,63 @@ class TestLoanConstants:
 class TestLoanServiceApply:
     """Loan application use-case."""
 
-    def test_apply_loan_success(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_success(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 24, "Home renovation"
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 24, "Home renovation")
         assert result.success is True
         assert "loan_id" in result.data
 
     def test_apply_loan_account_not_found(self, service: LoanService) -> None:
-        result = service.apply_loan(
-            "9999999999", "Personal", Decimal("100000"), Decimal("12.0"), 24
-        )
+        result = service.apply_loan("9999999999", "Personal", Decimal("100000"), Decimal("12.0"), 24)
         assert result.success is False
         assert "not found" in result.message.lower()
 
-    def test_apply_loan_invalid_type(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_invalid_type(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "InvalidType", Decimal("100000"), Decimal("12.0"), 24
-        )
+        result = service.apply_loan("1000000001", "InvalidType", Decimal("100000"), Decimal("12.0"), 24)
         assert result.success is False
         assert "Invalid loan type" in result.message
 
-    def test_apply_loan_below_minimum(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_below_minimum(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("500"), Decimal("12.0"), 24
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("500"), Decimal("12.0"), 24)
         assert result.success is False
         assert "Minimum" in result.message
 
-    def test_apply_loan_above_maximum(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_above_maximum(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("50000000"), Decimal("12.0"), 24
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("50000000"), Decimal("12.0"), 24)
         assert result.success is False
         assert "Maximum" in result.message
 
-    def test_apply_loan_invalid_tenure(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_invalid_tenure(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 200
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 200)
         assert result.success is False
         assert "Tenure" in result.message
 
-    def test_apply_loan_invalid_rate(self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account) -> None:
+    def test_apply_loan_invalid_rate(
+        self, service: LoanService, account_repo: FakeAccountRepository, sample_account: Account
+    ) -> None:
         account_repo.create(sample_account)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("100000"), Decimal("25.0"), 24
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("100000"), Decimal("25.0"), 24)
         assert result.success is False
         assert "Interest rate" in result.message
 
     def test_apply_loan_frozen_account(self, service: LoanService, account_repo: FakeAccountRepository) -> None:
-        frozen = Account(
-            account_number="1000000001", name="Frozen", is_frozen=True, balance=Decimal("500000")
-        )
+        frozen = Account(account_number="1000000001", name="Frozen", is_frozen=True, balance=Decimal("500000"))
         account_repo.create(frozen)
-        result = service.apply_loan(
-            "1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 24
-        )
+        result = service.apply_loan("1000000001", "Personal", Decimal("100000"), Decimal("12.0"), 24)
         assert result.success is False
         assert "frozen" in result.message.lower()
 

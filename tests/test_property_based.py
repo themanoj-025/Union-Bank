@@ -190,8 +190,7 @@ def test_transfer_preserves_total_balance(
     total_after = sum(a.balance for a in repo.get_all())
 
     assert total_before == total_after, (
-        f"Total balance changed from {total_before} to {total_after}! "
-        f"Money would be created or destroyed!"
+        f"Total balance changed from {total_before} to {total_after}! Money would be created or destroyed!"
     )
 
     if result.success:

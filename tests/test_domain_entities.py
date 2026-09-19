@@ -77,18 +77,22 @@ class TestAccount:
 class TestTransaction:
     def test_create_transaction(self) -> None:
         t = Transaction(
-            txn_id="TXN001", account_number="123",
+            txn_id="TXN001",
+            account_number="123",
             type=TransactionType.DEPOSIT,
-            amount=Decimal("1000"), balance=Decimal("5000"),
+            amount=Decimal("1000"),
+            balance=Decimal("5000"),
         )
         assert t.amount == Decimal("1000")
         assert t.category == "General"
 
     def test_repr(self) -> None:
         t = Transaction(
-            txn_id="TXN001", account_number="123",
+            txn_id="TXN001",
+            account_number="123",
             type=TransactionType.WITHDRAW,
-            amount=Decimal("500"), balance=Decimal("4500"),
+            amount=Decimal("500"),
+            balance=Decimal("4500"),
         )
         assert "TXN001" in repr(t)
 
@@ -96,31 +100,39 @@ class TestTransaction:
 class TestSavingsGoal:
     def test_progress_pct(self) -> None:
         g = SavingsGoal(
-            goal_id="G001", account_number="123",
-            name="Emergency", target_amount=Decimal("10000"),
+            goal_id="G001",
+            account_number="123",
+            name="Emergency",
+            target_amount=Decimal("10000"),
             current_amount=Decimal("5000"),
         )
         assert g.progress_pct == 50.0
 
     def test_progress_zero_target(self) -> None:
         g = SavingsGoal(
-            goal_id="G001", account_number="123",
-            name="X", target_amount=Decimal("0"),
+            goal_id="G001",
+            account_number="123",
+            name="X",
+            target_amount=Decimal("0"),
         )
         assert g.progress_pct == 0.0
 
     def test_remaining(self) -> None:
         g = SavingsGoal(
-            goal_id="G001", account_number="123",
-            name="X", target_amount=Decimal("10000"),
+            goal_id="G001",
+            account_number="123",
+            name="X",
+            target_amount=Decimal("10000"),
             current_amount=Decimal("3000"),
         )
         assert g.remaining == Decimal("7000")
 
     def test_remaining_overfunded(self) -> None:
         g = SavingsGoal(
-            goal_id="G001", account_number="123",
-            name="X", target_amount=Decimal("10000"),
+            goal_id="G001",
+            account_number="123",
+            name="X",
+            target_amount=Decimal("10000"),
             current_amount=Decimal("15000"),
         )
         assert g.remaining == Decimal("0.00")
@@ -129,38 +141,54 @@ class TestSavingsGoal:
 class TestLoan:
     def test_progress_pct(self) -> None:
         loan = Loan(
-            loan_id="L001", account_number="123",
-            loan_type="Personal", principal_amount=Decimal("100000"),
-            interest_rate=Decimal("10"), tenure_months=12,
-            emi_amount=Decimal("8792"), amount_paid=Decimal("50000"),
+            loan_id="L001",
+            account_number="123",
+            loan_type="Personal",
+            principal_amount=Decimal("100000"),
+            interest_rate=Decimal("10"),
+            tenure_months=12,
+            emi_amount=Decimal("8792"),
+            amount_paid=Decimal("50000"),
             remaining_amount=Decimal("50000"),
         )
         assert loan.progress_pct == 50.0
 
     def test_remaining_emis(self) -> None:
         loan = Loan(
-            loan_id="L001", account_number="123",
-            loan_type="Personal", principal_amount=Decimal("100000"),
-            interest_rate=Decimal("10"), tenure_months=12,
-            emi_amount=Decimal("8792"), remaining_amount=Decimal("17584"),
+            loan_id="L001",
+            account_number="123",
+            loan_type="Personal",
+            principal_amount=Decimal("100000"),
+            interest_rate=Decimal("10"),
+            tenure_months=12,
+            emi_amount=Decimal("8792"),
+            remaining_amount=Decimal("17584"),
         )
         assert loan.remaining_emis == 2
 
     def test_is_active(self) -> None:
         loan = Loan(
-            loan_id="L001", account_number="123",
-            loan_type="Personal", principal_amount=Decimal("100000"),
-            interest_rate=Decimal("10"), tenure_months=12,
-            emi_amount=Decimal("8792"), status=LoanStatus.ACTIVE.value,
+            loan_id="L001",
+            account_number="123",
+            loan_type="Personal",
+            principal_amount=Decimal("100000"),
+            interest_rate=Decimal("10"),
+            tenure_months=12,
+            emi_amount=Decimal("8792"),
+            status=LoanStatus.ACTIVE.value,
         )
         assert loan.is_active is True
 
     def test_is_not_active_pending(self) -> None:
         loan = Loan(
-            loan_id="L001", account_number="123",
-            loan_type="Personal", principal_amount=Decimal("100000"),
-            interest_rate=Decimal("10"), tenure_months=12,
-            emi_amount=Decimal("8792"), status=LoanStatus.PENDING.value,
+            loan_id="L001",
+            account_number="123",
+            loan_type="Personal",
+            principal_amount=Decimal("100000"),
+            interest_rate=Decimal("10"),
+            tenure_months=12,
+            emi_amount=Decimal("8792"),
+            status=LoanStatus.PENDING.value,
         )
         assert loan.is_active is False
 
@@ -168,7 +196,8 @@ class TestLoan:
 class TestRefreshToken:
     def test_valid_token(self) -> None:
         rt = RefreshToken(
-            token_id="T001", account_number="123",
+            token_id="T001",
+            account_number="123",
             role="customer",
             expires_at=datetime.now(UTC) + timedelta(days=7),
         )
@@ -177,7 +206,8 @@ class TestRefreshToken:
 
     def test_expired_token(self) -> None:
         rt = RefreshToken(
-            token_id="T001", account_number="123",
+            token_id="T001",
+            account_number="123",
             role="customer",
             expires_at=datetime.now(UTC) - timedelta(days=1),
         )
@@ -186,7 +216,8 @@ class TestRefreshToken:
 
     def test_revoked_token(self) -> None:
         rt = RefreshToken(
-            token_id="T001", account_number="123",
+            token_id="T001",
+            account_number="123",
             role="customer",
             expires_at=datetime.now(UTC) + timedelta(days=7),
             revoked_at=datetime.now(UTC),
@@ -202,7 +233,8 @@ class TestLoginAttempt:
 
     def test_locked(self) -> None:
         la = LoginAttempt(
-            key="123", count=5,
+            key="123",
+            count=5,
             lockout_until=datetime.now(UTC) + timedelta(minutes=15),
         )
         assert la.is_locked is True

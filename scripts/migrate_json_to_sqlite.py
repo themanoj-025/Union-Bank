@@ -114,9 +114,7 @@ def migrate_transactions() -> int:
                 # Ensure the account exists in the DB (create stub if needed)
                 account = session.query(AccountModel).filter_by(account_number=acc_no).first()
                 if account is None:
-                    logger.warning(
-                        f"Account {acc_no} not found in DB - creating stub for transaction {txn_id}"
-                    )
+                    logger.warning(f"Account {acc_no} not found in DB - creating stub for transaction {txn_id}")
                     account = AccountModel(
                         account_number=acc_no,
                         name=acc_no,  # account number as name

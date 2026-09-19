@@ -4,8 +4,6 @@ Tests for UNION-BANK- formatting and ID generation module.
 Tests currency formatting, timestamp helpers, and ID generators.
 """
 
-
-
 from unionbank.utils.formatting import (
     fmt_currency,
     generate_account_number,

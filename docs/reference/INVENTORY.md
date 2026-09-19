@@ -1,7 +1,7 @@
 # Phase -1: Forensic Inventory
 
-**Date:** July 15, 2026  
-**Auditor:** Automated import-graph trace  
+**Date:** July 15, 2026
+**Auditor:** Automated import-graph trace
 **Status:** All modules classified. Zero AMBIGUOUS entries remaining.
 
 ---
@@ -167,16 +167,16 @@ graph TD
     CLI --> AuthSvc
     V2 --> Auth
     V2 --> Services
-    
+
     Services --> Entities
     Services --> Repos
-    
+
     Repos --> DB
     Repos --> Cache
-    
+
     API --> Metrics
     API --> Auth
-    
+
     src/container.py --> Services
     src/container.py --> Repos
     src/config.py --> All

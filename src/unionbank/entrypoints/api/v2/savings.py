@@ -29,11 +29,7 @@ def v2_list_savings_goals(customer: dict = Depends(get_current_customer)) -> Api
 
     goal_list = []
     for g in goals:
-        pct = (
-            round((float(g.current_amount) / float(g.target_amount) * 100), 1)
-            if float(g.target_amount) > 0
-            else 0
-        )
+        pct = round((float(g.current_amount) / float(g.target_amount) * 100), 1) if float(g.target_amount) > 0 else 0
         goal_list.append(
             SavingsGoalOut(
                 goal_id=g.goal_id,
@@ -64,9 +60,7 @@ def v2_list_savings_goals(customer: dict = Depends(get_current_customer)) -> Api
     )
 
 
-@router.post(
-    "/savings", response_model=ApiResponse[SavingsGoalOut], status_code=status.HTTP_201_CREATED
-)
+@router.post("/savings", response_model=ApiResponse[SavingsGoalOut], status_code=status.HTTP_201_CREATED)
 def v2_create_savings_goal(req: SavingsGoalCreate, customer: dict = Depends(get_current_customer)) -> ApiResponse:
     """Create a new savings goal."""
     acc_no = customer["account_number"]
@@ -106,9 +100,7 @@ def v2_contribute_to_goal(
     acc_no = customer["account_number"]
     c = _get_container()
 
-    result = c.savings_goal_service().contribute(
-        acc_no=acc_no, goal_id=goal_id, amount=Decimal(str(req.amount))
-    )
+    result = c.savings_goal_service().contribute(acc_no=acc_no, goal_id=goal_id, amount=Decimal(str(req.amount)))
     if not result.success:
         _err(result.message)
 
@@ -117,9 +109,7 @@ def v2_contribute_to_goal(
         _err("Goal not found.", status.HTTP_404_NOT_FOUND)
 
     pct = (
-        round((float(goal.current_amount) / float(goal.target_amount) * 100), 1)
-        if float(goal.target_amount) > 0
-        else 0
+        round((float(goal.current_amount) / float(goal.target_amount) * 100), 1) if float(goal.target_amount) > 0 else 0
     )
     return _ok(
         SavingsGoalOut(

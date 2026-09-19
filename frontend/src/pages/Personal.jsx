@@ -18,14 +18,14 @@ function Personal() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero bg-gray"
         initial="hidden"
         animate="visible"
@@ -36,7 +36,7 @@ function Personal() {
         }}
       >
         <div className="subpage-hero-text">
-          <motion.h1 
+          <motion.h1
             style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px' }}
             variants={{
               hidden: { opacity: 0, y: 30 },
@@ -45,7 +45,7 @@ function Personal() {
           >
             YOUR MONEY,<br/>WITHOUT BORDERS
           </motion.h1>
-          <motion.p 
+          <motion.p
             style={{ fontSize: '20px', marginBottom: '30px', maxWidth: '500px', color: 'var(--gray-text)' }}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -54,8 +54,8 @@ function Personal() {
           >
             Join millions of people who save when they send, spend, and manage their personal finances globally with Union Bank.
           </motion.p>
-          <motion.button 
-            className="btn-primary" 
+          <motion.button
+            className="btn-primary"
             onClick={() => navigate('/signup')}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -67,7 +67,7 @@ function Personal() {
             Open an account in minutes
           </motion.button>
         </div>
-        <motion.div 
+        <motion.div
           className="subpage-hero-image"
           variants={{
             hidden: { opacity: 0, x: 50 },
@@ -78,7 +78,7 @@ function Personal() {
         </motion.div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"

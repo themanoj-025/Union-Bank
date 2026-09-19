@@ -15,14 +15,14 @@ function Pricing() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
       className="page-container"
     >
-      <motion.section 
+      <motion.section
         className="subpage-hero"
         initial="hidden"
         animate="visible"
@@ -34,7 +34,7 @@ function Pricing() {
         style={{ justifyContent: 'center', textAlign: 'center' }}
       >
         <div style={{ maxWidth: '800px' }}>
-          <motion.h1 
+          <motion.h1
             style={{ fontSize: 'clamp(48px, 6vw, 64px)', fontWeight: '900', lineHeight: '1.1', marginBottom: '20px' }}
             variants={{
               hidden: { opacity: 0, scale: 0.9, y: 30 },
@@ -43,7 +43,7 @@ function Pricing() {
           >
             100% TRANSPARENT <br/> ZERO HIDDEN FEES
           </motion.h1>
-          <motion.p 
+          <motion.p
             style={{ fontSize: '20px', color: 'var(--gray-text)', margin: '0 auto' }}
             variants={{
               hidden: { opacity: 0, y: 20 },
@@ -55,7 +55,7 @@ function Pricing() {
         </div>
       </motion.section>
 
-      <motion.section 
+      <motion.section
         className="info-section"
         variants={containerVariants}
         initial="hidden"
@@ -73,7 +73,7 @@ function Pricing() {
               <li style={{ padding: '15px 0', display: 'flex', gap: '10px' }}><span>✅</span> <span>Transparent tracking</span></li>
             </ul>
           </motion.div>
-          
+
           <motion.div className="info-card" variants={itemVariants} style={{ border: '2px solid var(--primary-green)', position: 'relative' }}>
             <div style={{ position: 'absolute', top: '-15px', right: '40px', backgroundColor: 'var(--primary-green)', color: 'black', padding: '5px 15px', borderRadius: '20px', fontWeight: '600', fontSize: '14px' }}>
               Most Popular

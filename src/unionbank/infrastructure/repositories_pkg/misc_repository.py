@@ -19,9 +19,7 @@ class SqlAlchemyIdempotencyRepository:
 
     def get(self, idempotency_key: str) -> IdempotencyRecord | None:
         """Retrieve an existing idempotency record by key."""
-        model = (
-            self.session.query(IdempotencyModel).filter_by(idempotency_key=idempotency_key).first()
-        )
+        model = self.session.query(IdempotencyModel).filter_by(idempotency_key=idempotency_key).first()
         if model is None:
             return None
         return IdempotencyRecord(
@@ -48,11 +46,7 @@ class SqlAlchemyIdempotencyRepository:
 
     def update(self, record: IdempotencyRecord) -> None:
         """Update an existing idempotency record (claim → completed result)."""
-        model = (
-            self.session.query(IdempotencyModel)
-            .filter_by(idempotency_key=record.idempotency_key)
-            .first()
-        )
+        model = self.session.query(IdempotencyModel).filter_by(idempotency_key=record.idempotency_key).first()
         if model is not None:
             model.result_json = record.result_json
             model.amount = record.amount
@@ -96,12 +90,7 @@ class SqlAlchemyAuditLogRepository:
         self.session.add(model)
 
     def get_recent(self, limit: int = 50) -> list:
-        models = (
-            self.session.query(AuditLogModel)
-            .order_by(AuditLogModel.timestamp.desc())
-            .limit(limit)
-            .all()
-        )
+        models = self.session.query(AuditLogModel).order_by(AuditLogModel.timestamp.desc()).limit(limit).all()
         return [
             {
                 "id": m.id,

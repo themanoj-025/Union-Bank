@@ -65,9 +65,7 @@ class MessageResponse(BaseModel):
 
 def _goal_to_out(goal) -> SavingsGoalOut:
     pct = (
-        round((float(goal.current_amount) / float(goal.target_amount) * 100), 1)
-        if float(goal.target_amount) > 0
-        else 0
+        round((float(goal.current_amount) / float(goal.target_amount) * 100), 1) if float(goal.target_amount) > 0 else 0
     )
     return SavingsGoalOut(
         goal_id=goal.goal_id,
@@ -202,9 +200,7 @@ def contribute_to_goal(
             detail=f"Insufficient balance. Available: {fmt_currency(float(domain_acc.balance))}",
         )
 
-    result = c.savings_goal_service().contribute(
-        acc_no=acc_no, goal_id=goal_id, amount=Decimal(str(req.amount))
-    )
+    result = c.savings_goal_service().contribute(acc_no=acc_no, goal_id=goal_id, amount=Decimal(str(req.amount)))
     if not result.success:
         raise HTTPException(status_code=400, detail=result.message)
 

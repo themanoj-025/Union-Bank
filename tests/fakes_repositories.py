@@ -68,9 +68,7 @@ class FakeAccountRepository:
 
     def create(self, account: Account) -> Account:
         if self.simulate_duplicate_key and account.account_number in self._accounts:
-            raise SimulatedDuplicateKeyError(
-                f"Duplicate key: account {account.account_number} already exists"
-            )
+            raise SimulatedDuplicateKeyError(f"Duplicate key: account {account.account_number} already exists")
         self._accounts[account.account_number] = account
         return account
 
@@ -126,11 +124,7 @@ class FakeAccountRepository:
 
     def search(self, query: str) -> list[Account]:
         q = query.lower()
-        return [
-            a
-            for a in self._accounts.values()
-            if q in a.account_number.lower() or q in a.name.lower()
-        ]
+        return [a for a in self._accounts.values() if q in a.account_number.lower() or q in a.name.lower()]
 
     def count(self) -> int:
         return len(self._accounts)
@@ -426,5 +420,3 @@ class FakeLoginAttemptRepository:
 
     def rollback(self) -> None:
         pass
-
-

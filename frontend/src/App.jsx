@@ -46,12 +46,12 @@ import 'flag-icons/css/flag-icons.min.css';
 function AppLayout() {
   const location = useLocation();
   const { user } = useAuth();
-  
+
   // Hide footer for auth pages or when logged in (to give a more app-like feel for dashboard, etc.)
   const hideFooter = [
     '/login', '/signup', '/admin', '/personal', '/business', '/platform', '/help'
   ].includes(location.pathname) || !!user;
-  
+
   return (
     <div className="app-container">
       <Header />

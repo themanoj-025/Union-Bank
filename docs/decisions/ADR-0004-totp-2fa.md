@@ -1,9 +1,9 @@
 # ADR-0004: TOTP 2FA Completion
 
-**Status:** Implemented  
-**Date:** 2026-07-16  
-**Author:** Union Bank Dev Team  
-**Deciders:** Architecture Review Board  
+**Status:** Implemented
+**Date:** 2026-07-16
+**Author:** Union Bank Dev Team
+**Deciders:** Architecture Review Board
 
 ---
 

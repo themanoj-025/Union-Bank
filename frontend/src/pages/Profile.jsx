@@ -7,7 +7,7 @@ import api from '../api';
 
 function Profile() {
   const { user, checkAuth, logout } = useAuth();
-  
+
   const [profileData, setProfileData] = useState({
     name: '',
     age: '',
@@ -15,7 +15,7 @@ function Profile() {
     mobile: '',
     email: ''
   });
-  
+
   const [passwordData, setPasswordData] = useState({
     current_password: '',
     new_password: '',
@@ -83,7 +83,7 @@ function Profile() {
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="dashboard-container"
@@ -100,9 +100,9 @@ function Profile() {
       </div>
 
       {message.text && (
-        <div style={{ 
-          padding: '15px', 
-          marginBottom: '20px', 
+        <div style={{
+          padding: '15px',
+          marginBottom: '20px',
           borderRadius: '8px',
           backgroundColor: message.type === 'error' ? '#fdecea' : '#eafdf0',
           color: message.type === 'error' ? 'red' : 'green'
@@ -119,7 +119,7 @@ function Profile() {
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Account Number</label>
               <input type="text" value={user?.account_number || ''} disabled style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ddd', backgroundColor: '#f5f5f5' }} />
             </div>
-            
+
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Full Name</label>
               <input type="text" name="name" value={profileData.name} onChange={handleProfileChange} required style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ddd' }} />

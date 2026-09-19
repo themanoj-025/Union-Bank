@@ -19,7 +19,7 @@ const Linkedin = ({ size = 24 }) => (
 
 function Footer() {
   return (
-    <motion.footer 
+    <motion.footer
       className="footer-section"
       initial={{ y: 100, opacity: 0 }}
       whileInView={{ y: 0, opacity: 1 }}

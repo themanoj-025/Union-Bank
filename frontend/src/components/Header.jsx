@@ -24,7 +24,7 @@ function Header() {
 
   return (
     <>
-      <motion.header 
+      <motion.header
         className="header"
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -56,8 +56,8 @@ function Header() {
           <Link to="/signup" className="btn-primary" style={{textDecoration: 'none', display: 'inline-flex', alignItems: 'center'}}>Sign up</Link>
         </div>
 
-        <button 
-          className="hamburger-menu" 
+        <button
+          className="hamburger-menu"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
           {isMobileMenuOpen ? '✕' : '☰'}
@@ -93,8 +93,8 @@ function Header() {
             <Link to="/help" style={{ fontSize: '18px', fontWeight: '600' }}>Help</Link>
             <Link to="/login" style={{ fontSize: '18px', fontWeight: '600' }}>Log in</Link>
             <Link to="/signup" className="btn-primary" style={{ textAlign: 'center' }}>Sign up</Link>
-            <button 
-              onClick={toggleTheme} 
+            <button
+              onClick={toggleTheme}
               style={{ background: 'var(--primary-green)', padding: '12px', borderRadius: '12px', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
             >
               {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}

@@ -70,7 +70,6 @@ def _get_account_lock(*acc_nos: str) -> asyncio.Lock:
 #  Async Transaction Service
 
 
-
 class AsyncTransactionService:
     """
     Async transaction use-cases (deposit, withdraw, transfer, statement, interest).
@@ -91,9 +90,7 @@ class AsyncTransactionService:
         self.notif_service = notif_service
         self.idempotency_repo = idempotency_repo
 
-    def _ensure_non_negative_balance(
-        self, balance: Decimal, operation: str = "transaction"
-    ) -> None:
+    def _ensure_non_negative_balance(self, balance: Decimal, operation: str = "transaction") -> None:
         """App-level guard: raise ValueError if balance would go negative."""
         if balance < Decimal("0.00"):
             raise ValueError(f"Insufficient balance for {operation}.")
@@ -122,9 +119,10 @@ class AsyncTransactionService:
             # declares timezone=True — normalize so the staleness math holds.
             if created_at is not None and created_at.tzinfo is None:
                 created_at = created_at.replace(tzinfo=UTC)
-            if created_at is not None and (
-                _utcnow() - created_at
-            ).total_seconds() > AsyncTransactionService._IDEMPOTENCY_STALE_SECONDS:
+            if (
+                created_at is not None
+                and (_utcnow() - created_at).total_seconds() > AsyncTransactionService._IDEMPOTENCY_STALE_SECONDS
+            ):
                 # A pending claim older than the staleness bound means the
                 # holder crashed mid-flight — the outcome is unknowable.
                 return "incomplete", data
@@ -229,11 +227,7 @@ class AsyncTransactionService:
         """Map a claim status to a ServiceResult (deposit/withdraw). None → claimed."""
         if status == "replay" and existing is not None:
             try:
-                data = (
-                    existing
-                    if isinstance(existing, dict)
-                    else json.loads(existing.result_json)
-                )
+                data = existing if isinstance(existing, dict) else json.loads(existing.result_json)
                 return ServiceResult(
                     success=data.get("success", True),
                     message=data.get("message", "Operation already completed."),
@@ -243,9 +237,7 @@ class AsyncTransactionService:
                 status = "corrupt"
         messages = {
             "corrupt": "Idempotency record corrupted; operation aborted. Contact support.",
-            "pending": (
-                f"{operation.capitalize()} already in progress for this idempotency key."
-            ),
+            "pending": (f"{operation.capitalize()} already in progress for this idempotency key."),
             "incomplete": "Previous attempt outcome unknown. Contact support before retrying.",
             "storage_error": "Idempotency storage unavailable; operation aborted. Please retry.",
         }
@@ -254,17 +246,11 @@ class AsyncTransactionService:
             return None
         return ServiceResult(success=False, message=message)
 
-    def _idempotency_transfer_result(
-        self, status: str, existing: IdempotencyRecord | None
-    ) -> TransferResult | None:
+    def _idempotency_transfer_result(self, status: str, existing: IdempotencyRecord | None) -> TransferResult | None:
         """Map a claim status to a TransferResult. None → claimed."""
         if status == "replay" and existing is not None:
             try:
-                data = (
-                    existing
-                    if isinstance(existing, dict)
-                    else json.loads(existing.result_json)
-                )
+                data = existing if isinstance(existing, dict) else json.loads(existing.result_json)
                 return TransferResult(
                     success=data.get("success", True),
                     sender_balance=Decimal(str(data.get("sender_balance", 0))),
@@ -297,9 +283,7 @@ class AsyncTransactionService:
         # Serialize writes to this account
         lock = _get_account_lock(acc_no)
         async with lock:
-            status, existing = await self._claim_idempotency(
-                idempotency_key, acc_no, "deposit", amount
-            )
+            status, existing = await self._claim_idempotency(idempotency_key, acc_no, "deposit", amount)
             cached = self._idempotency_service_result(status, existing, "deposit")
             if cached is not None:
                 return cached
@@ -307,16 +291,12 @@ class AsyncTransactionService:
             account = await self.account_repo.get(acc_no)
             if account is None:
                 failure = ServiceResult(success=False, message="Account not found.")
-                await self._complete_idempotency(
-                    idempotency_key, acc_no, "deposit", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, acc_no, "deposit", amount, failure)
                 return failure
             if not account.can_transact:
                 acc_status = "frozen" if account.is_frozen else "closed"
                 failure = ServiceResult(success=False, message=f"Account is {acc_status}.")
-                await self._complete_idempotency(
-                    idempotency_key, acc_no, "deposit", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, acc_no, "deposit", amount, failure)
                 return failure
 
             account.balance += amount
@@ -340,9 +320,7 @@ class AsyncTransactionService:
                 f"New balance: {fmt_currency(float(account.balance))}",
                 data={"balance": float(account.balance)},
             )
-            await self._complete_idempotency(
-                idempotency_key, acc_no, "deposit", amount, result
-            )
+            await self._complete_idempotency(idempotency_key, acc_no, "deposit", amount, result)
 
         # Send notification (non-fatal if fails)
         if self.notif_service and account:
@@ -368,9 +346,7 @@ class AsyncTransactionService:
         # Serialize writes to this account
         lock = _get_account_lock(acc_no)
         async with lock:
-            status, existing = await self._claim_idempotency(
-                idempotency_key, acc_no, "withdraw", amount
-            )
+            status, existing = await self._claim_idempotency(idempotency_key, acc_no, "withdraw", amount)
             cached = self._idempotency_service_result(status, existing, "withdraw")
             if cached is not None:
                 return cached
@@ -378,16 +354,12 @@ class AsyncTransactionService:
             account = await self.account_repo.get(acc_no)
             if account is None:
                 failure = ServiceResult(success=False, message="Account not found.")
-                await self._complete_idempotency(
-                    idempotency_key, acc_no, "withdraw", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, acc_no, "withdraw", amount, failure)
                 return failure
             if not account.can_transact:
                 acc_status = "frozen" if account.is_frozen else "closed"
                 failure = ServiceResult(success=False, message=f"Account is {acc_status}.")
-                await self._complete_idempotency(
-                    idempotency_key, acc_no, "withdraw", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, acc_no, "withdraw", amount, failure)
                 return failure
 
             if amount > account.balance:
@@ -395,9 +367,7 @@ class AsyncTransactionService:
                     success=False,
                     message=f"Insufficient balance. Available: {fmt_currency(float(account.balance))}",
                 )
-                await self._complete_idempotency(
-                    idempotency_key, acc_no, "withdraw", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, acc_no, "withdraw", amount, failure)
                 return failure
 
             account.balance -= amount
@@ -422,16 +392,12 @@ class AsyncTransactionService:
                 f"New balance: {fmt_currency(float(account.balance))}",
                 data={"balance": float(account.balance)},
             )
-            await self._complete_idempotency(
-                idempotency_key, acc_no, "withdraw", amount, result
-            )
+            await self._complete_idempotency(idempotency_key, acc_no, "withdraw", amount, result)
 
         # Send notification (non-fatal if fails)
         if self.notif_service and account:
             try:
-                await self.notif_service.notify_withdraw(
-                    acc_no, amount, account.balance, txn.txn_id
-                )
+                await self.notif_service.notify_withdraw(acc_no, amount, account.balance, txn.txn_id)
             except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
@@ -450,9 +416,7 @@ class AsyncTransactionService:
         if amount <= 0:
             return TransferResult(success=False, error_message="Amount must be positive.")
         if sender_acc_no == receiver_acc_no:
-            return TransferResult(
-                success=False, error_message="Cannot transfer to your own account."
-            )
+            return TransferResult(success=False, error_message="Cannot transfer to your own account.")
 
         cat = category if category in TRANSACTION_CATEGORIES else "General"
 
@@ -463,9 +427,7 @@ class AsyncTransactionService:
             # (DB-unique key) is atomic, so a concurrent same-key request
             # either replays this result or reports in-progress — it can
             # never double-execute.
-            status, existing = await self._claim_idempotency(
-                idempotency_key, sender_acc_no, "transfer", amount
-            )
+            status, existing = await self._claim_idempotency(idempotency_key, sender_acc_no, "transfer", amount)
             cached = self._idempotency_transfer_result(status, existing)
             if cached is not None:
                 return cached
@@ -475,34 +437,20 @@ class AsyncTransactionService:
 
             if sender is None:
                 failure = TransferResult(success=False, error_message="Sender account not found.")
-                await self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                 return failure
             if receiver is None:
-                failure = TransferResult(
-                    success=False, error_message="Recipient account not found."
-                )
-                await self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, failure
-                )
+                failure = TransferResult(success=False, error_message="Recipient account not found.")
+                await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                 return failure
 
             if not sender.can_transact:
-                failure = TransferResult(
-                    success=False, error_message="Your account is frozen or closed."
-                )
-                await self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, failure
-                )
+                failure = TransferResult(success=False, error_message="Your account is frozen or closed.")
+                await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                 return failure
             if not receiver.can_transact:
-                failure = TransferResult(
-                    success=False, error_message="Recipient account is frozen or closed."
-                )
-                await self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, failure
-                )
+                failure = TransferResult(success=False, error_message="Recipient account is frozen or closed.")
+                await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                 return failure
 
             if amount > sender.balance:
@@ -510,9 +458,7 @@ class AsyncTransactionService:
                     success=False,
                     error_message=f"Insufficient balance. Available: {fmt_currency(float(sender.balance))}",
                 )
-                await self._complete_idempotency(
-                    idempotency_key, sender_acc_no, "transfer", amount, failure
-                )
+                await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, failure)
                 return failure
 
             # Perform atomic transfer
@@ -566,9 +512,7 @@ class AsyncTransactionService:
                 sender_balance=sender.balance,
                 receiver_balance=receiver.balance,
             )
-            await self._complete_idempotency(
-                idempotency_key, sender_acc_no, "transfer", amount, result
-            )
+            await self._complete_idempotency(idempotency_key, sender_acc_no, "transfer", amount, result)
 
         # Send notifications (non-fatal if fails, outside lock)
         if self.notif_service:
@@ -607,9 +551,7 @@ class AsyncTransactionService:
         if not account.can_transact:
             return ServiceResult(success=False, message="Account is frozen or closed.")
 
-        interest = Decimal(
-            str(calculate_monthly_interest(float(account.balance), settings.SAVINGS_INTEREST_RATE))
-        )
+        interest = Decimal(str(calculate_monthly_interest(float(account.balance), settings.SAVINGS_INTEREST_RATE)))
         if interest <= 0:
             return ServiceResult(success=False, message="No interest to apply.")
 
@@ -631,9 +573,7 @@ class AsyncTransactionService:
         # Send notification (non-fatal if fails)
         if self.notif_service and account:
             try:
-                await self.notif_service.notify_interest(
-                    acc_no, interest, account.balance, txn.txn_id
-                )
+                await self.notif_service.notify_interest(acc_no, interest, account.balance, txn.txn_id)
             except (OSError, TimeoutError):
                 from unionbank.utils.logger import logger
 
@@ -688,5 +628,3 @@ class AsyncTransactionService:
 
 
 #  Async Account Service
-
-
