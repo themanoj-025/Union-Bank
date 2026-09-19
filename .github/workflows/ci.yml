@@ -29,7 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        # requires-python is >=3.11 (pyproject.toml); 3.10 collected 26 test
+        # import errors — the matrix advertised support the package can't have.
+        python-version: ["3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v7
