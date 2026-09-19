@@ -100,8 +100,11 @@ jobs:
         shell: bash
 
       - name: Check for password field in API response models
+        # Focused run: the global --cov/--cov-fail-under=50 from pyproject
+        # addopts only makes sense for the full suite (this single-file run
+        # topped out at 42.66% and failed the gate before running anything).
         run: |
-          python -m pytest tests/test_password_leak.py -q --tb=line
+          python -m pytest tests/test_password_leak.py -q --tb=line --no-cov
         shell: bash
 
       - name: Test with pytest
