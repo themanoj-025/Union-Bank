@@ -209,44 +209,80 @@ BRANCH_CODES = [
 
 TxnCategory = str  # type alias
 
-TRANSACTION_DESCRIPTIONS: list[TxnCategory] = [
+# Transaction-type mix drawn per generated transaction. Values match the
+# TransactionType enum in unionbank.domain.entities.
+TRANSACTION_TYPES: list[str] = ["DEPOSIT", "WITHDRAW", "TRANSFER_OUT", "TRANSFER_IN"]
+
+TXN_WEIGHTS: list[int] = [30, 25, 25, 20]
+
+# Category values mirror the options offered by the frontend transaction forms
+# (frontend/src/pages/Transactions/*.jsx) so seeded data reads like real usage.
+TYPE_CATEGORY_MAP: dict[str, list[str]] = {
+    "DEPOSIT": ["General", "Salary", "Savings", "Investment", "Other"],
+    "WITHDRAW": [
+        "General", "Food & Dining", "Transport", "Shopping",
+        "Bills & Utilities", "Entertainment", "Health", "Education",
+        "Rent", "Other",
+    ],
+    "TRANSFER_OUT": [
+        "General", "Rent", "Education", "Investment", "Shopping",
+        "Bills & Utilities", "Other",
+    ],
+    "TRANSFER_IN": ["General", "Salary", "Savings", "Investment", "Other"],
+}
+
+DEPOSIT_DESCRIPTIONS: list[str] = [
+    "Cash deposit",
     "Salary credit",
+    "Interest earned",
+    "Tax refund",
+    "Dividend credit",
+    "Cheque clearance",
+    "Freelance payment",
+    "Commission received",
+    "Gift received",
+    "Government subsidy",
+    "Pension credit",
+    "Fixed deposit interest",
+    "Family remittance",
+]
+
+WITHDRAW_DESCRIPTIONS: list[str] = [
     "ATM withdrawal",
-    "UPI payment",
-    "NEFT transfer",
-    "IMPS transfer",
     "Card payment",
+    "Grocery store",
+    "Restaurant",
+    "Fuel",
+    "Medical expense",
     "Electricity bill",
     "Mobile recharge",
     "Rent payment",
     "Insurance premium",
     "Mutual fund SIP",
-    "Fixed deposit interest",
-    "Grocery store",
-    "Restaurant",
-    "Fuel",
-    "Medical expense",
-    "Education fee",
-    "EMI payment",
-    "Loan disbursement",
-    "Loan repayment",
-    "Credit card payment",
     "Shopping",
     "Travel",
     "Entertainment",
     "Subscription",
-    "Cash deposit",
-    "Cheque clearance",
-    "Dividend credit",
-    "Interest earned",
-    "Tax refund",
-    "Government subsidy",
-    "Pension credit",
-    "Commission received",
-    "Freelance payment",
-    "Gift received",
+    "Education fee",
+]
+
+TRANSFER_OUT_DESCRIPTIONS: list[str] = [
+    "NEFT transfer",
+    "IMPS transfer",
+    "EMI payment",
+    "Loan repayment",
+    "Credit card payment",
+    "Rent payment",
     "Family remittance",
+    "Education fee",
+]
+
+TRANSFER_IN_DESCRIPTIONS: list[str] = [
     "Transfer received",
+    "Family remittance",
+    "Freelance payment",
+    "Commission received",
+    "Gift received",
 ]
 
 
