@@ -32,6 +32,17 @@
 
 <br>
 
+## 📸 Screenshots
+
+> _To add screenshots: run `docker compose up`, log in to the React app, capture your screen, save images to `docs/assets/`, and reference them below._
+>
+> **Suggested screenshots:**
+> - React dashboard with account balances and a completed transfer
+> - TOTP 2FA enrollment and login flow
+> - Grafana dashboard on Prometheus metrics (p95 latency, error rate)
+
+---
+
 ## 💡 Why I Built This
 
 I built this project to deeply understand how real ledgers handle concurrency and prevent lost money. I wanted to move beyond basic CRUD apps and solve the hard problems of atomic financial transactions and defense-in-depth security.
@@ -340,6 +351,12 @@ open http://localhost:5173    # or http://localhost:8000/docs for API docs
 ## 📄 License
 
 [MIT](LICENSE) — Use this as a portfolio reference. Contributions welcome.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
