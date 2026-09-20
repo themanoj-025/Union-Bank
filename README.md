@@ -34,10 +34,15 @@
 
 ## 📸 Screenshots
 
-> _To add screenshots: run `docker compose up`, log in to the React app, capture your screen, save images to `docs/assets/`, and reference them below._
+| | |
+|---|---|
+| ![Landing page](docs/assets/screenshots/landing.png) | ![Login](docs/assets/screenshots/login.png) |
+| *Marketing landing page* | *Customer login* |
+
+> _Captured from a live local run (React dev server + FastAPI). To add more: log in to the React app, capture your screen, save images to `docs/assets/screenshots/`, and reference them below._
 >
-> **Suggested screenshots:**
-> - React dashboard with account balances and a completed transfer
+> **Suggested additional screenshots:**
+> - Customer dashboard with account balances and a completed transfer
 > - TOTP 2FA enrollment and login flow
 > - Grafana dashboard on Prometheus metrics (p95 latency, error rate)
 
