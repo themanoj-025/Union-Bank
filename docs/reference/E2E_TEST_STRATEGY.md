@@ -9,7 +9,7 @@ to verify the system works as a whole.
 
 ## Test Architecture
 
-```
+```text
 ┌──────────────┐     ┌──────────────┐     ┌────────────┐     ┌───────────┐
 │  Playwright  │────▶│  React App   │────▶│  FastAPI   │────▶│ Postgres  │
 │  (Node.js)   │     │  (Vite dev)  │     │  (uvicorn) │     │  (test)   │
@@ -72,7 +72,7 @@ to verify the system works as a whole.
 
 ### Directory Structure
 
-```
+```text
 tests/
   e2e/
     __init__.py

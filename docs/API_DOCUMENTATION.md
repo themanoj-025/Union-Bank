@@ -10,7 +10,7 @@
 
 All protected endpoints require a Bearer JWT token in the `Authorization` header:
 
-```
+```text
 Authorization: Bearer <access_token>
 ```
 
@@ -227,7 +227,7 @@ curl http://localhost:8000/api/v2/account/balance \
 
 ## Architecture
 
-```
+```text
 Client → FastAPI (api/main.py)
          ├── /api/v2/* → v2.py router (ApiResponse envelope)
          ├── /api/*    → main.py (legacy v1, deprecated)

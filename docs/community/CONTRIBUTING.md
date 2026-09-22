@@ -74,7 +74,7 @@ This installs:
 
 ## Project Structure
 
-```
+```text
 ├── src/unionbank/             # Canonical Python package
 │   ├── domain/                # Pure domain entities, enums, interest logic
 │   ├── application/           # Services + protocol interfaces
@@ -125,7 +125,7 @@ This installs:
 
 We use a **trunk-based development** model with short-lived feature branches:
 
-```
+```text
 main                     ← Always deployable, protected
 ├── feat/my-feature      ← New features
 ├── fix/bug-description  ← Bug fixes
@@ -148,7 +148,7 @@ main                     ← Always deployable, protected
 
 Every commit message **must** follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
 
-```
+```text
 type(scope): description
 
 [optional body]
@@ -172,7 +172,7 @@ type(scope): description
 
 **Examples:**
 
-```
+```text
 feat(auth): add account-based rate limiting on money-movement endpoints
 
 Implement per-account rate limiter in Redis that tracks deposits,
@@ -182,14 +182,14 @@ Max 5 operations per account per hour.
 Closes #143
 ```
 
-```
+```text
 fix(api): correct health endpoint to check DB connectivity
 
 Previously returned 200 even when database was unreachable.
 Now runs SELECT 1 and returns 503 on failure.
 ```
 
-```
+```text
 chore(deps): pin fastapi to >=0.115.0 in requirements.txt
 ```
 

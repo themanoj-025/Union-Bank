@@ -63,7 +63,7 @@
 | Loading | Skeleton |
 | Error | Card-level retry |
 
-```
+```text
 ┌──────────────────────────┐
 │ Checking ···· 1234   ACTIVE│
 │ Balance                    │

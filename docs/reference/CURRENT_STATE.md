@@ -27,7 +27,7 @@
 
 ## Architecture (Current)
 
-```
+```text
 project_root/
 ├── api.py              ← LIVE FastAPI app (entry point)
 ├── main.py             ← LIVE CLI entry point

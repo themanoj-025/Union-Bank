@@ -26,7 +26,7 @@
 - **Naming:** snake_case (py), camelCase (TS), `UPPER_CASE` constants.
 - **Structure (canonical):**
 
-```
+```text
 UNION-BANK-/
 ├── src/unionbank/
 │   ├── domain/            # pure domain (no outside imports)

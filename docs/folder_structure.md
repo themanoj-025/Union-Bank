@@ -1,6 +1,6 @@
 # UNION-BANK- — Folder Structure
 
-```
+```text
 UNION-BANK-/
 ├── src/unionbank/                # Core package (src-layout, clean architecture)
 │   ├── config.py                 # Settings / env-driven config (single source)
