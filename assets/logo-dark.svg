@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120" role="img" aria-label="Union Bank Management System">
+  <!-- Blue rounded tile with a bank façade: pediment, architrave, columns, base -->
+  <rect x="4" y="10" width="100" height="100" rx="20" fill="#1D4ED8"/>
+  <path d="M54 26 L86 46 L22 46 Z" fill="#FFFFFF"/>
+  <rect x="26" y="50" width="56" height="6" rx="2" fill="#FFFFFF"/>
+  <rect x="31" y="60" width="8" height="24" fill="#FFFFFF"/>
+  <rect x="43" y="60" width="8" height="24" fill="#FFFFFF"/>
+  <rect x="55" y="60" width="8" height="24" fill="#FFFFFF"/>
+  <rect x="67" y="60" width="8" height="24" fill="#FFFFFF"/>
+  <rect x="26" y="88" width="56" height="6" rx="2" fill="#FFFFFF"/>
+  <!-- Wordmark — lightened for dark backgrounds -->
+  <text x="130" y="78" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="52" font-weight="700" fill="#60A5FA" letter-spacing="1">Union Bank</text>
+  <text x="132" y="102" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="500" fill="#9CA3AF" letter-spacing="2.5">MANAGEMENT SYSTEM</text>
+</svg>
