@@ -10,7 +10,7 @@ async PostgreSQL, layered architecture, and full observability.
 
 ## Structure
 
-```
+```text
 docs/
 ├── README.md                      ← this index
 ├── architecture.md                system architecture

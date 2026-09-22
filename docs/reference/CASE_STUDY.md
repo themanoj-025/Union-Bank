@@ -7,9 +7,9 @@
 ## Table of Contents
 
 1. [Atomic Transfers Under Concurrency](#1-atomic-transfers-under-concurrency)
-2. [Architecture Consolidation — From Chaos to One Canonical Tree](#2-architecture-consolidation)
+2. [Architecture Consolidation — From Chaos to One Canonical Tree](#2-architecture-consolidation--from-chaos-to-one-canonical-tree)
 3. [Security Defense in Depth — Beyond JWTs](#3-security-defense-in-depth)
-4. [Testing Strategy — From 26% to 73% Without Coverage Padding](#4-testing-strategy)
+4. [Testing Strategy — From 26% to 73% Without Coverage Padding](#4-testing-strategy--from-26-to-73-without-coverage-padding)
 
 ---
 
@@ -19,7 +19,7 @@
 
 A fund transfer is not a single operation. It's a sequence:
 
-```
+```text
 debit(sender_account, amount)     # Step 1
 credit(receiver_account, amount)  # Step 2
 ```
@@ -134,7 +134,7 @@ The protocol-based repository layer makes this a configuration change, not a cod
 
 The codebase had three overlapping generations of code:
 
-```
+```text
 root/
 ├── account.py          ← Flask/JSON era
 ├── bank.py             ← Flask/JSON era

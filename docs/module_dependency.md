@@ -6,7 +6,7 @@ Dependencies point **inward only**: `entrypoints` + `infrastructure` may use
 `application`, `domain`, `utils`, `config`; `application` may use `domain`;
 `domain` depends on nothing.
 
-```
+```text
 config.py            ← imported by every layer (settings, TESTING flag)
 domain/*             ← imported by application (entities in use cases) and
                        infrastructure (repositories/mappers map to entities)
@@ -33,7 +33,7 @@ entrypoints/cli/*    ← imports application.services + domain + utils
 
 ## Frontend → backend
 
-```
+```text
 frontend/src/api.js           → REST calls to backend /api/* (JWT bearer)
 frontend/src/context/AuthContext.jsx → login/session state, calls api.js
 frontend/src/pages/*.jsx      → components + api.js/AuthContext (no direct
