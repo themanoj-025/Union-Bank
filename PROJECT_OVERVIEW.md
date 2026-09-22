@@ -120,7 +120,7 @@ flowchart TB
 
 ## 4. Complete Folder Structure Tree
 
-```
+```text
 UNION-BANK-/
 ├── .dockerignore
 ├── .editorconfig
@@ -407,7 +407,7 @@ docker-compose -f docker-compose.prod.yml up
 
 ## 11. Dependency Graph Summary
 
-```
+```text
 entrypoints/api/main.py → application/services.py → infrastructure/repositories.py
 application/services.py → domain/entities.py
 infrastructure/repositories.py → infrastructure/database.py

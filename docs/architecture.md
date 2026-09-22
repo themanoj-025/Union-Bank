@@ -7,7 +7,7 @@ Kubernetes + Docker deployment.
 
 ## High-level components
 
-```
+```text
                      ┌──────────────────────────────────────┐
                      │        frontend/  (React SPA)        │
                      │  pages · components · AuthContext    │

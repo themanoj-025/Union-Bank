@@ -87,7 +87,7 @@ healthcheck:
 
 ### Prometheus Endpoint
 
-```
+```text
 GET /metrics
 ```
 
@@ -405,7 +405,7 @@ If admin locked out due to 2FA:
 
 ### A. Directory Structure
 
-```
+```text
 data/
 ├── bank.log          # Text application logs
 ├── bank.jsonl        # Structured JSON logs

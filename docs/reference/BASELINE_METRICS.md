@@ -85,7 +85,7 @@
 
 ### Test Count Growth
 
-```
+```text
 Count
 400┤                                  ● 386
    │                              ●
@@ -101,7 +101,7 @@ Count
 
 ### Coverage Growth
 
-```
+```text
 100%┤
     │
  80%┤                                  ● 73%
@@ -118,7 +118,7 @@ Count
 
 ### Dead Code Deletion
 
-```
+```text
 LOC
 20k┤ ● 18,744
     │  └── dead code (Flask JSON, duplicate modules)

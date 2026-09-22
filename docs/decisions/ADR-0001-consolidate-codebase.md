@@ -23,7 +23,7 @@ The root-level files were kept as backward-compatibility shims, relying on `sys.
 
 Delete all confirmed DEAD modules, leaving only one canonical tree:
 
-```
+```text
 project_root/
 ├── api.py              # LIVE — FastAPI entry point
 ├── main.py             # LIVE — CLI entry point

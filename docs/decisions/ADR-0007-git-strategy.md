@@ -14,7 +14,7 @@ The project had no consistent git strategy: commits were generic ("migration"), 
 
 ### 1. Branch Strategy: Trunk-Based with Feature Branches
 
-```
+```text
 main                ← Always deployable, protected
 ├── feat/*          ← Feature branches (merged via PR)
 ├── fix/*           ← Bugfix branches
@@ -35,7 +35,7 @@ main                ← Always deployable, protected
 
 Every commit message from Phase 8 forward **must** follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-```
+```text
 type(scope): description
 
 [optional body]
@@ -59,7 +59,7 @@ type(scope): description
 
 ### 3. Release Strategy: Semver with Tagged Releases
 
-```
+```text
 v<major>.<minor>.<patch>
 ```
 
