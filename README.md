@@ -1,4 +1,11 @@
 <p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg" />
+    <img src="assets/logo.svg" width="280" alt="Union Bank Management System logo — blue bank tile and wordmark" />
+  </picture>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/FastAPI-0.135%2B-009688?logo=fastapi&logoColor=white" alt="FastAPI">
   <img src="https://img.shields.io/badge/SQLAlchemy-2.0%2B-d71f00?logo=sqlalchemy&logoColor=white" alt="SQLAlchemy">
@@ -10,6 +17,14 @@
   <img src="https://img.shields.io/badge/coverage-73%25-yellowgreen" alt="Coverage">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
 </p>
+
+<!--
+  Social preview (maintainer note — invisible when rendered):
+  GitHub does not use the README header image for the repo card. Upload one manually:
+  Settings → General → Social preview → Edit → upload a 1280×640 (2:1) PNG under 1 MB.
+  Good hero candidates, both already in this README: the dashboard capture in the 📸 Screenshots
+  section, or the 🏗 architecture diagram. Re-upload to replace; GitHub caches the previous image.
+-->
 
 <br>
 
