@@ -103,6 +103,11 @@ ignore = [
     "T201",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+# Vendored CI helpers — shared verbatim across the portfolio; docstring
+# style for them follows the common config, not this repo's pydocstyle set
+".github/scripts/*" = ["D"]
+
 [tool.mypy]
 strict = true
 python_version = "3.11"
