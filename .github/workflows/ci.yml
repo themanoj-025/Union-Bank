@@ -134,7 +134,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           cache: npm
-          node-version: "20"
+          node-version: "20.19"
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -201,7 +201,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           cache: npm
-          node-version: "20"
+          node-version: "20.19"
 
       - name: Install frontend dependencies
         working-directory: frontend
@@ -495,7 +495,9 @@ jobs:
         run: |
           npx vite preview --port 5173 &
           sleep 5
-          lhci autorun --config=frontend/lighthouserc.json
+          # --no-failOnUploadFailure: budget enforcement must not depend on the
+          # upload step succeeding against a potentially non-writable target.
+          lhci autorun --config=frontend/lighthouserc.json --no-failOnUploadFailure
       - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
