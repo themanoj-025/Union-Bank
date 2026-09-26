@@ -13,8 +13,6 @@
   <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL">
   <img src="https://img.shields.io/badge/Redis-7.2-DC382D?logo=redis&logoColor=white" alt="Redis">
   <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Union-Bank/ci.yml?branch=main&label=CI&logo=github" alt="CI">
-  <img src="https://img.shields.io/badge/tests-386%20passing-brightgreen" alt="Tests">
-  <img src="https://img.shields.io/badge/coverage-73%25-yellowgreen" alt="Coverage">
   <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
 </p>
 
