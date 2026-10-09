@@ -1,0 +1,506 @@
+# Cancel superseded runs of this workflow on the same ref (PR pushes).
+# Never cancels on main pushes or scheduled runs.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+name: CI
+
+permissions:
+  contents: read
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.12"
+
+      - name: Run pre-commit hooks
+        run: |
+          pip install pre-commit
+          pre-commit run --all-files
+
+  backend-tests:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # requires-python is >=3.11 (pyproject.toml); 3.10 collected 26 test
+        # import errors — the matrix advertised support the package can't have.
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with ruff
+        run: |
+          pip install ruff==0.16.4
+          ruff check .
+
+      - name: "Check for bare except: pass (security anti-pattern)"
+        run: |
+          python -c "
+          import sys, os, re
+
+          failed = 0
+          # Match 'except:' or 'except Exception:' or 'except BaseException:' on its own line
+          # followed by 'pass' on the next line (the anti-pattern we ban)
+          except_re = re.compile(r'^\s*except(\s+(Exception|BaseException)|\s*)?:\s*$')
+          pass_re = re.compile(r'^\s*pass\s*$')
+
+          dirs = ['src', 'api']
+          files = ['api.py']
+
+          for d in dirs:
+              if not os.path.isdir(d):
+                  continue
+              for root, _, filenames in os.walk(d):
+                  for f in filenames:
+                      if not f.endswith('.py'):
+                          continue
+                      path = os.path.join(root, f)
+                      with open(path, encoding='utf-8') as fh:
+                          lines = fh.readlines()
+                      for i, line in enumerate(lines):
+                          if except_re.match(line):
+                              if i + 1 < len(lines) and pass_re.match(lines[i + 1]):
+                                  print(f'BARE EXCEPT FOUND: {path}:{i+1}: \"{line.strip()}\" followed by \"{lines[i+1].strip()}\"')
+                                  failed = 1
+
+          for f in files:
+              if os.path.isfile(f):
+                  path = f
+                  with open(path, encoding='utf-8') as fh:
+                      lines = fh.readlines()
+                  for i, line in enumerate(lines):
+                      if except_re.match(line):
+                          if i + 1 < len(lines) and pass_re.match(lines[i + 1]):
+                              print(f'BARE EXCEPT FOUND: {path}:{i+1}: \"{line.strip()}\" followed by \"{lines[i+1].strip()}\"')
+                              failed = 1
+
+          if failed:
+              print('FAIL: bare except:pass anti-patterns found (should log exception, not silently swallow)')
+              sys.exit(1)
+          else:
+              print('  ✓ No bare except:pass found')
+          "
+        shell: bash
+
+      - name: Check for password field in API response models
+        # Focused run: the global --cov/--cov-fail-under=50 from pyproject
+        # addopts only makes sense for the full suite (this single-file run
+        # topped out at 42.66% and failed the gate before running anything).
+        run: |
+          python -m pytest tests/test_password_leak.py -q --tb=line --no-cov
+        shell: bash
+
+      - name: Test with pytest
+        run: |
+          python -m pytest tests/ -v --tb=short --cov --cov-report=term --cov-fail-under=65
+        env:
+          UNION_BANK_TESTING: "1"
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+
+  frontend-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          cache: npm
+          node-version: "20.19"
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+  postgres-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: unionbank_test
+          POSTGRES_PASSWORD: test_password_ci
+          POSTGRES_DB: unionbank_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U unionbank_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests against PostgreSQL
+        run: |
+          python -m pytest tests/ -v --tb=short -o faulthandler_timeout=60
+        env:
+          UNION_BANK_TESTING: "1"
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+          DATABASE_URL: "postgresql://unionbank_test:test_password_ci@localhost:5432/unionbank_test"
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          cache: npm
+          node-version: "20.19"
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run frontend tests
+        working-directory: frontend
+        run: npm test
+
+  security-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run security tests
+        run: |
+          python -m pytest tests/test_security.py tests/test_password_leak.py -v --tb=short
+        env:
+          UNION_BANK_TESTING: "1"
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+
+  mutation-testing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mutmut
+
+      - name: Run mutation testing (non-blocking report)
+        run: |
+          mutmut run --paths-to-mutate src/unionbank/application/ --tests-dir tests/ --runner "python -m pytest tests/ -x --tb=short" 2>&1 | tail -30 || true
+        continue-on-error: true
+        env:
+          UNION_BANK_TESTING: "1"
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+
+  schemathesis-fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install schemathesis
+
+      - name: Generate OpenAPI spec
+        run: |
+          PYTHONPATH=src UNION_BANK_TESTING=1 python -c "
+          from unionbank.entrypoints.api.main import app
+          import json
+          with open('/tmp/openapi.json', 'w') as f:
+              json.dump(app.openapi(), f, indent=2)
+          "
+        env:
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+
+      - name: Schemathesis fuzz API
+        run: |
+          # Start the app in background
+          PYTHONPATH=src UNION_BANK_TESTING=1 uvicorn unionbank.entrypoints.api.main:app --host 0.0.0.0 --port 8000 &
+          sleep 3
+          st run --checks all /tmp/openapi.json --base-url http://localhost:8000 -w 5 --hypothesis-suppress-health-check=too_slow 2>&1 | tail -20 || true
+        env:
+          JWT_SECRET: "ci-test-secret"
+          FLASK_SECRET_KEY: "ci-test-flask-secret"
+
+  hadolint:
+    name: Container lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: hadolint/hadolint-action@06be81baf89a55ffd0e24b8f04a4185738dd3387 # v3.5.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+          ignore: DL3066
+
+  docker-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+
+      - name: Build Docker image (cached)
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
+        with:
+          context: .
+          file: Dockerfile
+          load: true
+          tags: unionbank:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Start services
+        run: |
+          docker compose up -d api
+
+      - name: Wait for API to be ready
+        run: |
+          echo "Waiting for API to be ready..."
+          timeout 30 sh -c 'until curl -s http://localhost:8000/api/health | grep -q "healthy"; do sleep 2; done' || echo "API health check timed out"
+
+      - name: Run tests in Docker
+        run: |
+          docker compose run --rm --no-deps -v ./tests:/app/tests api \
+            sh -c "UNION_BANK_TESTING=1 JWT_SECRET=ci-test-secret FLASK_SECRET_KEY=ci-test-flask-secret python -m pytest tests/ -v --tb=short --cov --cov-report=term --cov-fail-under=50"
+
+      - name: Check Docker container logs
+        if: always()
+        run: |
+          docker compose logs --tail=20 api 2>/dev/null || true
+
+      - name: Stop services
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+
+  secrets-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check for accidentally committed secrets
+        run: |
+          # Check for common secret patterns in diff
+          echo "Checking for secrets in repository..."
+          # Warn about .env files
+          if [ -f .env ]; then
+            echo "⚠️  WARNING: .env file exists in repository root!"
+          fi
+          # Check for potential secret patterns in non-config files
+          python -c "
+          import os, re, sys
+
+          # Patterns that look like secrets (not in config files or tests)
+          secret_patterns = [
+              (r'-----BEGIN RSA PRIVATE KEY-----', 'RSA private key'),
+              (r'AKIA[0-9A-Z]{16}', 'AWS access key'),
+              (r'ghp_[0-9a-zA-Z]{36}', 'GitHub personal access token'),
+              (r'gho_[0-9a-zA-Z]{36}', 'GitHub OAuth access token'),
+              (r'xox[baprs]-[0-9a-zA-Z-]+', 'Slack token'),
+              (r'sk_live_[0-9a-z]+', 'Stripe live secret key'),
+          ]
+
+          # Files to skip (expected to contain patterns)
+          skip_files = {'.gitignore', 'secrets-check', 'SECURITY.md', 'THREAT_MODEL.md'}
+          skip_dirs = {'.git', 'node_modules', '__pycache__', '.venv', 'venv'}
+
+          found = False
+          for root, dirs, files in os.walk('.'):
+              dirs[:] = [d for d in dirs if d not in skip_dirs and not d.startswith('.')]
+              for fname in files:
+                  if fname in skip_files:
+                      continue
+                  fpath = os.path.join(root, fname)
+                  if not os.path.isfile(fpath):
+                      continue
+                  try:
+                      with open(fpath, 'r', encoding='utf-8', errors='ignore') as f:
+                          content = f.read()
+                      for pattern, desc in secret_patterns:
+                          if re.search(pattern, content):
+                              print(f'  ⚠️  {desc} pattern found in: {fpath}')
+                              found = True
+                  except:
+                      pass
+
+          if found:
+              print('Secrets detected in repository! Review and remove before committing.')
+              sys.exit(1)
+          else:
+              print('  ✓ No secret patterns found in repository')
+          "
+        shell: bash
+        continue-on-error: true
+
+  link-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Check for broken links in docs
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2
+        with:
+          args: >-
+            --config /dev/null
+            --no-progress
+            --exclude 'https?://localhost'
+            --exclude 'https?://127\\.0\\.0\\.1'
+            --exclude 'https?://.*shields\\.io'
+            --exclude 'https?://.*example\\.com'
+            --exclude 'https?://.*test\\.org'
+            --exclude 'https?://.*\\{.*\\}.*'
+            '**/*.md'
+        continue-on-error: true
+
+  typecheck:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install mypy==1.15.0
+      - name: Type check with mypy
+        run: mypy . --ignore-missing-imports
+
+  security-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          cache: pip
+          python-version: '3.12'
+      - name: Install tools
+        run: pip install pip-audit bandit==1.9.4
+      - name: pip-audit
+        run: pip-audit -r requirements.txt
+      - name: Bandit security scan
+        run: bandit -r src/ -ll
+
+  lighthouse:
+    name: "Frontend — Lighthouse CI (performance budgets)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build frontend
+        run: npm run build
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+      - name: Start preview server + run Lighthouse
+        run: |
+          npx vite preview --port 5173 &
+          sleep 5
+          # --no-failOnUploadFailure: budget enforcement must not depend on the
+          # upload step succeeding against a potentially non-writable target.
+          lhci autorun --config=frontend/lighthouserc.json --no-failOnUploadFailure
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: lighthouse-reports
+          path: frontend/lhci-reports

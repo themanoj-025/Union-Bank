@@ -1,0 +1,36 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+#  UNION BANK MANAGEMENT SYSTEM  —  Python Dependencies
+# ═══════════════════════════════════════════════════════════════════════════════
+#  All versions are pinned for reproducible builds.
+#  See requirements-lock.txt for a complete transitive-dependency snapshot.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+alembic==1.20.0
+bcrypt==5.0.0
+colorama==0.4.6
+fastapi==0.141.1
+prometheus-client==0.24.1
+pytest==9.1.1
+pytest-cov==7.1.0
+httpx==0.28.1
+hypothesis==6.168.0
+PyJWT==2.14.0
+pyotp==2.10.0
+pybreaker==1.4.1  # circuit breaker used by application/services.py (was only in pyproject)
+redis==7.2.0
+slowapi==0.1.10
+SQLAlchemy==2.0.54
+uvicorn==0.53.0
+
+# Pyproject-matched dependencies
+pydantic==2.13.5
+python-multipart==0.0.20
+python-dotenv==1.2.3
+psycopg2-binary==2.9.13
+
+
+# OpenTelemetry distributed tracing (optional, enabled via OTEL_ENABLED=true)
+opentelemetry-api>=1.20.0,<2.0
+opentelemetry-sdk>=1.20.0,<2.0
+opentelemetry-exporter-otlp-proto-grpc>=1.20.0,<2.0
+opentelemetry-instrumentation-fastapi>=0.41b0,<1.0
