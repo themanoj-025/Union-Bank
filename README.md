@@ -195,7 +195,25 @@ See [SECURITY.md](SECURITY.md) for the security model, and [docs/reference/SELF_
 
 > [!IMPORTANT] This is a portfolio project with a realistic-but-simplified threat model. Do not run it as a public-facing service against real money without a third-party security review.
 
-## Testing
+## Modernization (2026-10) — repository restructure pass
+
+This pass applies the ULTRA MASTER REPOSITORY MODERNIZATION PROMPT (v7.0) structure-and-hygiene protocol. Only delete/merge/reorganize actions that are proven safe were applied; business logic, public APIs, DB migrations, and test counts were intentionally left untouched.
+
+### Changes applied
+- Removed the orphaned tracked artifact 'MODERNIZATION_AUDIT.md' (zero inbound references; duplicates `docs/audit/cleanup-audit-*.md`).
+- Removed untracked runtime data snapshots `data/union_bank.db`, `data/union_bank.db-wal`, `data/union_bank.db-shm` (documented runtime artifacts, gitignored by `data/*.db*`).
+- Retained '*.bak' snapshot files: they are the app's intentional runtime self-backup feature (`src/unionbank/utils/file_io.py` + `SECURITY.md`). Deleting them would remove a documented behavior artifact, so they were left in place and flagged for review.
+- 'README'/'CHANGELOG': documentation updated. No behavior change.
+
+### Verified gates
+- Frontend (Node 26): 'vite build' rc=0, 'oxlint' rc=0 (11 warnings / 0 errors).
+- Python (ruff, mypy, pytest, mypy): **NOT VERIFIED** in this sandbox — the host `python` launcher resolves to a corrupt Python 3.14 install and the repo requires >=3.11. CI runs these on GitHub Actions (3.11/3.12); baseline captured on the tracker. See `logs/` if a scratch run becomes possible; record exit codes there.
+
+### Intent & integrity
+- History preserved (git mv never used; no history rewrite).
+- No secrets added/removed; required disclosures (`AI_DISCLOSURE.md`, `SECURITY.md`, `LICENSE`) untouched.
+- Reversible: deletions are recoverable via git and the run can be rolled back per batch.
+
 
 ```bash
 # Run the full suite

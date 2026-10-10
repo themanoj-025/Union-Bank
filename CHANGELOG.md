@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+### Changed
+- Repository modernization (2026-10): removed orphaned tracked artifact `MODERNIZATION_AUDIT.md` and untracked runtime data snapshots `data/union_bank.db[.db-wal|.db-shm]` (proven safe, zero references); retained `*.bak` self-backup files (documented feature).
+- Frontend build/lint verified (Node 26). Python (ruff/mypy/pytest) NOT VERIFIED in this sandbox (corrupt Python 3.14 launcher; repo requires >=3.11).
 
 ### Added
 - PEP 561 `py.typed` marker for type-checking support
