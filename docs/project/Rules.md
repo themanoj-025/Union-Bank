@@ -1,4 +1,4 @@
-# Rules — UNION-BANK-: Coding Standards & AI-Agent Operating Rules
+# Rules — UNION-BANK-: Coding Standards & Engineering Operating Rules
 
 | Field | Value |
 | --- | --- |
@@ -56,7 +56,7 @@ UNION-BANK-/
 - Optional: mutation testing (mutmut), OpenAPI fuzzing (schemathesis) — both run in CI.
 - Frontend: Vitest + React Testing Library for states.
 
-## 5. AI Agent Operating Rules
+## 5. Engineering Operating Rules
 
 - Read Tracker.md and ImplementationPlan.md before starting a task.
 - Never mark a task 🟢 Done without the relevant tests passing (local or CI).
