@@ -59,19 +59,19 @@
 
 ## 📋 Table of Contents
 
-- [What this demonstrates](#-what-this-demonstrates)
-- [Architecture](#-architecture)
-- [Engineering case studies](#-engineering-case-studies)
-- [Quick start](#-quick-start)
-- [Metrics](#-metrics)
-- [Security](#-security)
-- [Environment variables](#-environment-variables)
+- [What this demonstrates](#what-this-demonstrates)
+- [Architecture](#architecture)
+- [Engineering case studies](#engineering-case-studies)
+- [Quick start](#quick-start)
+- [Metrics](#metrics)
+- [Security](#security)
+- [Environment variables](#environment-variables)
 - [Testing](#-testing)
-- [Continuous integration](#-continuous-integration)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
-- [Support](#-support)
-- [License](#-license)
+- [Continuous integration](#continuous-integration)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
 
 ---
 
@@ -223,6 +223,15 @@ python -m pytest tests/ -v
 python -m pytest tests/ -v --cov=apis --cov-report=term-missing
 ```
 
+## 🧪 Testing
+
+```bash
+# Run all test suites
+pytest
+```
+
+---
+
 ## Continuous integration
 
 GitHub Actions runs:
@@ -257,3 +266,4 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 MIT License — see [LICENSE](LICENSE).
 
 > [!IMPORTANT] The license in this README matches the `license` field in `pyproject.toml` and the contents of the `LICENSE` file. No conflicts were found.
+
