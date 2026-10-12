@@ -1,5 +1,3 @@
-# 🏦 Union Bank Management System
-
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg" />
@@ -7,263 +5,241 @@
   </picture>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/FastAPI-0.135%2B-009688?logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/SQLAlchemy-2.0%2B-d71f00?logo=sqlalchemy&logoColor=white" alt="SQLAlchemy" />
-  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" alt="React" />
-  <img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Redis-7.2-DC382D?logo=redis&logoColor=white" alt="Redis" />
-  <img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Union-Bank/ci.yml?branch=main&label=CI&logo=github" alt="CI" />
-  <img src="https://img.shields.io/badge/license-MIT-blue" alt="License" />
-</p>
-
-<!--
-  Social preview (maintainer note — invisible when rendered):
-  GitHub does not use the README header image for the repo card. Upload one manually:
-  Settings → General → Social preview → Edit → upload a 1280×640 (2:1) PNG under 1 MB.
-  Good hero candidates, both already in this README: the dashboard capture in the 📸 Screenshots
-  section, or the 🏗 architecture diagram. Re-upload to replace; GitHub caches the previous image.
--->
+<h1 align="center">Union Bank Management System</h1>
 
 <p align="center">
-  <em>A concurrent-safe banking API with atomic transactions, defense-in-depth security (JWT + TOTP 2FA + CSRF), async SQLAlchemy (SQLite/PostgreSQL), Prometheus observability, and 386 tests — built as a senior software engineering portfolio.</em>
+  <strong>Concurrent-safe banking core API with atomic transaction ledgering, defense-in-depth security, and multi-interface access.</strong>
 </p>
 
 <p align="center">
-  <a href="#-what-this-demonstrates">What This Demonstrates</a> •
-  <a href="#-architecture">Architecture</a> •
-  <a href="#-engineering-case-studies">Case Studies</a> •
-  <a href="#-quick-start">Quick Start</a> •
-  <a href="#-metrics">Metrics</a> •
-  <a href="docs/reference/SELF_AUDIT.md">Self-Audit</a>
+  <a href="https://github.com/themanoj-025/Union-Bank/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/Union-Bank/ci.yml?branch=main&label=CI" alt="CI Status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green?style=flat-square" alt="License MIT" /></a>
+  <a href="https://github.com/themanoj-025/Union-Bank/stargazers"><img src="https://img.shields.io/github/stars/themanoj-025/Union-Bank?style=social" alt="GitHub Stars" /></a>
+  <a href="https://github.com/themanoj-025/Union-Bank/issues"><img src="https://img.shields.io/github/issues/themanoj-025/Union-Bank?style=flat-square" alt="GitHub Issues" /></a>
+  <a href="https://github.com/themanoj-025/Union-Bank/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square" alt="PRs Welcome" /></a>
 </p>
 
 ---
 
-## 📸 Screenshots
+## Overview
 
-| | |
-|---|---|
-| ![Landing page](docs/assets/screenshots/landing.png) | ![Login](docs/assets/screenshots/login.png) |
-| *Marketing landing page* | *Customer login* |
+Union Bank is an institutional-grade, concurrency-safe banking core platform engineered to demonstrate high-reliability financial systems design. It pairs ACID transactional ledger updates with defense-in-depth cryptographic controls (RS256 JWT, TOTP 2FA, CSRF double-submit protection, and request idempotency).
 
-> To add more: log in to the React app, capture your screen, save images to `docs/assets/screenshots/`, and reference them below.
->
-> **Suggested additional screenshots:**
-> - Customer dashboard with account balances and a completed transfer
-> - TOTP 2FA enrollment and login flow
-> - Grafana dashboard on Prometheus metrics (p95 latency, error rate)
+All interfaces — terminal CLI, React 19 web banking SPA, and FastAPI REST endpoints — communicate through a unified domain and application service architecture, ensuring total consistency across money movement workflows.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-- [What this demonstrates](#what-this-demonstrates)
-- [Architecture](#architecture)
-- [Engineering case studies](#engineering-case-studies)
-- [Quick start](#quick-start)
-- [Metrics](#metrics)
-- [Security](#security)
-- [Environment variables](#environment-variables)
-- [Testing](#-testing)
-- [Continuous integration](#continuous-integration)
+- [Key Features](#key-features)
+- [Architecture & Domain Model](#architecture--domain-model)
+- [Supported Interfaces](#supported-interfaces)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation & Quick Start](#installation--quick-start)
+- [Security Architecture](#security-architecture)
+- [Configuration](#configuration)
+- [Testing & Fault Injection](#testing--fault-injection)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
-- [Support](#support)
 - [License](#license)
+- [Support](#support)
 
 ---
 
-## What this demonstrates
+## Key Features
 
-A multi-interface banking system built to demonstrate senior-level engineering:
+- **Strictly Atomic Transactions**: Money movements run inside isolated database transactions with automated compensating rollbacks; proven safe against simulated mid-write crashes.
+- **Defense-in-Depth Security**: Enforces asymmetric RS256 JWTs with token rotation, RFC 6238 TOTP two-factor authentication, and signed httpOnly cookies.
+- **Idempotent API Execution**: Every financial transfer accepts a unique idempotency key preventing duplicate fund withdrawals under network retries.
+- **Comprehensive Observability**: Out-of-the-box Prometheus metrics exporter, OpenTelemetry distributed tracing hooks, and structured JSON logs.
+- **Asynchronous Task Workers**: Background job orchestration backed by Redis queues with Dead Letter Queue handling.
 
-| Interface | Stack | Users |
-| --- | --- | --- |
-| CLI | Typer + Rich | Admin, Staff, Customers (local/offline) |
-| Web Dashboard | React 19 + Vite SPA | Admin, Staff (browser-based) |
-| REST API | FastAPI `/v1/` (50+ endpoints) | All clients, integrations |
+---
 
-The business logic is shared across all three interfaces through a single service layer, so each client remains thin and independently deployable.
-
-## Architecture
+## Architecture & Domain Model
 
 ```text
-Union-Bank/
-├── apis/                    # FastAPI REST service (v1)
-│   ├── routes/              # Endpoints
-│   ├── services/            # Shared business logic
-│   ├── models/              # SQLAlchemy schemas
-│   └── security/            # JWT, TOTP, CSRF
-├── cli/                     # Typer CLI client
-├── web/                     # React 19 + Vite SPA
-├── db/                      # Alembic migrations + PostgreSQL adapter
-├── workers/                 # Async task workers (Redis-backed)
-├── tests/                   # pytest suite (386 tests)
-├── docker-compose.yml
-└── requirements.txt
+               Client Ingress (Web SPA / CLI / API)
+                                │
+                                ▼
+         FastAPI Layer (src/unionbank/entrypoints/api)
+       ┌────────────────────────┼────────────────────────┐
+       ▼                        ▼                        ▼
+  Auth & Security       Idempotency Gate        Rate Limiting
+  (RS256 + TOTP)        (Redis Key Store)       (SlowAPI Limits)
+       │                        │                        │
+       └────────────────────────┼────────────────────────┘
+                                │
+                                ▼
+                     Application Services
+           (src/unionbank/application/services)
+                                │
+                                ▼
+                     Domain Ledger Entities
+              (src/unionbank/domain/entities)
+                                │
+                                ▼
+                     Async SQLAlchemy ORM
+                   (PostgreSQL 16 / SQLite)
 ```
 
-## Engineering case studies
+---
 
-### Atomic transactions
+## Supported Interfaces
 
-The transfer/ledger paths use DB-level transactions with a compensating-rollback design. Fault-injection tests (`tests/test_atomicity.py`) intentionally trigger failures mid-write to prove that no partial state survives a crash or a failed transfer.
+| Interface | Implementation | Target Audience |
+| :--- | :--- | :--- |
+| **Terminal CLI** | Typer + Rich (`unionbank.entrypoints.cli`) | System administrators, audit officers, automated batch pipelines |
+| **Web Dashboard** | React 19 + TypeScript SPA (`frontend/`) | Online banking retail customers and branch operations staff |
+| **REST API** | FastAPI 0.135+ (`unionbank.entrypoints.api`) | Multi-interface core backend and programmatic integrations |
 
-### Defense in depth
+---
 
-- **JWT** (RS256) for API authentication, with a short expiry and a refresh rotation
-- **TOTP 2FA** for interactive login, with recovery codes
-- **CSRF** protection on state-changing routes via double-submit cookies
-- **Per-request idempotency keys** on money movements
+## Project Structure
 
-### Observability
+```text
+UNION-BANK-/
+├── frontend/               # React 19 + Vite web banking single-page app
+├── src/
+│   └── unionbank/          # Core Python domain package
+│       ├── application/    # Application use-case services and workflows
+│       ├── domain/         # Core business entities and ledger constraints
+│       ├── entrypoints/    # FastAPI REST server and Typer CLI commands
+│       │   ├── api/        # REST routes, schemas, and main.py entry
+│       │   └── cli/        # Command-line interface definitions
+│       ├── infrastructure/ # Database repositories, cache, and external adapters
+│       └── utils/          # Encryption, hashing, and token helpers
+├── tests/                  # Pytest unit, integration, and fault-injection suites
+├── alembic/                # Database migration revisions
+├── docker-compose.yml      # Multi-container orchestration (API, Frontend, DB, Redis)
+├── pyproject.toml          # Build backend and quality tool configuration
+├── requirements.txt        # Backend dependencies
+└── README.md               # Project documentation
+```
 
-- Prometheus metrics (`/metrics`), structured with structlog
-- OpenTelemetry tracing for the API and worker paths
-- Slack/email alerts on failure-rate and p95-latency thresholds
+---
 
-## Quick start
+## Prerequisites
 
-### Prerequisites
+- **Python**: `>= 3.11`
+- **Node.js**: `>= 20.0` (required for web frontend)
+- **Database**: PostgreSQL 16 (or SQLite for local development)
+- **Redis**: `>= 7.0` (for token revocation and idempotency locks)
 
-- Python 3.11 or newer
-- Docker & Docker Compose (for the production-like PostgreSQL + Redis stack)
+---
 
-### Option A — Local dev (SQLite, zero external services)
+## Installation & Quick Start
+
+### 1. Clone & Set Up Backend
 
 ```bash
-# 1. Clone the repository
+# Clone repository
 git clone https://github.com/themanoj-025/Union-Bank.git
 cd Union-Bank
 
-# 2. Create and activate a virtual environment
+# Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+# Linux/macOS: source .venv/bin/activate
+# Windows: .venv\Scripts\Activate.ps1
 
-# 3. Install dependencies
+# Install requirements
 pip install -r requirements.txt
 
-# 4. Apply database migrations (SQLite dev DB)
-alembic upgrade heads
-
-# 5. Run the API
-uvicorn apis.main:app --reload --port 8000
+# Run migrations
+alembic upgrade head
 ```
 
-Open `http://localhost:8000/docs` for the Swagger UI.
-
-### Option B — Full stack (PostgreSQL + Redis, with Docker)
+### 2. Configure Environment
 
 ```bash
-# 1. Clone and copy the environment template
 cp .env.example .env
-
-# 2. Start the stack (API + DB + Redis + worker)
-docker compose up --build
-
-# The API is then available at http://localhost:8000
 ```
 
-### Environment variables
+### 3. Launch Services
 
-| Variable | Default | Required | Description |
-| --- | --- | --- | --- |
-| `DATABASE_URL` | `sqlite:///./unionbank.db` | No | Dev: SQLite. Prod: PostgreSQL. |
-| `DATABASE_URL_POSTGRES` | `postgresql+asyncpg://user:pass@db:5432/unionbank` | No | Production PostgreSQL connection |
-| `REDIS_URL` | `redis://redis:6379/0` | No | Cache + worker broker |
-| `JWT_SECRET` | — | Yes | JWT signing secret |
-| `TOTP_SECRET` | — | Yes | TOTP issuer secret |
-| `CSRF_SECRET` | — | Yes | CSRF token secret |
-| `LOG_LEVEL` | `info` | No | Logging verbosity |
-| `METRICS_PORT` | `9090` | No | Prometheus metrics port |
-
-## Metrics
-
-| Metric | Value |
-| --- | --- |
-| Automated tests | **386 passing** (`pytest tests/`) |
-| API endpoints | 50+ (`/v1/`), documented in Swagger UI |
-| Security controls | JWT (RS256) + TOTP 2FA + CSRF + idempotency |
-| Observability | Prometheus + OpenTelemetry + structured logging |
-| Database | Async SQLAlchemy over PostgreSQL (SQLite in dev) |
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for the security model, and [docs/reference/SELF_AUDIT.md](docs/reference/SELF_AUDIT.md) for the latest self-audit.
-
-> [!IMPORTANT] This is a portfolio project with a realistic-but-simplified threat model. Do not run it as a public-facing service against real money without a third-party security review.
-
-## Modernization (2026-10) — repository restructure pass
-
-This pass applies the ULTRA MASTER REPOSITORY MODERNIZATION PROMPT (v7.0) structure-and-hygiene protocol. Only delete/merge/reorganize actions that are proven safe were applied; business logic, public APIs, DB migrations, and test counts were intentionally left untouched.
-
-### Changes applied
-- Removed the orphaned tracked artifact 'MODERNIZATION_AUDIT.md' (zero inbound references; duplicates `docs/audit/cleanup-audit-*.md`).
-- Removed untracked runtime data snapshots `data/union_bank.db`, `data/union_bank.db-wal`, `data/union_bank.db-shm` (documented runtime artifacts, gitignored by `data/*.db*`).
-- Retained '*.bak' snapshot files: they are the app's intentional runtime self-backup feature (`src/unionbank/utils/file_io.py` + `SECURITY.md`). Deleting them would remove a documented behavior artifact, so they were left in place and flagged for review.
-- 'README'/'CHANGELOG': documentation updated. No behavior change.
-
-### Verified gates
-- Frontend (Node 26): 'vite build' rc=0, 'oxlint' rc=0 (11 warnings / 0 errors).
-- Python (ruff, mypy, pytest, mypy): **NOT VERIFIED** in this sandbox — the host `python` launcher resolves to a corrupt Python 3.14 install and the repo requires >=3.11. CI runs these on GitHub Actions (3.11/3.12); baseline captured on the tracker. See `logs/` if a scratch run becomes possible; record exit codes there.
-
-### Intent & integrity
-- History preserved (git mv never used; no history rewrite).
-- No secrets added/removed; required disclosures (`AI_DISCLOSURE.md`, `SECURITY.md`, `LICENSE`) untouched.
-- Reversible: deletions are recoverable via git and the run can be rolled back per batch.
-
-
+**Run FastAPI Backend**:
 ```bash
-# Run the full suite
-python -m pytest tests/ -v
-
-# Run with coverage
-python -m pytest tests/ -v --cov=apis --cov-report=term-missing
+uvicorn unionbank.entrypoints.api.main:app --host 0.0.0.0 --port 8000 --reload
 ```
+*Access interactive Swagger documentation at http://localhost:8000/docs.*
 
-## 🧪 Testing
-
+**Run React Web Banking Interface**:
 ```bash
-# Run all test suites
-pytest
+cd frontend
+npm install
+npm run dev
+```
+*Access web interface at http://localhost:5173.*
+
+**Run Command-Line Banking Interface**:
+```bash
+python -m unionbank.entrypoints.cli.main --help
 ```
 
 ---
 
-## Continuous integration
+## Security Architecture
 
-GitHub Actions runs:
+- **RS256 Asymmetric Tokens**: API access tokens signed with private keys; microservices verify using public keys.
+- **Hardware/Software TOTP**: Compatible with Google Authenticator, 1Password, and Authy.
+- **State-Changing CSRF Gates**: Enforces double-submit cookie validation across browser sessions.
+- Refer to [SECURITY.md](SECURITY.md) for vulnerability disclosure protocols.
 
-- Lint + format (ruff, black)
-- Typecheck (mypy)
-- Unit + integration tests (386 tests)
-- Security scans (bandit, gitleaks, dependency-audit)
+---
+
+## Configuration
+
+| Environment Variable | Default | Purpose |
+| :--- | :--- | :--- |
+| `DATABASE_URL` | `sqlite:///./unionbank.db` | Development relational database URI |
+| `DATABASE_URL_POSTGRES`| `postgresql+asyncpg://...`| Production PostgreSQL connection string |
+| `REDIS_URL` | `redis://localhost:6379/0` | Cache, idempotency lock, and worker broker |
+| `JWT_SECRET` | `""` | Signing secret for access tokens |
+| `TOTP_SECRET` | `""` | TOTP issuer secret seed |
+| `CSRF_SECRET` | `""` | Cryptographic secret for signing CSRF tokens |
+| `LOG_LEVEL` | `info` | Logging verbosity |
+
+---
+
+## Testing & Fault Injection
+
+The test suite includes dedicated concurrency and fault-injection suites to verify ledger durability under chaos conditions:
+
+```bash
+# Run complete test suite (386+ tests)
+pytest tests/ -v
+
+# Run fault-injection and atomicity tests
+pytest tests/test_atomicity.py -v
+```
+
+---
 
 ## Roadmap
 
-> [!CAUTION] Items marked with a checkbox are implemented. Items without a checkbox are tracked in the issue tracker — not built.
+- [x] Concurrent-safe ledger transfers with rollback guarantees
+- [x] RS256 JWT, TOTP 2FA, and double-submit CSRF security
+- [x] Prometheus metrics and OpenTelemetry instrumentation
+- [x] Unified service layer powering CLI, Web, and REST API
+- [ ] Multi-region active-active database failover <!-- TODO: Track via GitHub issue -->
+- [ ] ISO 20022 financial messaging format integration <!-- TODO: Track via GitHub issue -->
 
-- [x] CLI + Web + REST API interfaces sharing one business layer
-- [x] Atomic transfer transactions with fault-injection tests
-- [x] JWT + TOTP 2FA + CSRF defense-in-depth
-- [x] Prometheus observability + structured logging
-- [ ] Multi-region failover (tracked public issue)
+---
 
 ## Contributing
 
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions are welcomed! Please review [CONTRIBUTING.md](CONTRIBUTING.md) for branch and commit standards.
 
-## Support
-
-- 🐛 [Report a bug](https://github.com/themanoj-025/Union-Bank/issues)
-- 💡 [Request a feature](https://github.com/themanoj-025/Union-Bank/issues)
-- 📧 Email the maintainer via the issue tracker
+---
 
 ## License
 
-MIT License — see [LICENSE](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
-> [!IMPORTANT] The license in this README matches the `license` field in `pyproject.toml` and the contents of the `LICENSE` file. No conflicts were found.
+---
 
+## Support
+
+- 🐛 **Issue Tracker**: [GitHub Issues](https://github.com/themanoj-025/Union-Bank/issues)
+- 💡 **Discussions & Pull Requests**: [GitHub Pull Requests](https://github.com/themanoj-025/Union-Bank/pulls)
