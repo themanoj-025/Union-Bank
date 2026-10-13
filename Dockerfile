@@ -86,7 +86,9 @@ CMD ["sh", "-c", "exec scripts/docker-entrypoint.sh"]
 # ── Stage 2: Development (hot-reload) ────────────────────────────────────────
 FROM base AS dev
 
+USER root
 RUN pip install --no-cache-dir watchfiles
+USER app
 
 ENV ENTRYPOINT_TARGET=api
 CMD ["sh", "-c", "exec scripts/docker-entrypoint.sh"]

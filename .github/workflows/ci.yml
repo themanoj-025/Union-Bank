@@ -329,6 +329,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
+          target: api
           load: true
           tags: unionbank:ci
           cache-from: type=gha
@@ -336,6 +337,7 @@ jobs:
 
       - name: Start services
         run: |
+          cp .env.example .env 2>/dev/null || touch .env
           docker compose up -d api
 
       - name: Wait for API to be ready
