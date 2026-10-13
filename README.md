@@ -59,19 +59,19 @@
 
 ## 📋 Table of Contents
 
-- [What this demonstrates](#-what-this-demonstrates)
-- [Architecture](#-architecture)
-- [Engineering case studies](#-engineering-case-studies)
-- [Quick start](#-quick-start)
-- [Metrics](#-metrics)
-- [Security](#-security)
-- [Environment variables](#-environment-variables)
-- [Testing](#-testing)
-- [Continuous integration](#-continuous-integration)
-- [Roadmap](#-roadmap)
-- [Contributing](#-contributing)
-- [Support](#-support)
-- [License](#-license)
+- [What this demonstrates](#what-this-demonstrates)
+- [Architecture](#architecture)
+- [Engineering case studies](#engineering-case-studies)
+- [Quick start](#quick-start)
+- [Metrics](#metrics)
+- [Security](#security)
+- [Environment variables](#environment-variables)
+- [Testing](#testing)
+- [Continuous integration](#continuous-integration)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
 
 ---
 
