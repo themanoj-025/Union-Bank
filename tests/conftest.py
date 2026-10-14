@@ -38,15 +38,31 @@ def _unset_env_vars_for_safety() -> None:
     yield
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _setup_postgres_tables() -> None:
+    """Ensure all PostgreSQL tables are created once at session start."""
+    if "postgres" in os.environ.get("DATABASE_URL", ""):
+        from unionbank.infrastructure.database import get_engine, init_db
+
+        engine = get_engine()
+        init_db(engine)
+
+
 @pytest.fixture(autouse=True)
 def _clean_postgres_db() -> None:
     """Clean Postgres database between tests."""
     if "postgres" in os.environ.get("DATABASE_URL", ""):
+        from sqlalchemy import text
         from unionbank.infrastructure.database import ModelBase, get_engine
 
         engine = get_engine()
-        ModelBase.metadata.drop_all(engine)
-        ModelBase.metadata.create_all(engine)
+        table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
+        if table_names:
+            with engine.begin() as conn:
+                conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
+        else:
+            ModelBase.metadata.drop_all(engine)
+            ModelBase.metadata.create_all(engine)
 
 
 @pytest.fixture

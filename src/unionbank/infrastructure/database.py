@@ -124,6 +124,7 @@ def get_engine() -> Any:
         engine_kwargs["max_overflow"] = settings.DB_MAX_OVERFLOW
         engine_kwargs["pool_timeout"] = settings.DB_POOL_TIMEOUT
         _engine_instance = create_engine(db_url, **engine_kwargs)
+        _engine_url = db_url
 
     _session_maker = sessionmaker(autocommit=False, autoflush=False, bind=_engine_instance)
     return _engine_instance
