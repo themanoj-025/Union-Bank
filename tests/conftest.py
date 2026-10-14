@@ -53,18 +53,55 @@ def _clean_postgres_db() -> None:
     """Clean Postgres database between tests."""
     if "postgres" in os.environ.get("DATABASE_URL", ""):
         from sqlalchemy import text
-        from unionbank.infrastructure.database import ModelBase, get_engine, init_db
+        from unionbank.infrastructure.database import (
+            ModelBase,
+            close_session,
+            get_engine,
+            init_db,
+            reset_engine,
+        )
+
+        close_session()
+        reset_engine()
 
         engine = get_engine()
         try:
-            table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
-            if table_names:
-                with engine.begin() as conn:
-                    conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
-            else:
-                init_db(engine)
+            with engine.connect() as conn:
+                conn = conn.execution_options(isolation_level="AUTOCOMMIT")
+                try:
+                    conn.execute(
+                        text(
+                            "SELECT pg_terminate_backend(pid) "
+                            "FROM pg_stat_activity "
+                            "WHERE pid <> pg_backend_pid() "
+                            "  AND datname = current_database();"
+                        )
+                    )
+                except Exception:  # noqa: BLE001
+                    pass
+                conn.execute(text("SET lock_timeout = '3s';"))
+                table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
+                if table_names:
+                    try:
+                        conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
+                    except Exception:  # noqa: BLE001
+                        for table in reversed(ModelBase.metadata.sorted_tables):
+                            try:
+                                conn.execute(table.delete())
+                            except Exception:  # noqa: BLE001
+                                pass
+                else:
+                    init_db(engine)
         except Exception:  # noqa: BLE001
             init_db(engine)
+
+    yield
+
+    if "postgres" in os.environ.get("DATABASE_URL", ""):
+        from unionbank.infrastructure.database import close_session, reset_engine
+
+        close_session()
+        reset_engine()
 
 
 @pytest.fixture
@@ -301,6 +338,11 @@ def client():
 
     with TestClient(app) as tc:
         yield tc
+    if "postgres" in os.environ.get("DATABASE_URL", ""):
+        from unionbank.infrastructure.database import close_session, reset_engine
+
+        close_session()
+        reset_engine()
 
 
 @pytest.fixture
