@@ -28,14 +28,18 @@ from unionbank.infrastructure.database import get_db_url, is_sqlite
 
 target_metadata = Base.metadata
 
-# Determine the database URL from settings (respects DATABASE_URL env var)
-db_url = get_db_url()
+# Determine the database URL from env override or settings
+db_url = os.environ.get("DATABASE_URL") or get_db_url()
 if is_sqlite(db_url):
-    # For SQLite, ensure the data directory exists
-    data_dir = os.environ.get("UNION_BANK_DATA_DIR", str(_PROJECT_DIR / "data"))
-    Path(data_dir).mkdir(parents=True, exist_ok=True)
-    db_path = Path(data_dir) / "union_bank.db"
-    config.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
+    # If a specific SQLite URL was already set on config or in env, use it directly
+    if db_url.startswith("sqlite:///"):
+        config.set_main_option("sqlalchemy.url", db_url)
+    else:
+        # For SQLite, ensure the data directory exists
+        data_dir = os.environ.get("UNION_BANK_DATA_DIR", str(_PROJECT_DIR / "data"))
+        Path(data_dir).mkdir(parents=True, exist_ok=True)
+        db_path = Path(data_dir) / "union_bank.db"
+        config.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
 else:
     # For PostgreSQL, use the DATABASE_URL directly
     config.set_main_option("sqlalchemy.url", db_url)
