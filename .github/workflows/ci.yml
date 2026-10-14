@@ -151,7 +151,7 @@ jobs:
 
   postgres-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
 
     services:
       postgres:
@@ -317,7 +317,7 @@ jobs:
 
   docker-build:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -348,7 +348,7 @@ jobs:
       - name: Run tests in Docker
         run: |
           docker compose run --rm --no-deps -v ./tests:/app/tests api \
-            sh -c "UNION_BANK_TESTING=1 JWT_SECRET=ci-test-secret FLASK_SECRET_KEY=ci-test-flask-secret python -m pytest tests/ -v --tb=short --cov --cov-report=term --cov-fail-under=50"
+            sh -c "UNION_BANK_TESTING=1 JWT_SECRET=ci-test-secret FLASK_SECRET_KEY=ci-test-flask-secret python -m pytest tests/ -v --tb=short -o faulthandler_timeout=60 --cov --cov-report=term --cov-fail-under=50"
 
       - name: Check Docker container logs
         if: always()
