@@ -5,6 +5,7 @@ All tests use temporary directories — never touch real production data/ files.
 Test-safe env vars are set BEFORE any project module is imported.
 """
 
+import contextlib
 import os
 import tempfile
 from pathlib import Path
@@ -68,7 +69,7 @@ def _clean_postgres_db() -> None:
         try:
             with engine.connect() as conn:
                 conn = conn.execution_options(isolation_level="AUTOCOMMIT")
-                try:
+                with contextlib.suppress(Exception):
                     conn.execute(
                         text(
                             "SELECT pg_terminate_backend(pid) "
@@ -77,8 +78,6 @@ def _clean_postgres_db() -> None:
                             "  AND datname = current_database();"
                         )
                     )
-                except Exception:  # noqa: BLE001
-                    pass
                 conn.execute(text("SET lock_timeout = '3s';"))
                 table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
                 if table_names:
@@ -86,10 +85,8 @@ def _clean_postgres_db() -> None:
                         conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
                     except Exception:  # noqa: BLE001
                         for table in reversed(ModelBase.metadata.sorted_tables):
-                            try:
+                            with contextlib.suppress(Exception):
                                 conn.execute(table.delete())
-                            except Exception:  # noqa: BLE001
-                                pass
                 else:
                     init_db(engine)
         except Exception:  # noqa: BLE001

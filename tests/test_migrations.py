@@ -26,7 +26,10 @@ def alembic_config() -> Config:
     """Create an Alembic config pointing at a temporary SQLite database."""
     with tempfile.TemporaryDirectory() as tmpdir:
         db_path = os.path.join(tmpdir, "test_migration.db")
+        old_data_dir = os.environ.get("UNION_BANK_DATA_DIR")
+        old_db_url = os.environ.get("DATABASE_URL")
         os.environ["UNION_BANK_DATA_DIR"] = tmpdir
+        os.environ["DATABASE_URL"] = f"sqlite:///{db_path}"
 
         # Point alembic at the config
         project_root = Path(__file__).resolve().parent.parent
@@ -36,7 +39,15 @@ def alembic_config() -> Config:
         yield alembic_cfg
 
         # Cleanup
-        os.environ.pop("UNION_BANK_DATA_DIR", None)
+        if old_db_url is not None:
+            os.environ["DATABASE_URL"] = old_db_url
+        else:
+            os.environ.pop("DATABASE_URL", None)
+
+        if old_data_dir is not None:
+            os.environ["UNION_BANK_DATA_DIR"] = old_data_dir
+        else:
+            os.environ.pop("UNION_BANK_DATA_DIR", None)
 
 
 class TestAlembicMigrations:
