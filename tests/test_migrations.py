@@ -25,7 +25,7 @@ from alembic.config import Config
 def alembic_config() -> Config:
     """Create an Alembic config pointing at a temporary SQLite database."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        db_path = os.path.join(tmpdir, "test_migration.db")
+        db_path = os.path.join(tmpdir, "union_bank.db")
         old_data_dir = os.environ.get("UNION_BANK_DATA_DIR")
         old_db_url = os.environ.get("DATABASE_URL")
         os.environ["UNION_BANK_DATA_DIR"] = tmpdir
