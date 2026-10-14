@@ -417,5 +417,3 @@ def second_registered_customer(client) -> dict:
         "access_token": login_data["access_token"],
         "headers": {"Authorization": f"Bearer {login_data['access_token']}"},
     }
-
-

@@ -1,6 +1,5 @@
 """Tests for UNION-BANK- configuration module."""
 
-
 import pytest
 
 from unionbank.config import Config, _require_env, _optional_env
