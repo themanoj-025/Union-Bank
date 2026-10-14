@@ -286,7 +286,7 @@ async def async_atomic_session() -> AsyncGenerator[AsyncSession, None]:
 #  DB Initialization
 
 
-def init_db() -> None:
+def init_db(engine=None) -> None:
     """
     Create all tables if they don't exist.
 
@@ -322,5 +322,5 @@ def init_db() -> None:
         TransactionModel,
     ]
 
-    engine = get_engine()
+    engine = get_engine() if engine is None else engine
     ModelBase.metadata.create_all(bind=engine)
