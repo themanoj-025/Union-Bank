@@ -1,6 +1,5 @@
 """Tests for UNION-BANK- input validation helpers."""
 
-
 from unionbank.utils.validation import (
     validate_email,
     validate_name,

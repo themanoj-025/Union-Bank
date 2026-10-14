@@ -1,6 +1,5 @@
 """Tests for UNION-BANK- password hashing (bcrypt)."""
 
-
 from unionbank.utils.hashing import hash_password, verify_password
 
 

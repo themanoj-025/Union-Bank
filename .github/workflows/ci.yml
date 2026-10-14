@@ -230,7 +230,7 @@ jobs:
 
       - name: Run security tests
         run: |
-          python -m pytest tests/test_security.py tests/test_password_leak.py -v --tb=short
+          python -m pytest tests/test_security.py tests/test_password_leak.py -v --tb=short --no-cov
         env:
           UNION_BANK_TESTING: "1"
           JWT_SECRET: "ci-test-secret"
