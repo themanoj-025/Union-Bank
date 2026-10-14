@@ -267,24 +267,25 @@ _uvicorn_error_logger.propagate = False
 # (which use bare {"detail": "message"}) are unaffected.
 
 
-@app.exception_handler(Exception)
-async def _v2_aware_http_exception_handler(request: Request, exc) -> JSONResponse:
-    """For V2 routes, return the ApiResponse dict directly (not wrapped in detail)."""
-    from fastapi import HTTPException
-    from fastapi.responses import JSONResponse
+from fastapi.exception_handlers import http_exception_handler
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from unionbank.entrypoints.api.models import ApiResponse
 
-    if isinstance(exc, HTTPException) and request.url.path.startswith("/api/v2/"):
+
+@app.exception_handler(StarletteHTTPException)
+async def _v2_aware_http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+    """For V2 routes, return the ApiResponse dict directly (not wrapped in detail)."""
+    if request.url.path.startswith("/api/v2/"):
         detail = exc.detail
-        if isinstance(detail, dict) and detail.get("success") is not None:
+        if isinstance(detail, dict) and "success" in detail:
             # Already an ApiResponse dict — return as-is
             return JSONResponse(status_code=exc.status_code, content=detail)
         # String detail — wrap in ApiResponse envelope
         return JSONResponse(
             status_code=exc.status_code,
-            content=_V2ApiResponse(success=False, error=str(detail)).model_dump(),
+            content=ApiResponse(success=False, error=str(detail)).model_dump(),
         )
-    # Fall through to default handler for non-HTTP exceptions
-    raise exc
+    return await http_exception_handler(request, exc)
 
 
 # ── Routers ──────────────────────────────────────────────────────────────
