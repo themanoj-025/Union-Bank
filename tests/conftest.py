@@ -53,16 +53,18 @@ def _clean_postgres_db() -> None:
     """Clean Postgres database between tests."""
     if "postgres" in os.environ.get("DATABASE_URL", ""):
         from sqlalchemy import text
-        from unionbank.infrastructure.database import ModelBase, get_engine
+        from unionbank.infrastructure.database import ModelBase, get_engine, init_db
 
         engine = get_engine()
-        table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
-        if table_names:
-            with engine.begin() as conn:
-                conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
-        else:
-            ModelBase.metadata.drop_all(engine)
-            ModelBase.metadata.create_all(engine)
+        try:
+            table_names = [f'"{table.name}"' for table in ModelBase.metadata.sorted_tables]
+            if table_names:
+                with engine.begin() as conn:
+                    conn.execute(text(f"TRUNCATE TABLE {', '.join(table_names)} RESTART IDENTITY CASCADE;"))
+            else:
+                init_db(engine)
+        except Exception:  # noqa: BLE001
+            init_db(engine)
 
 
 @pytest.fixture
