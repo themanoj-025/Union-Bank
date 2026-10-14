@@ -273,3 +273,149 @@ def sample_transaction_records() -> list[dict]:
             "category": "Food & Dining",
         },
     ]
+
+
+@pytest.fixture
+def client():
+    """FastAPI TestClient connected to the real application."""
+    from fastapi.testclient import TestClient
+    from unionbank.entrypoints.api.main import app
+
+    with TestClient(app) as tc:
+        yield tc
+
+
+@pytest.fixture
+def sample_customer_registration() -> dict:
+    """Return a valid customer registration payload."""
+    return {
+        "name": "Alice Johnson",
+        "age": 28,
+        "gender": "Female",
+        "mobile": "9876543210",
+        "email": "alice@example.com",
+        "password": "SecureP@ss1",
+        "confirm_password": "SecureP@ss1",
+    }
+
+
+@pytest.fixture
+def registered_customer(client, sample_customer_registration: dict) -> dict:
+    """Register a customer and return the resulting account info + auth tokens."""
+    from decimal import Decimal
+    from unionbank.infrastructure.container import get_container
+
+    resp = client.post("/api/auth/register", json=sample_customer_registration)
+    assert resp.status_code == 200
+    data = resp.json()
+
+    # Extract account number from the message
+    msg = data.get("message", "")
+    assert "Account created successfully" in msg
+    acc_no = msg.split(": ")[-1].strip()
+
+    # Login to get JWT token
+    login_resp = client.post(
+        "/api/auth/login",
+        json={
+            "account_number": acc_no,
+            "password": sample_customer_registration["password"],
+        },
+    )
+    assert login_resp.status_code == 200
+    login_data = login_resp.json()
+
+    # Make sure the account has some balance for operations that need it
+    c = get_container()
+    c.transaction_service().deposit(acc_no, Decimal("1000.00"), "Salary")
+
+    # Clear cookies so Bearer-only auth is used (no CSRF cookie present)
+    client.cookies.clear()
+
+    return {
+        "account_number": acc_no,
+        "name": sample_customer_registration["name"],
+        "password": sample_customer_registration["password"],
+        "access_token": login_data["access_token"],
+        "refresh_token": login_data.get("refresh_token"),
+        "headers": {"Authorization": f"Bearer {login_data['access_token']}"},
+    }
+
+
+@pytest.fixture
+def admin_token(client) -> dict:
+    """Create an admin user and return auth token."""
+    from unionbank.domain.entities import AdminUser
+    from unionbank.infrastructure.container import get_container
+    from unionbank.utils.hashing import hash_password
+
+    c = get_container()
+    admin_repo = c.admin_repo()
+
+    existing = admin_repo.get_by_username("admin")
+    if not existing:
+        admin = AdminUser(
+            username="admin",
+            password=hash_password("admin123"),
+        )
+        admin_repo.create(admin)
+        admin_repo.commit()
+
+    resp = client.post(
+        "/api/auth/admin-login",
+        json={
+            "username": "admin",
+            "password": "admin123",
+        },
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    client.cookies.clear()
+
+    return {
+        "username": "admin",
+        "access_token": data["access_token"],
+        "headers": {"Authorization": f"Bearer {data['access_token']}"},
+    }
+
+
+@pytest.fixture
+def second_registered_customer(client) -> dict:
+    """Register a second customer (for transfer tests)."""
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "name": "Bob Smith",
+            "age": 32,
+            "gender": "Male",
+            "mobile": "9123456789",
+            "email": "bob@example.com",
+            "password": "BobStr0ng!",
+            "confirm_password": "BobStr0ng!",
+        },
+    )
+    assert resp.status_code == 200
+    msg = resp.json().get("message", "")
+    acc_no = msg.split(": ")[-1].strip()
+
+    login_resp = client.post(
+        "/api/auth/login",
+        json={
+            "account_number": acc_no,
+            "password": "BobStr0ng!",
+        },
+    )
+    assert login_resp.status_code == 200
+    login_data = login_resp.json()
+
+    # Clear cookies so Bearer-only auth is used (no CSRF cookie present)
+    client.cookies.clear()
+
+    return {
+        "account_number": acc_no,
+        "name": "Bob Smith",
+        "access_token": login_data["access_token"],
+        "headers": {"Authorization": f"Bearer {login_data['access_token']}"},
+    }
+
+

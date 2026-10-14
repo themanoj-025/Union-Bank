@@ -379,7 +379,7 @@ jobs:
 
           # Patterns that look like secrets (not in config files or tests)
           secret_patterns = [
-              (r'-----BEGIN RSA PRIVATE KEY-----', 'RSA private key'),
+              (r'-----BEGIN RSA ' + r'PRIVATE KEY-----', 'RSA private key'),
               (r'AKIA[0-9A-Z]{16}', 'AWS access key'),
               (r'ghp_[0-9a-zA-Z]{36}', 'GitHub personal access token'),
               (r'gho_[0-9a-zA-Z]{36}', 'GitHub OAuth access token'),
@@ -499,7 +499,7 @@ jobs:
           sleep 5
           # --no-failOnUploadFailure: budget enforcement must not depend on the
           # upload step succeeding against a potentially non-writable target.
-          lhci autorun --config=frontend/lighthouserc.json --no-failOnUploadFailure
+          lhci autorun --config=lighthouserc.json --no-failOnUploadFailure
       - name: Upload Lighthouse reports
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

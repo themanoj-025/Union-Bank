@@ -60,6 +60,7 @@ def is_postgres(url: str | None = None) -> bool:
 
 _engine_instance = None
 _session_maker = None
+_engine_url = None
 _thread_local = threading.local()
 
 
@@ -71,19 +72,19 @@ def get_engine() -> Any:
     Falls back to SQLite at the current DATA_DIR.
     The engine is lazily recreated when the database URL changes (e.g., during tests).
     """
-    global _engine_instance, _session_maker
+    global _engine_instance, _session_maker, _engine_url
 
     db_url = get_db_url()
 
     # If engine exists for a different URL, dispose and recreate
     if _engine_instance is not None:
-        current_url = str(_engine_instance.url)
-        if current_url == db_url:
+        if _engine_url == db_url:
             return _engine_instance
         # URL changed — dispose old engine
         _engine_instance.dispose()
         _engine_instance = None
         _session_maker = None
+        _engine_url = None
         # Invalidate the thread-local session: it is still bound to the
         # disposed engine, so writes would silently target the old database.
         close_session()
@@ -99,6 +100,7 @@ def get_engine() -> Any:
         engine_kwargs["max_overflow"] = 10
 
         _engine_instance = create_engine(db_url, **engine_kwargs)
+        _engine_url = db_url
 
         @event.listens_for(_engine_instance, "connect")
         def _set_pragmas(dbapi_connection, connection_record) -> None:
