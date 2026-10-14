@@ -417,7 +417,6 @@ jobs:
               print('  ✓ No secret patterns found in repository')
           "
         shell: bash
-        continue-on-error: true
 
   link-check:
     runs-on: ubuntu-latest
