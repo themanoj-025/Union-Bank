@@ -2,11 +2,73 @@
 #  UNION BANK  –  .gitignore
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# ── Environment & secrets (CRITICAL - NEVER COMMIT) ──────────────────────────
+.env
+.env.*
+*.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.staging
+.env.production
+!.env.example
+!.env.*.example
+!.env.template
+!.env.sample
+frontend/.env
+frontend/.env.*
+frontend/.env.local
+frontend/.env.*.local
+!frontend/.env.example
+
+# Private keys, certificates & credentials
+*.pem
+*.key
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pkcs12
+*.cer
+*.crt
+*.der
+*.id_rsa
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+
+# Cloud & service credentials
+credentials.json
+client_secret*.json
+service-account*.json
+service_account*.json
+serviceAccountKey*.json
+google-services.json
+GoogleService-Info.plist
+.aws/
+.azure/
+.gcp/
+gcloud/
+.act-secrets
+*.publishsettings
+
+# Authentication tokens & configs
+.netrc
+.pypirc
+.npmrc
+*token*.json
+token.pickle
+auth*.json
+
 # ── Python byte-code & caches ────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyc
+*.so
+.Python
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -18,7 +80,6 @@ __pycache__/
 .eggs/
 dist/
 build/
-*.egg/
 
 # ── Virtual environments ─────────────────────────────────────────────────────
 venv/
@@ -26,20 +87,18 @@ venv/
 env/
 ENV/
 .env/
-
-# ── Environment & secrets (NEVER COMMIT) ─────────────────────────────────────
-.env
-.env.*
-!.env.example
-!.env.*.example
-frontend/.env
-frontend/.env.*
-frontend/.env.local
+.venv*/
+env.bak/
+venv.bak/
 
 # ── IDE / Editor ─────────────────────────────────────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+.vscode/*.local.*
+.vscode/mcp.json
 .idea/
 *.swp
 *.swo
@@ -49,10 +108,18 @@ frontend/.env.local
 
 # ── OS / Windows artifacts ───────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 Thumbs.db
 Desktop.ini
+desktop.ini
+$RECYCLE.BIN/
 *.bak
 nul
+*.tmp
+*.temp
 
 # ── Project data — JSON legacy storage ───────────────────────────────────────
 data/*.json
@@ -64,6 +131,7 @@ data/*.jsonl
 data/*.log
 *.jsonl
 *.log
+logs/
 
 # ── Project data — SQLite databases (ALL locations) ──────────────────────────
 data/*.db
@@ -76,6 +144,12 @@ src/data/*.db-shm
 src/**/data/*.db
 src/**/data/*.db-wal
 src/**/data/*.db-shm
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
 
 # ── Temporary test database directories ──────────────────────────────────────
 data/fresh_*/
@@ -107,15 +181,10 @@ dist/
 frontend/dist/
 frontend/dist-ssr/
 frontend/build/
-frontend/.env
-frontend/.env.local
-frontend/.env.*.local
-
-# ── AI / IDE metadata ───────────────────────────────────────────────────────
-.gemini/
-.cursorrules
-CLAUDE.md
-.prompt.md
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # ── Docker ───────────────────────────────────────────────────────────────────
 docker-compose.override.yml
@@ -124,17 +193,8 @@ docker-compose.override.yml
 *.pid
 *.seed
 *.pid.lock
-
-# Runtime balance log
 radar_balance.txt
-
-# Legacy lock file (superseded by requirements.lock)
 requirements-lock.txt
-
-# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
-*.db
-*.db-shm
-*.db-wal
 
 # =====================================================================
 # KEEP: AI provenance & transparency files — these must remain
