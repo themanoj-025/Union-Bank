@@ -715,55 +715,55 @@ npm run dev
 
 ## <a id="exam"></a>§EXAM — Cold-Reader Verification Exam (25 Questions)
 
-1. **Q: What is the primary architectural domain of Union Bank?**  
+1. **Q: What is the primary architectural domain of Union Bank?**
    *A:* Concurrent-safe core banking API, atomic financial ledger, and multi-interface management platform. Reference: [§TLDR](#tldr).
-2. **Q: How does the system prevent race conditions and lost updates during balance transfers?**  
+2. **Q: How does the system prevent race conditions and lost updates during balance transfers?**
    *A:* Using database row-level locking (`SELECT ... FOR UPDATE`) inside atomic transactions. Reference: [§WHAT](#what).
-3. **Q: What three distinct interfaces consume the shared DDD application core?**  
+3. **Q: What three distinct interfaces consume the shared DDD application core?**
    *A:* FastAPI REST service (`/api/v2/`), React 19 SPA, and Typer + Rich terminal CLI. Reference: [§WHAT](#what).
-4. **Q: What two-factor authentication (2FA) algorithm is implemented for customer security?**  
+4. **Q: What two-factor authentication (2FA) algorithm is implemented for customer security?**
    *A:* RFC 6238 TOTP with encrypted Fernet seed storage. Reference: [§AUTH](#auth).
-5. **Q: What ORM library and persistence engines are utilized?**  
+5. **Q: What ORM library and persistence engines are utilized?**
    *A:* SQLAlchemy 2.0 Asyncio supporting PostgreSQL 16 and SQLite. Reference: [§DEPENDENCIES](#dependencies).
-6. **Q: How many automated tests are collected across the test suite?**  
+6. **Q: How many automated tests are collected across the test suite?**
    *A:* 743 tests across 48 test files. Reference: [§TEST-CATALOG](#test-catalog).
-7. **Q: What frontend library and build tool power the web dashboard?**  
+7. **Q: What frontend library and build tool power the web dashboard?**
    *A:* React 19 (`^19.2.7`) with Vite. Reference: [§DEPENDENCIES](#dependencies).
-8. **Q: What mechanism prevents duplicate transfers when clients retry network requests?**  
+8. **Q: What mechanism prevents duplicate transfers when clients retry network requests?**
    *A:* Idempotency keys stored and checked prior to balance debiting. Reference: [§RESILIENCE](#resilience).
-9. **Q: What open-source license governs the UNION-BANK- repository?**  
+9. **Q: What open-source license governs the UNION-BANK- repository?**
    *A:* MIT License. Reference: [`LICENSE`](LICENSE).
-10. **Q: What total lines of code exist in the UNION-BANK- codebase?**  
+10. **Q: What total lines of code exist in the UNION-BANK- codebase?**
     *A:* 135,487 lines of code. Reference: [§META](#meta).
-11. **Q: What git commit hash was verified for this documentation?**  
+11. **Q: What git commit hash was verified for this documentation?**
     *A:* `1689617` (`1689617cb9220a76b4c1d077c71e5598064dd0f8`). Reference: [§META](#meta).
-12. **Q: What git tree hash represents the verified repository state?**  
+12. **Q: What git tree hash represents the verified repository state?**
     *A:* `ae5575cbd38a90b461545ab0a387d4c1aa3650cf`. Reference: [§META](#meta).
-13. **Q: What test file verifies atomic rollbacks under simulated mid-execution exceptions?**  
+13. **Q: What test file verifies atomic rollbacks under simulated mid-execution exceptions?**
     *A:* `tests/test_features.py`. Reference: [`tests/test_features.py`](tests/test_features.py).
-14. **Q: What test file verifies concurrent transfer execution without lost updates?**  
+14. **Q: What test file verifies concurrent transfer execution without lost updates?**
     *A:* `tests/test_integration_part2.py`. Reference: [`tests/test_integration_part2.py`](tests/test_integration_part2.py).
-15. **Q: What endpoint exposes real-time Prometheus operational metrics?**  
+15. **Q: What endpoint exposes real-time Prometheus operational metrics?**
     *A:* `/metrics`. Reference: [§API](#api).
-16. **Q: What cryptographic algorithm signs customer session JWT tokens?**  
+16. **Q: What cryptographic algorithm signs customer session JWT tokens?**
     *A:* RS256 / HS256. Reference: [§AUTH](#auth).
-17. **Q: What defense protects state-changing browser requests against cross-site request forgery?**  
+17. **Q: What defense protects state-changing browser requests against cross-site request forgery?**
     *A:* Double-submit CSRF cookie verification. Reference: [§SEC-MODEL](#sec-model).
-18. **Q: What rate limiting middleware protects the REST API against brute-force attacks?**  
+18. **Q: What rate limiting middleware protects the REST API against brute-force attacks?**
     *A:* SlowAPI with Redis sliding-window counters. Reference: [§SEC-MODEL](#sec-model).
-19. **Q: What Python runtime version is required?**  
+19. **Q: What Python runtime version is required?**
     *A:* Python >= 3.11. Reference: [`pyproject.toml`](pyproject.toml).
-20. **Q: Where are database schema migration revisions stored?**  
+20. **Q: Where are database schema migration revisions stored?**
     *A:* `alembic/`. Reference: [`alembic/`](alembic/).
-21. **Q: What four user roles are supported in the core domain?**  
+21. **Q: What four user roles are supported in the core domain?**
     *A:* `CUSTOMER`, `TELLER`, `MANAGER`, and `ADMIN`. Reference: [§AUTH](#auth).
-22. **Q: What CLI command creates a customer account interactively?**  
+22. **Q: What CLI command creates a customer account interactively?**
     *A:* `python -m src.unionbank.cli account create`. Reference: [§CLI](#cli).
-23. **Q: What measured latency benchmark is achieved for atomic transfer operations?**  
+23. **Q: What measured latency benchmark is achieved for atomic transfer operations?**
     *A:* 18 ms. Reference: [§PERF](#perf).
-24. **Q: Where are Kubernetes orchestration manifests located?**  
+24. **Q: Where are Kubernetes orchestration manifests located?**
     *A:* In `k8s/`. Reference: [`k8s/`](k8s/).
-25. **Q: How many total tracked files are cataloged with 100% manifest coverage in Appendix A?**  
+25. **Q: How many total tracked files are cataloged with 100% manifest coverage in Appendix A?**
     *A:* All 361 tracked files. Reference: [§APP](#app).
 
 ---
