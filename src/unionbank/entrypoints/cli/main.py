@@ -107,7 +107,7 @@ def create_admin_bootstrap() -> None:
 
     valid, msg = validate_password(password)
     if not valid:
-        print(f"  [!] {msg}\n")
+        sys.stdout.write(f"  [!] {msg}\n\n")
         sys.exit(1)
 
     admin = AdminUser(
