@@ -54,11 +54,13 @@ def readiness_probe() -> dict:
         session.execute(text("SELECT 1"))
         return {"status": "ready", "database": "connected"}
     except (OSError, ConnectionError) as e:
+        import logging
         from fastapi.responses import JSONResponse
 
+        logging.getLogger(__name__).warning("Database readiness probe failed: %s", e)
         return JSONResponse(
             status_code=503,
-            content={"status": "not ready", "database": str(e)},
+            content={"status": "not ready", "database": "unavailable"},
         )
 
 

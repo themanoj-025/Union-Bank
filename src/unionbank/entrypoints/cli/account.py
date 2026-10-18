@@ -228,16 +228,18 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
         logger.info(f"Full statement viewed -> Acc:{self.account_number}")
 
     def view_profile(self) -> Any:
+        import sys
+
         status = "FROZEN" if self.is_frozen else ("ACTIVE" if self.is_active else "CLOSED")
         status_color = RED if self.is_frozen else (GREEN if self.is_active else YELLOW)
         header("PROFILE DETAILS")
-        print(f"  {CYAN}Name           :{WHITE} {self.name}{RESET}")
-        print(f"  {CYAN}Age            :{WHITE} {self.age}{RESET}")
-        print(f"  {CYAN}Gender         :{WHITE} {self.gender}{RESET}")
-        print(f"  {CYAN}Mobile         :{WHITE} {self.mobile}{RESET}")
-        print(f"  {CYAN}Email          :{WHITE} {self.email}{RESET}")
-        print(f"  {CYAN}Account Number :{WHITE} {self.account_number}{RESET}")
-        print(f"  {CYAN}Balance        :{WHITE} {fmt_currency(self.balance)}{RESET}")
-        print(f"  {CYAN}Account Status :{WHITE} {status_color}{status}{RESET}")
-        print(f"  {CYAN}Member Since   :{WHITE} {self.created_at}{RESET}")
+        sys.stdout.write(f"  {CYAN}Name           :{WHITE} {self.name}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Age            :{WHITE} {self.age}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Gender         :{WHITE} {self.gender}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Mobile         :{WHITE} {self.mobile}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Email          :{WHITE} {self.email}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Account Number :{WHITE} {self.account_number}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Balance        :{WHITE} {fmt_currency(self.balance)}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Account Status :{WHITE} {status_color}{status}{RESET}\n")
+        sys.stdout.write(f"  {CYAN}Member Since   :{WHITE} {self.created_at}{RESET}\n")
         divider()
