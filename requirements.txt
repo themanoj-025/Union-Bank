@@ -29,7 +29,7 @@ pydantic==2.14.0
 python-multipart>=0.0.32
 python-dotenv==1.2.4
 psycopg2-binary==2.9.13
-psycopg[binary]>=3.2.0
+psycopg[binary]>=3.3.6
 
 
 # OpenTelemetry distributed tracing (optional, enabled via OTEL_ENABLED=true)
