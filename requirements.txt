@@ -21,7 +21,7 @@ pyotp==2.10.0
 pybreaker==1.4.1  # circuit breaker used by application/services.py (was only in pyproject)
 redis==7.2.0
 slowapi==0.1.10
-SQLAlchemy==2.1.4
+SQLAlchemy==2.1.6
 uvicorn==0.53.0
 
 # Pyproject-matched dependencies
