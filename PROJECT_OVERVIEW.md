@@ -1176,4 +1176,3 @@ Total tracked files in repository tree: 361
 | [`tests/test_v2_helpers.py`](tests/test_v2_helpers.py) | `.py` | 118 | 4035 | Automated test suite component |
 | [`tests/test_validation.py`](tests/test_validation.py) | `.py` | 125 | 3780 | Automated test suite component |
 | [`uv.lock`](uv.lock) | `.lock` | 3170 | 688130 | Dependency manifest or lockfile |
-
