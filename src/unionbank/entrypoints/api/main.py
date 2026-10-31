@@ -30,7 +30,6 @@ from unionbank.config import settings
 
 # ── Shared exception handler for V2 envelope ────────────────────────────
 
-from unionbank.entrypoints.api.models import ApiResponse as _V2ApiResponse
 from unionbank.infrastructure.metrics import MetricsMiddleware
 from unionbank.utils.logger import JsonFormatter, clear_context, logger, set_request_id
 
