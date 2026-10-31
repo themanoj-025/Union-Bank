@@ -873,7 +873,7 @@ Total tracked files in repository tree: 361
 | [`alembic/versions/bc2a4f8e9d1b_add_balance_check_constraint.py`](alembic/versions/bc2a4f8e9d1b_add_balance_check_constraint.py) | `.py` | 54 | 1661 | Alembic database schema migration script |
 | [`assets/logo-dark.svg`](assets/logo-dark.svg) | `.svg` | 14 | 1131 | Configuration or static asset |
 | [`assets/logo.svg`](assets/logo.svg) | `.svg` | 14 | 1096 | Configuration or static asset |
-| [`audit/dependabot-agent/2026-08-15-run.md`](audit/dependabot-agent/2026-08-15-run.md) | `.md` | 30 | 2358 | Documentation asset |
+| [`docs/audit/dependabot-agent/2026-08-15-run.md`](docs/audit/dependabot-agent/2026-08-15-run.md) | `.md` | 30 | 2358 | Documentation asset |
 | [`circuit_breaker.py`](circuit_breaker.py) | `.py` | 151 | 4985 | Configuration or static asset |
 | [`commitlint.config.js`](commitlint.config.js) | `.js` | 13 | 572 | Configuration or static asset |
 | [`docker-compose.prod.yml`](docker-compose.prod.yml) | `.yml` | 100 | 3528 | Configuration or static asset |
@@ -1176,3 +1176,4 @@ Total tracked files in repository tree: 361
 | [`tests/test_v2_helpers.py`](tests/test_v2_helpers.py) | `.py` | 118 | 4035 | Automated test suite component |
 | [`tests/test_validation.py`](tests/test_validation.py) | `.py` | 125 | 3780 | Automated test suite component |
 | [`uv.lock`](uv.lock) | `.lock` | 3170 | 688130 | Dependency manifest or lockfile |
+
