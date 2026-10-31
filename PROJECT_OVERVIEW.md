@@ -828,7 +828,6 @@ Total tracked files in repository tree: 361
 | [`.github/ISSUE_TEMPLATE/bug_report.md`](.github/ISSUE_TEMPLATE/bug_report.md) | `.md` | 39 | 937 | GitHub Actions CI/CD automation workflow |
 | [`.github/ISSUE_TEMPLATE/feature_request.md`](.github/ISSUE_TEMPLATE/feature_request.md) | `.md` | 34 | 898 | GitHub Actions CI/CD automation workflow |
 | [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) | `.md` | 47 | 1606 | GitHub Actions CI/CD automation workflow |
-| [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | `.md` | 22 | 818 | GitHub Actions CI/CD automation workflow |
 | [`.github/dependabot.yml`](.github/dependabot.yml) | `.yml` | 56 | 1099 | GitHub Actions CI/CD automation workflow |
 | [`.github/labeler.yml`](.github/labeler.yml) | `.yml` | 21 | 602 | GitHub Actions CI/CD automation workflow |
 | [`.github/scripts/check_lockfile.py`](.github/scripts/check_lockfile.py) | `.py` | 214 | 7174 | GitHub Actions CI/CD automation workflow |
@@ -857,8 +856,6 @@ Total tracked files in repository tree: 361
 | [`.mailmap`](.mailmap) | `no-ext` | 6 | 298 | Configuration or static asset |
 | [`.pre-commit-config.yaml`](.pre-commit-config.yaml) | `.yaml` | 17 | 511 | Configuration or static asset |
 | [`.vscode/settings.json`](.vscode/settings.json) | `.json` | 17 | 465 | Configuration or static asset |
-| [`AGENTS.md`](AGENTS.md) | `.md` | 73 | 1901 | Documentation asset |
-| [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md) | `.md` | 66 | 2565 | Documentation asset |
 | [`CHANGELOG.md`](CHANGELOG.md) | `.md` | 40 | 1418 | Documentation asset |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | `.md` | 14 | 532 | Documentation asset |
 | [`Dockerfile`](Dockerfile) | `no-ext` | 94 | 4188 | Configuration or static asset |
@@ -868,7 +865,6 @@ Total tracked files in repository tree: 361
 | [`PROJECT_ANALYSIS.md`](PROJECT_ANALYSIS.md) | `.md` | 18 | 728 | Documentation asset |
 | [`README.md`](README.md) | `.md` | 396 | 17582 | Documentation asset |
 | [`SECURITY.md`](SECURITY.md) | `.md` | 25 | 986 | Documentation asset |
-| [`ai-provenance.json`](ai-provenance.json) | `.json` | 64 | 1676 | Configuration or static asset |
 | [`alembic.ini`](alembic.ini) | `.ini` | 149 | 5010 | Configuration or static asset |
 | [`alembic/README`](alembic/README) | `no-ext` | 1 | 39 | Alembic database schema migration script |
 | [`alembic/env.py`](alembic/env.py) | `.py` | 78 | 2425 | Alembic database schema migration script |
