@@ -35,5 +35,5 @@ psycopg[binary]>=3.3.6
 # OpenTelemetry distributed tracing (optional, enabled via OTEL_ENABLED=true)
 opentelemetry-api>=1.45.1,<2.0
 opentelemetry-sdk>=1.45.1,<2.0
-opentelemetry-exporter-otlp-proto-grpc>=1.45.1,<2.0
+opentelemetry-exporter-otlp-proto-grpc>=1.45.2,<2.0
 opentelemetry-instrumentation-fastapi>=0.66b1,<1.0
