@@ -8,7 +8,7 @@
 alembic==1.20.1
 bcrypt==5.0.0
 colorama==0.4.6
-fastapi==0.162.0
+fastapi==0.162.2
 prometheus-client==0.24.1
 pytest==9.2.0
 pytest-cov==7.1.0
@@ -29,7 +29,7 @@ pydantic==2.14.3
 python-multipart>=0.0.32
 python-dotenv==1.2.4
 psycopg2-binary==2.9.13
-psycopg[binary]>=3.3.6
+psycopg[binary]>=3.3.8
 
 
 # OpenTelemetry distributed tracing (optional, enabled via OTEL_ENABLED=true)
