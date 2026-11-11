@@ -1,4 +1,5 @@
-"""Lightweight circuit breaker for external API calls and service dependencies.
+"""
+Lightweight circuit breaker for external API calls and service dependencies.
 
 Provides automatic fault tolerance and failure isolation for remote dependencies.
 
