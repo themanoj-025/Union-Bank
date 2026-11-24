@@ -105,9 +105,16 @@ def create_admin_bootstrap() -> None:
         print("  [!] Passwords do not match.\n")
         sys.exit(1)
 
+    _password_policy_messages = {
+        "Password must be at least 8 characters long.": "Password must be at least 8 characters long.",
+        "Password must contain at least one uppercase letter.": "Password must contain at least one uppercase letter.",
+        "Password must contain at least one lowercase letter.": "Password must contain at least one lowercase letter.",
+        "Password must contain at least one digit.": "Password must contain at least one digit.",
+    }
     valid, msg = validate_password(password)
     if not valid:
-        sys.stdout.write(f"  [!] {msg}\n\n")
+        safe_msg = _password_policy_messages.get(msg, "Password does not meet security requirements.")
+        sys.stdout.write(f"  [!] {safe_msg}\n\n")
         sys.exit(1)
 
     admin = AdminUser(

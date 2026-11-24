@@ -235,7 +235,15 @@ class Account(AccountOperationsMixin, AccountGoalsMixin):
         header("PROFILE DETAILS")
         sys.stdout.write(f"  {CYAN}Name           :{WHITE} {self.name}{RESET}\n")
         sys.stdout.write(f"  {CYAN}Age            :{WHITE} {self.age}{RESET}\n")
-        sys.stdout.write(f"  {CYAN}Gender         :{WHITE} {self.gender}{RESET}\n")
+        gender_display = {
+            "male": "Male",
+            "m": "Male",
+            "female": "Female",
+            "f": "Female",
+            "other": "Other",
+            "non-binary": "Non-binary",
+        }.get(str(self.gender or "").strip().lower(), "On file" if self.gender else "Not set")
+        sys.stdout.write(f"  {CYAN}Gender         :{WHITE} {gender_display}{RESET}\n")
         sys.stdout.write(f"  {CYAN}Mobile         :{WHITE} {self.mobile}{RESET}\n")
         sys.stdout.write(f"  {CYAN}Email          :{WHITE} {self.email}{RESET}\n")
         sys.stdout.write(f"  {CYAN}Account Number :{WHITE} {self.account_number}{RESET}\n")
